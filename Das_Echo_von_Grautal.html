@@ -477,7 +477,10 @@
         currentChapter: 1,
         storyPath: 'main', // main, water, resistance, power, truth, redemption
         visitedScenes: new Set(),
-        specialFlags: new Set() // Für besondere Entscheidungen
+        specialFlags: new Set(), // Für besondere Entscheidungen
+        hasReachedPositiveExtreme: false,
+        hasReachedNegativeExtreme: false,
+        isGameOver: false // Verhindert mehrfache Endauswertungen
     };
 
     // Timer-Variablen
@@ -1516,79 +1519,900 @@
             ]
         },
 
-        // Platzhalter für weitere Szenen
-        'silent_wait_2': { chapter: 2, image: '', text: 'PLACEHOLDER - Diese Szene muss noch ausgearbeitet werden', choices: [{ text: 'Weiter', moralEffect: 0, nextScene: 'check_ending', feedback: 'Placeholder' }] },
-        'feign_ignorance_2': { chapter: 2, image: '', text: 'PLACEHOLDER', choices: [{ text: 'Weiter', moralEffect: 0, nextScene: 'check_ending', feedback: 'Placeholder' }] },
-        'go_alone_2': { chapter: 2, image: '', text: 'PLACEHOLDER', choices: [{ text: 'Weiter', moralEffect: 0, nextScene: 'check_ending', feedback: 'Placeholder' }] },
-        'save_some_docs_2': { chapter: 2, image: '', text: 'PLACEHOLDER', choices: [{ text: 'Weiter', moralEffect: 0, nextScene: 'check_ending', feedback: 'Placeholder' }] },
-        'give_up_2': { chapter: 2, image: '', text: 'PLACEHOLDER', choices: [{ text: 'Weiter', moralEffect: 0, nextScene: 'check_ending', feedback: 'Placeholder' }] },
-        'analyze_data_2': { chapter: 2, image: '', text: 'PLACEHOLDER', choices: [{ text: 'Weiter', moralEffect: 0, nextScene: 'check_ending', feedback: 'Placeholder' }] },
-        'consider_selling_2': { chapter: 2, image: '', text: 'PLACEHOLDER', choices: [{ text: 'Weiter', moralEffect: 0, nextScene: 'check_ending', feedback: 'Placeholder' }] },
-        'learn_about_group_2': { chapter: 2, image: '', text: 'PLACEHOLDER', choices: [{ text: 'Weiter', moralEffect: 0, nextScene: 'check_ending', feedback: 'Placeholder' }] },
-        'seek_power_2': { chapter: 2, image: '', text: 'PLACEHOLDER', choices: [{ text: 'Weiter', moralEffect: 0, nextScene: 'check_ending', feedback: 'Placeholder' }] },
-        'find_journalist_2': { chapter: 2, image: '', text: 'PLACEHOLDER', choices: [{ text: 'Weiter', moralEffect: 0, nextScene: 'check_ending', feedback: 'Placeholder' }] },
-        'suggest_blackmail_2': { chapter: 2, image: '', text: 'PLACEHOLDER', choices: [{ text: 'Weiter', moralEffect: 0, nextScene: 'check_ending', feedback: 'Placeholder' }] },
-        'support_radical_2': { chapter: 2, image: '', text: 'PLACEHOLDER', choices: [{ text: 'Weiter', moralEffect: 0, nextScene: 'check_ending', feedback: 'Placeholder' }] },
-        'middle_ground_2': { chapter: 2, image: '', text: 'PLACEHOLDER', choices: [{ text: 'Weiter', moralEffect: 0, nextScene: 'check_ending', feedback: 'Placeholder' }] },
-        'save_documents_2': { chapter: 2, image: '', text: 'PLACEHOLDER', choices: [{ text: 'Weiter', moralEffect: 0, nextScene: 'check_ending', feedback: 'Placeholder' }] },
-        'hide_fear_2': { chapter: 2, image: '', text: 'PLACEHOLDER', choices: [{ text: 'Weiter', moralEffect: 0, nextScene: 'check_ending', feedback: 'Placeholder' }] },
-        'call_for_peace_2': { chapter: 2, image: '', text: 'PLACEHOLDER', choices: [{ text: 'Weiter', moralEffect: 0, nextScene: 'check_ending', feedback: 'Placeholder' }] },
-        'protect_vulnerable_2': { chapter: 2, image: '', text: 'PLACEHOLDER', choices: [{ text: 'Weiter', moralEffect: 0, nextScene: 'check_ending', feedback: 'Placeholder' }] },
-        'flee_early_2': { chapter: 2, image: '', text: 'PLACEHOLDER', choices: [{ text: 'Weiter', moralEffect: 0, nextScene: 'check_ending', feedback: 'Placeholder' }] },
-        'pretend_interest_3': { chapter: 3, image: '', text: 'PLACEHOLDER', choices: [{ text: 'Weiter', moralEffect: 0, nextScene: 'check_ending', feedback: 'Placeholder' }] },
-        'consider_joining_3': { chapter: 3, image: '', text: 'PLACEHOLDER', choices: [{ text: 'Weiter', moralEffect: 0, nextScene: 'check_ending', feedback: 'Placeholder' }] },
-        'suggest_safer_3': { chapter: 3, image: '', text: 'PLACEHOLDER', choices: [{ text: 'Weiter', moralEffect: 0, nextScene: 'check_ending', feedback: 'Placeholder' }] },
-        'stay_background_3': { chapter: 3, image: '', text: 'PLACEHOLDER', choices: [{ text: 'Weiter', moralEffect: 0, nextScene: 'check_ending', feedback: 'Placeholder' }] },
-        'stay_silent_3': { chapter: 3, image: '', text: 'PLACEHOLDER', choices: [{ text: 'Weiter', moralEffect: 0, nextScene: 'check_ending', feedback: 'Placeholder' }] },
-        'give_false_info_3': { chapter: 3, image: '', text: 'PLACEHOLDER', choices: [{ text: 'Weiter', moralEffect: 0, nextScene: 'check_ending', feedback: 'Placeholder' }] },
-        'betray_all_3': { chapter: 3, image: '', text: 'PLACEHOLDER', choices: [{ text: 'Weiter', moralEffect: 0, nextScene: 'check_ending', feedback: 'Placeholder' }] },
-        'seek_compromise_3': { chapter: 3, image: '', text: 'PLACEHOLDER', choices: [{ text: 'Weiter', moralEffect: 0, nextScene: 'check_ending', feedback: 'Placeholder' }] },
-        'call_violence_3': { chapter: 3, image: '', text: 'PLACEHOLDER', choices: [{ text: 'Weiter', moralEffect: 0, nextScene: 'check_ending', feedback: 'Placeholder' }] },
-        'flee_with_evidence_3': { chapter: 3, image: '', text: 'PLACEHOLDER', choices: [{ text: 'Weiter', moralEffect: 0, nextScene: 'check_ending', feedback: 'Placeholder' }] },
-        'attack_guard_3': { chapter: 3, image: '', text: 'PLACEHOLDER', choices: [{ text: 'Weiter', moralEffect: 0, nextScene: 'check_ending', feedback: 'Placeholder' }] },
-        'coordinate_media_3': { chapter: 3, image: '', text: 'PLACEHOLDER', choices: [{ text: 'Weiter', moralEffect: 0, nextScene: 'check_ending', feedback: 'Placeholder' }] },
-        'secret_talks_3': { chapter: 3, image: '', text: 'PLACEHOLDER', choices: [{ text: 'Weiter', moralEffect: 0, nextScene: 'check_ending', feedback: 'Placeholder' }] },
-        'thank_guard_3': { chapter: 3, image: '', text: 'PLACEHOLDER', choices: [{ text: 'Weiter', moralEffect: 0, nextScene: 'check_ending', feedback: 'Placeholder' }] },
-        'quick_escape_3': { chapter: 3, image: '', text: 'PLACEHOLDER', choices: [{ text: 'Weiter', moralEffect: 0, nextScene: 'check_ending', feedback: 'Placeholder' }] },
-        'trust_mayor_3': { chapter: 3, image: '', text: 'PLACEHOLDER', choices: [{ text: 'Weiter', moralEffect: 0, nextScene: 'check_ending', feedback: 'Placeholder' }] },
-        'continue_strike_3': { chapter: 3, image: '', text: 'PLACEHOLDER', choices: [{ text: 'Weiter', moralEffect: 0, nextScene: 'check_ending', feedback: 'Placeholder' }] },
-        'go_quarry_4': { chapter: 4, image: '', text: 'PLACEHOLDER', choices: [{ text: 'Weiter', moralEffect: 0, nextScene: 'check_ending', feedback: 'Placeholder' }] },
-        'ignore_letter_4': { chapter: 4, image: '', text: 'PLACEHOLDER', choices: [{ text: 'Weiter', moralEffect: 0, nextScene: 'check_ending', feedback: 'Placeholder' }] },
-        'insist_alone_4': { chapter: 4, image: '', text: 'PLACEHOLDER', choices: [{ text: 'Weiter', moralEffect: 0, nextScene: 'check_ending', feedback: 'Placeholder' }] },
-        'call_police_4': { chapter: 4, image: '', text: 'PLACEHOLDER', choices: [{ text: 'Weiter', moralEffect: 0, nextScene: 'check_ending', feedback: 'Placeholder' }] },
-        'ask_evidence_4': { chapter: 4, image: '', text: 'PLACEHOLDER', choices: [{ text: 'Weiter', moralEffect: 0, nextScene: 'check_ending', feedback: 'Placeholder' }] },
-        'stay_suspicious_4': { chapter: 4, image: '', text: 'PLACEHOLDER', choices: [{ text: 'Weiter', moralEffect: 0, nextScene: 'check_ending', feedback: 'Placeholder' }] },
-        'deescalate_4': { chapter: 4, image: '', text: 'PLACEHOLDER', choices: [{ text: 'Weiter', moralEffect: 0, nextScene: 'check_ending', feedback: 'Placeholder' }] },
-        'abandon_all_4': { chapter: 4, image: '', text: 'PLACEHOLDER', choices: [{ text: 'Weiter', moralEffect: 0, nextScene: 'check_ending', feedback: 'Placeholder' }] },
-        'ask_hide_4': { chapter: 4, image: '', text: 'PLACEHOLDER', choices: [{ text: 'Weiter', moralEffect: 0, nextScene: 'check_ending', feedback: 'Placeholder' }] },
-        'take_evidence_leave_4': { chapter: 4, image: '', text: 'PLACEHOLDER', choices: [{ text: 'Weiter', moralEffect: 0, nextScene: 'check_ending', feedback: 'Placeholder' }] },
-        'get_doctor_4': { chapter: 4, image: '', text: 'PLACEHOLDER', choices: [{ text: 'Weiter', moralEffect: 0, nextScene: 'check_ending', feedback: 'Placeholder' }] },
-        'leave_elara_4': { chapter: 4, image: '', text: 'PLACEHOLDER', choices: [{ text: 'Weiter', moralEffect: 0, nextScene: 'check_ending', feedback: 'Placeholder' }] },
-        'accept_deal_4': { chapter: 4, image: '', text: 'PLACEHOLDER', choices: [{ text: 'Weiter', moralEffect: 0, nextScene: 'check_ending', feedback: 'Placeholder' }] },
-        'fake_accept_4': { chapter: 4, image: '', text: 'PLACEHOLDER', choices: [{ text: 'Weiter', moralEffect: 0, nextScene: 'check_ending', feedback: 'Placeholder' }] },
-        'media_blast_4': { chapter: 4, image: '', text: 'PLACEHOLDER', choices: [{ text: 'Weiter', moralEffect: 0, nextScene: 'check_ending', feedback: 'Placeholder' }] },
-        'competitor_deal_4': { chapter: 4, image: '', text: 'PLACEHOLDER', choices: [{ text: 'Weiter', moralEffect: 0, nextScene: 'check_ending', feedback: 'Placeholder' }] },
-        'underground_fight_4': { chapter: 4, image: '', text: 'PLACEHOLDER', choices: [{ text: 'Weiter', moralEffect: 0, nextScene: 'check_ending', feedback: 'Placeholder' }] },
-        'flee_exile_4': { chapter: 4, image: '', text: 'PLACEHOLDER', choices: [{ text: 'Weiter', moralEffect: 0, nextScene: 'check_ending', feedback: 'Placeholder' }] },
-        'take_money_betray': { chapter: 4, image: '', text: 'PLACEHOLDER', choices: [{ text: 'Weiter', moralEffect: 0, nextScene: 'check_ending', feedback: 'Placeholder' }] },
-        'demand_punishment': { chapter: 4, image: '', text: 'PLACEHOLDER', choices: [{ text: 'Weiter', moralEffect: 0, nextScene: 'check_ending', feedback: 'Placeholder' }] },
+        // Platzhalter für weitere Szenen - KAPITEL 2
+        'silent_wait_2': { // Fortsetzung von hide_docs_2
+            chapter: 2,
+            image: 'https://picsum.photos/seed/silent-confrontation/1200/400?grayscale',
+            text: 'Du schweigst und erträgst den kalten Blick des Anführers. Die OmniCorp-Leute ziehen schließlich ab, hinterlassen aber eine Aura der Bedrohung. Sobald sie weg sind, atmest du tief durch. Die versteckten Dokumente sind sicher - vorerst.',
+            choices: [
+                { text: 'Die Dokumente sofort an einen sichereren Ort bringen', moralEffect: 1, nextScene: 'secure_docs_further_2', // Neue Szene
+                  feedback: 'Vorsicht ist geboten. Du handelst klug, um die Beweise zu schützen. (+1)' },
+                { text: 'Kontakt mit der Widerstandsgruppe aufnehmen (falls bekannt)', moralEffect: 1, nextScene: 'contact_resistance_urgent_2', // Neue Szene
+                  feedback: 'Du suchst Unterstützung und teilst die brisanten Informationen. (+1)', condition: () => gameState.visitedScenes.has('commit_meeting_1') || gameState.visitedScenes.has('seek_elara_1') }
+            ]
+        },
+        'feign_ignorance_2': { // Fortsetzung von hide_docs_2
+            chapter: 2,
+            image: 'https://picsum.photos/seed/feigning-ignorance/1200/400?grayscale',
+            text: 'Du spielst den Unwissenden, stammelst Entschuldigungen für die "Störung". Der Anführer der OmniCorp-Sicherheitsleute mustert dich verächtlich, scheint dir aber deine gespielte Unterwürfigkeit abzunehmen. "Bleiben Sie unauffällig", knurrt er, bevor sie gehen. Du fühlst dich schmutzig.',
+            choices: [
+                { text: 'Dich über deine eigene Feigheit ärgern und Rache schwören', moralEffect: -1, nextScene: 'plot_revenge_2', // Neue Szene
+                  feedback: 'Deine Selbstachtung hat gelitten. Rachegedanken sind ein gefährlicher Weg. (-1)' },
+                { text: 'Die versteckten Dokumente prüfen und über nächste Schritte nachdenken', moralEffect: 0, nextScene: 'study_hidden_docs_2', // Neue Szene
+                  feedback: 'Du versuchst, die Demütigung abzuschütteln und dich auf das Wesentliche zu konzentrieren.' }
+            ]
+        },
+        'go_alone_2': { // Fortsetzung von escape_2
+            chapter: 2,
+            image: 'https://picsum.photos/seed/going-alone-night/1200/400?grayscale',
+            text: 'Du dankst Elara für ihr Angebot, entscheidest dich aber, vorerst allein weiterzugehen. Die Dokumente fühlen sich schwer in deiner Tasche an. Die Nacht ist dunkel, und jeder Schatten scheint eine Bedrohung zu sein. Du musst einen sicheren Ort finden, um die Papiere zu studieren.',
+            choices: [
+                { text: 'Zurück zum Haus deiner Großmutter schleichen (riskant)', moralEffect: -1, nextScene: 'return_house_risky_2', // Neue Szene
+                  feedback: 'Ein riskanter Plan. OmniCorp könnte das Haus beobachten. (-1)' },
+                { text: 'Versuchen, ein verlassenes Gebäude als Unterschlupf zu finden', moralEffect: 0, nextScene: 'find_shelter_2', // Neue Szene
+                  feedback: 'Du suchst einen temporären, sicheren Ort. Das ist vernünftig.' }
+            ]
+        },
+        'save_some_docs_2': { // Fortsetzung von cooperate_2
+            chapter: 2,
+            image: 'https://picsum.photos/seed/salvage-docs/1200/400?grayscale',
+            text: 'Als die OmniCorp-Leute einen Moment unachtsam sind, gelingt es dir, unbemerkt ein kleines Bündel Papiere aus einem Stapel zu ziehen und in deiner Jacke zu verstecken. Es ist nicht viel, aber vielleicht ist etwas Wichtiges dabei. Der Rest ist verloren.',
+            choices: [
+                { text: 'Die geretteten Papiere heimlich untersuchen', moralEffect: 1, nextScene: 'examine_salvaged_2', // Neue Szene
+                  feedback: 'Dein schneller Verstand hat vielleicht etwas Entscheidendes gerettet. Gut gemacht! (+1)' },
+                { text: 'Aus Angst die Papiere vorerst nicht ansehen', moralEffect: -1, nextScene: 'fearful_inaction_2', // Neue Szene
+                  feedback: 'Die Angst lähmt dich. Eine verpasste Chance? (-1)' }
+            ]
+        },
+        'give_up_2': { // Fortsetzung von cooperate_2
+            chapter: 2,
+            image: 'https://picsum.photos/seed/giving-up-early/1200/400?grayscale',
+            text: 'Die Enttäuschung und Angst überwältigen dich. Du siehst zu, wie OmniCorp das Erbe deiner Großmutter wegschafft. Mit hängenden Schultern verlässt du das Haus. Grautal scheint verloren. Du überlegst, die Stadt ganz zu verlassen.',
+            choices: [
+                { text: 'Grautal verlassen und alles hinter dir lassen', moralEffect: -2, nextScene: 'leave_grautal_2', // Führt zu einem frühen negativen Ende oder Pfad
+                  feedback: 'Du gibst auf und flieht. Das ist das Ende deines Kampfes für Grautal. (-2)' },
+                { text: 'Trotz allem in Grautal bleiben und nach neuen Wegen suchen', moralEffect: 1, nextScene: 'stay_desperate_2', // Neue Szene
+                  feedback: 'Ein Funken Hoffnung oder Pflichtgefühl hält dich zurück. Vielleicht ist noch nicht alles verloren. (+1)' }
+            ]
+        },
+        'analyze_data_2': { // Fortsetzung von confront_threat_2
+            chapter: 2,
+            image: 'https://picsum.photos/seed/analyzing-data/1200/400?grayscale',
+            text: 'Du beschließt, den USB-Stick erst selbst gründlich zu analysieren. Die darauf enthaltenen Dateien sind verschlüsselt, aber mit etwas Mühe und den Computerkenntnissen deiner Großmutter (du erinnerst dich an ihre Notizen) knackst du den Code. Die Daten sind brisant!',
+            choices: [
+                { text: 'Die entschlüsselten Daten sofort der Widerstandsgruppe zeigen', moralEffect: 1, nextScene: 'share_data_2', // Zurück zum Hauptpfad
+                  feedback: 'Deine gründliche Vorarbeit zahlt sich aus. Die Informationen sind Gold wert. (+1)' },
+                { text: 'Eine Kopie der Daten an einem sicheren Ort verstecken, bevor du sie teilst', moralEffect: 1, nextScene: 'hide_usb_copy_2', // Neue Szene
+                  feedback: 'Doppelte Sicherheit ist klug. Du denkst strategisch. (+1)' }
+            ]
+        },
+        'consider_selling_2': { // Fortsetzung von confront_threat_2
+            chapter: 2,
+            image: 'https://picsum.photos/seed/selling-out-thought/1200/400?grayscale',
+            text: 'Ein dunkler Gedanke schleicht sich ein: Was, wenn du versuchst, die Daten an OmniCorp zurück zu verkaufen? Ein gefährliches Spiel, aber vielleicht könntest du so Geld für deine Flucht oder für den Widerstand bekommen. Der Gedanke fühlt sich falsch an.',
+            choices: [
+                { text: 'Den Gedanken sofort verwerfen - das ist Verrat!', moralEffect: 1, nextScene: 'share_data_2', // Zurück zum moralischen Pfad
+                  feedback: 'Du widerstehst der Versuchung. Deine Integrität ist wichtiger als Geld. (+1)' },
+                { text: 'Anonym Kontakt zu OmniCorp aufnehmen und ein Angebot machen', moralEffect: -2, nextScene: 'contact_omnicorp_sell_2', // Neuer, negativer Pfad
+                  feedback: 'Du spielst mit dem Feuer und verrätst deine Prinzipien. Das wird Konsequenzen haben. (-2)' }
+            ]
+        },
+        'learn_about_group_2': { // Fortsetzung von trust_elara_2
+            chapter: 2,
+            image: 'https://picsum.photos/seed/learning-resistance/1200/400?grayscale',
+            text: 'Bevor du dich voll einbringst, möchtest du mehr über die Widerstandsgruppe erfahren. Elara erklärt dir ihre Ziele: OmniCorp stoppen, die Wasserrechte schützen, die korrupte Stadtverwaltung entlarven. Sie arbeiten im Geheimen, haben aber Informanten und Pläne.',
+            choices: [
+                { text: 'Deine volle Unterstützung anbieten und die Dokumente teilen', moralEffect: 1, nextScene: 'offer_immediate_help_2', // Zurück zum Hauptpfad
+                  feedback: 'Du bist überzeugt und bereit, dich dem Kampf anzuschließen. (+1)' },
+                { text: 'Nach den Risiken und bisherigen Erfolgen fragen', moralEffect: 0, nextScene: 'ask_group_risks_2', // Neue Szene
+                  feedback: 'Eine gründliche Einschätzung ist vernünftig, bevor man sich bindet.' }
+            ]
+        },
+        'seek_power_2': { // Fortsetzung von trust_elara_2
+            chapter: 2,
+            image: 'https://picsum.photos/seed/power-grab/1200/400?grayscale',
+            text: 'Du siehst die engagierten, aber vielleicht etwas unorganisierten Menschen und denkst, dass du hier schnell eine Führungsrolle übernehmen könntest. "Wer leitet das hier eigentlich? Ich habe Erfahrung in Projektmanagement", sagst du etwas zu forsch.',
+            choices: [
+                { text: 'Dich für den harschen Ton entschuldigen und bescheidener auftreten', moralEffect: 1, nextScene: 'apologize_tone_2', // Neue Szene
+                  feedback: 'Du erkennst deinen Fehltritt. Bescheidenheit und Teamgeist sind jetzt wichtiger. (+1)' },
+                { text: 'Darauf bestehen, dass du Führungsqualitäten hast, die gebraucht werden', moralEffect: -2, nextScene: 'insist_leadership_2', // Neuer, negativer Pfad
+                  feedback: 'Dein Ego steht dir im Weg. So gewinnst du keine Verbündeten. (-2)' }
+            ]
+        },
+        'find_journalist_2': { // Fortsetzung von share_data_2
+            chapter: 2,
+            image: 'https://picsum.photos/seed/journalist-search/1200/400?grayscale',
+            text: 'Die Gruppe stimmt zu, dass ein Journalist die Story mit mehr Wucht bringen könnte. Elara kennt jemanden bei einer überregionalen Zeitung, der für seine investigativen Reportagen bekannt ist, aber auch als unberechenbar gilt. Es ist ein Risiko.',
+            choices: [
+                { text: 'Den Kontakt zum Journalisten herstellen lassen', moralEffect: 1, nextScene: 'contact_journalist_2', // Neue Szene
+                  feedback: 'Ihr entscheidet euch für die professionelle Route, trotz der Risiken. (+1)' },
+                { text: 'Vorschlagen, die Informationen anonym an mehrere Medien zu streuen', moralEffect: 0, nextScene: 'leak_to_media_2', // Neue Szene
+                  feedback: 'Eine breitere Streuung könnte sicherer sein, aber auch weniger wirkungsvoll.' }
+            ]
+        },
+        'suggest_blackmail_2': { // Fortsetzung von share_data_2
+            chapter: 2,
+            image: 'https://picsum.photos/seed/blackmail-idea/1200/400?grayscale',
+            text: 'Du äußerst den Gedanken, OmniCorp mit den Daten zu erpressen, um Geld für den Widerstand zu bekommen oder sie zum Rückzug zu zwingen. Einige in der Gruppe sind schockiert, andere wirken nachdenklich. Elara sieht dich streng an.',
+            choices: [
+                { text: 'Die Idee schnell zurückziehen und dich entschuldigen', moralEffect: 1, nextScene: 'share_data_2', // Zurück zum moralischen Pfad, oder zu 'immediate_publish_2'
+                  feedback: 'Du erkennst, dass dies der falsche Weg ist. Der Zweck heiligt nicht die Mittel. (+1)' },
+                { text: 'Argumentieren, dass der Feind mit seinen eigenen Waffen geschlagen werden muss', moralEffect: -2, nextScene: 'push_blackmail_plan_2', // Neuer, negativer Pfad
+                  feedback: 'Du begibst dich auf moralisch dünnes Eis. Das könnte die Gruppe spalten. (-2)' }
+            ]
+        },
+        'support_radical_2': { // Fortsetzung von offer_immediate_help_2
+            chapter: 2,
+            image: 'https://picsum.photos/seed/radical-support/1200/400?grayscale',
+            text: 'Du stimmst denen zu, die radikalere Maßnahmen befürworten. Friedlicher Protest sei zu langsam und wirkungslos gegen einen Gegner wie OmniCorp. Einige nicken zustimmend, andere, darunter Elara, sehen dich besorgt an. Die Gruppe ist gespalten.',
+            choices: [
+                { text: 'Vorschlagen, eine Sabotageaktion gegen OmniCorp-Anlagen zu planen', moralEffect: -2, nextScene: 'plan_sabotage_2', // Neuer, gefährlicher Pfad
+                  feedback: 'Du eskalierst die Situation und riskierst, dass Unschuldige zu Schaden kommen. (-2)' },
+                { text: 'Versuchen, einen Kompromiss zwischen den Fraktionen zu finden', moralEffect: 1, nextScene: 'middle_ground_2', // Zurück zum Mittelweg
+                  feedback: 'Du erkennst die Gefahr der Spaltung und suchst nach Einheit. (+1)' }
+            ]
+        },
+        'middle_ground_2': { // Fortsetzung von offer_immediate_help_2 oder support_radical_2
+            chapter: 2,
+            image: 'https://picsum.photos/seed/middle-ground-talk/1200/400?grayscale',
+            text: 'Du versuchst, einen Mittelweg zu finden: eine entschlossene, aber gewaltfreie Aktion, die OmniCorp empfindlich trifft, ohne Menschenleben zu gefährden. Zum Beispiel eine Blockade der Zufahrtswege zu ihrer neuen Baustelle, kombiniert mit einer öffentlichen Kampagne.',
+            choices: [
+                { text: 'Die Gruppe von diesem Plan überzeugen', moralEffect: 1, nextScene: 'convince_group_blockade_2', // Neue Szene
+                  feedback: 'Dein Vorschlag findet Anklang und eint die Gruppe hinter einem gemeinsamen Ziel. (+1)' },
+                { text: 'Dich der Mehrheitsentscheidung beugen, auch wenn es nicht dein Ideal ist', moralEffect: 0, nextScene: 'submit_to_majority_2', // Neue Szene, hängt von vorherigen Entscheidungen ab
+                  feedback: 'Demokratische Entscheidungen sind wichtig, auch wenn sie Kompromisse erfordern.' }
+            ]
+        },
+        'save_documents_from_fire_2': { // Ehemals 'save_documents_2', Fortsetzung von immediate_publish_2 (Brand)
+            chapter: 2,
+            image: 'https://picsum.photos/seed/saving-from-fire/1200/400?grayscale',
+            text: 'Während andere Menschen retten, stürzt du dich in die brennende Bibliothek, um die wichtigsten verbliebenen Dokumente und Forschungsergebnisse der Gruppe zu bergen. Die Hitze ist erdrückend, Rauch beißt in deinen Lungen, aber du kannst einige Kisten retten.',
+            choices: [
+                { text: 'Die geretteten Dokumente sofort an einen neuen, sicheren Ort bringen', moralEffect: 1, nextScene: 'secure_fire_docs_2', // Neue Szene
+                  feedback: 'Heldentum und Weitsicht! Diese Dokumente sind unersetzlich. (+1)' },
+                { text: 'Eine Rauchvergiftung riskieren, um noch mehr zu retten', moralEffect: -1, nextScene: 'overreach_fire_rescue_2', // Neue Szene, potenziell negativ
+                  feedback: 'Dein Mut ist bewundernswert, aber du musst auch auf dich achten. (-1 für Leichtsinn)' }
+            ]
+        },
+        'hide_fear_2': { // Fortsetzung von immediate_publish_2 (Brand)
+            chapter: 2,
+            image: 'https://picsum.photos/seed/hiding-in-fear/1200/400?grayscale',
+            text: 'Der Brand und die offensichtliche Brutalität von OmniCorp jagen dir eine Heidenangst ein. Du beschließt, dich erstmal zu verstecken und abzuwarten, wie sich die Dinge entwickeln. Du suchst Unterschlupf bei einem entfernten Bekannten am Stadtrand.',
+            choices: [
+                { text: 'Versuchen, heimlich Kontakt zur Gruppe aufzunehmen', moralEffect: 0, nextScene: 'secret_contact_fear_2', // Neue Szene
+                  feedback: 'Deine Angst ist verständlich, aber du versuchst, loyal zu bleiben.' },
+                { text: 'Alle Verbindungen kappen und deine Flucht aus Grautal planen', moralEffect: -2, nextScene: 'plan_escape_fear_2', // Negativer Pfad
+                  feedback: 'Die Angst hat gesiegt. Du lässt deine Verbündeten im Stich. (-2)' }
+            ]
+        },
+        'call_for_peace_2': { // Fortsetzung von peaceful_protest_2
+            chapter: 2,
+            image: 'https://picsum.photos/seed/call-for-peace/1200/400?grayscale',
+            text: 'Als die Stimmung aggressiver zu werden droht, ergreifst du ein Megafon und rufst die Menge zur Ruhe und Gewaltlosigkeit auf. Deine Worte sind klar und überzeugend. Die Menge beruhigt sich etwas, die Spannung bleibt aber.',
+            choices: [
+                { text: 'Die Polizei direkt ansprechen und zum Dialog auffordern', moralEffect: 1, nextScene: 'police_dialogue_2', // Neue Szene
+                  feedback: 'Ein mutiger Schritt, um eine Eskalation zu verhindern. (+1)' },
+                { text: 'Weiterhin die Demonstranten beruhigen und auf Passivität setzen', moralEffect: 1, nextScene: 'maintain_calm_2', // Neue Szene
+                  feedback: 'Du bleibst deiner Linie treu und setzt auf die Macht des friedlichen Protests. (+1)' }
+            ]
+        },
+        'protect_vulnerable_2': { // Fortsetzung von peaceful_protest_2
+            chapter: 2,
+            image: 'https://picsum.photos/seed/protecting-vulnerable/1200/400?grayscale',
+            text: 'Du siehst, wie einige Polizisten aggressiv auf eine Gruppe älterer Demonstranten und Familien mit Kindern zugehen. Entschlossen stellst du dich mit einigen anderen schützend vor sie, die Arme ausgebreitet.',
+            choices: [
+                { text: 'Die Polizisten an ihre Verantwortung erinnern', moralEffect: 1, nextScene: 'remind_police_duty_2', // Neue Szene
+                  feedback: 'Du appellierst an ihr Gewissen und zeigst Zivilcourage. (+1)' },
+                { text: 'Passiven Widerstand leisten, auch wenn es weh tut', moralEffect: 2, nextScene: 'passive_resistance_pain_2', // Neue Szene
+                  feedback: 'Dein selbstloser Einsatz ist ein starkes moralisches Signal. (+2)' }
+            ]
+        },
+        'flee_early_2': { // Fortsetzung von peaceful_protest_2
+            chapter: 2,
+            image: 'https://picsum.photos/seed/fleeing-protest/1200/400?grayscale',
+            text: 'Als die ersten Polizisten ihre Schilde heben und OmniCorp-Sicherheitsleute bedrohlich näherkommen, packt dich die Angst. Du nutzt die Verwirrung, um dich unauffällig aus der Menge zu stehlen und zu fliehen. Die Rufe der anderen verfolgen dich.',
+            choices: [
+                { text: 'Dich in Sicherheit bringen und das Geschehen aus der Ferne beobachten', moralEffect: -1, nextScene: 'observe_from_afar_2', // Neue Szene
+                  feedback: 'Du hast dich deiner Verantwortung entzogen. Das wird an dir nagen. (-1)' },
+                { text: 'Die Stadt so schnell wie möglich verlassen', moralEffect: -2, nextScene: 'leave_grautal_coward_2', // Negativer Pfad
+                  feedback: 'Feigheit hat dich besiegt. Du lässt alle im Stich. (-2)' }
+            ]
+        },
+        // Neue Szenen, die aus den obigen Choices resultieren (Kapitel 2)
+        'secure_docs_further_2': {
+            chapter: 2,
+            image: 'https://picsum.photos/seed/securing-docs-more/1200/400?grayscale',
+            text: 'Du beschließt, dass das Haus deiner Großmutter kein sicherer Ort mehr für die Dokumente ist. Unter dem Schutz der Dunkelheit bringst du sie zu einem alten, verlassenen Schuppen am Waldrand, den nur du kennst.',
+            choices: [
+                { text: 'Die Dokumente dort gründlich studieren', moralEffect: 1, nextScene: 'study_docs_remote_2', // Neue Szene
+                  feedback: 'Ein guter Plan. An einem sicheren Ort kannst du dich auf die Analyse konzentrieren. (+1)'},
+                { text: 'Eine Nachricht für Elara (oder die Gruppe) hinterlassen, um sie über den neuen Ort zu informieren', moralEffect: 1, nextScene: 'inform_elara_new_loc_2', feedback: 'Vertrauen und Kommunikation sind wichtig für den Zusammenhalt. (+1)', condition: () => gameState.visitedScenes.has('seek_elara_1')}
+            ]
+        },
+        // ... (weitere neue Szenen für Kapitel 2 werden hier bei Bedarf hinzugefügt) ...
+        // PLATZHALTER FÜR KAPITEL 3
+        'pretend_interest_3': { // Fortsetzung von meeting_with_backup_3
+            chapter: 3,
+            image: 'https://picsum.photos/seed/pretend-interest-corp/1200/400?grayscale',
+            text: 'Du spielst Interesse an Steinbergs Angebot vor, stellst gezielte Fragen über die internen Strukturen und Entscheidungsprozesse bei OmniCorp. Steinberg, geschmeichelt von deiner scheinbaren Einsicht, plaudert mehr aus, als er vielleicht sollte. Du sammelst wertvolle Informationen.',
+            choices: [
+                { text: 'Die Informationen diskret an die Widerstandsgruppe weiterleiten', moralEffect: 1, nextScene: 'share_intel_resistance_3', // Neue Szene
+                  feedback: 'List im Dienste der guten Sache. Die Informationen könnten entscheidend sein. (+1)' },
+                { text: 'Das Spiel zu weit treiben und nach einer konkreten Position fragen', moralEffect: -1, nextScene: 'ask_position_corp_3', // Neue Szene
+                  feedback: 'Deine Tarnung droht aufzufliegen. Gier nach mehr Informationen macht dich unvorsichtig. (-1)' }
+            ]
+        },
+        'consider_joining_3': { // Fortsetzung von meeting_with_backup_3
+            chapter: 3,
+            image: 'https://picsum.photos/seed/considering-dark-side/1200/400?grayscale',
+            text: 'Steinbergs Worte über "Reform von innen" klingen verführerisch. Ein Teil von dir fragt sich, ob das nicht der effektivere Weg wäre. Die ständigen Kämpfe, die Gefahr... vielleicht könntest du wirklich mehr erreichen, wenn du Teil des Systems wirst. Deine Backup-Gruppe bemerkt dein Zögern.',
+            choices: [
+                { text: 'Die Idee verwerfen und loyal zur Gruppe stehen', moralEffect: 1, nextScene: 'reject_offer_3', // Zurück zum Hauptpfad
+                  feedback: 'Du widerstehst der Versuchung. Deine Loyalität und Prinzipien sind stärker. (+1)' },
+                { text: 'Das Angebot unter Vorbehalt annehmen, um OmniCorp auszuspionieren', moralEffect: -1, nextScene: 'accept_spy_corp_3', // Neuer, gefährlicher Pfad
+                  feedback: 'Ein gefährliches Doppelspiel. Du riskierst, dich selbst zu verlieren. (-1)' }
+            ]
+        },
+        'suggest_safer_3': { // Fortsetzung von refuse_meeting_3
+            chapter: 3,
+            image: 'https://picsum.photos/seed/safer-plan-suggest/1200/400?grayscale',
+            text: 'Du schlägst vor, anstatt einer gefährlichen Infiltration zu versuchen, einen OmniCorp-Mitarbeiter zu identifizieren, der unzufrieden sein könnte, und ihn als Informanten zu gewinnen. Das wäre subtiler und weniger riskant.',
+            choices: [
+                { text: 'Die Gruppe stimmt zu und beginnt mit der Recherche nach potenziellen Informanten', moralEffect: 1, nextScene: 'find_informant_3', // Neue Szene
+                  feedback: 'Ein kluger und strategischer Vorschlag. Gewaltvermeidung ist immer erstrebenswert. (+1)' },
+                { text: 'Einige Hardliner in der Gruppe lehnen ab, sie wollen direkte Aktion', moralEffect: 0, nextScene: 'group_dispute_action_3', // Neue Szene
+                  feedback: 'Dein Vorschlag stößt auf Widerstand. Die Ungeduld in der Gruppe wächst.' }
+            ]
+        },
+        'stay_background_3': { // Fortsetzung von refuse_meeting_3
+            chapter: 3,
+            image: 'https://picsum.photos/seed/staying-background-coward/1200/400?grayscale',
+            text: 'Du argumentierst, dass deine Stärken eher in der Planung und Analyse liegen und meldest dich nicht für die gefährliche Mission. Andere Freiwillige treten vor, während du dich in den Hintergrund zurückziehst. Ein Gefühl der Scham beschleicht dich.',
+            choices: [
+                { text: 'Die Mission zumindest bestmöglich planen und vorbereiten helfen', moralEffect: 0, nextScene: 'help_plan_mission_3', // Neue Szene
+                  feedback: 'Du versuchst, deinen Beitrag im sicheren Bereich zu leisten. Besser als nichts.' },
+                { text: 'Dich komplett aus der Verantwortung für diese Mission stehlen', moralEffect: -2, nextScene: 'evade_mission_completely_3', // Neue Szene
+                  feedback: 'Andere in Gefahr zu schicken und selbst nichts zu riskieren, ist feige und schadet dem Gruppengeist. (-2)' }
+            ]
+        },
+        'stay_silent_3': { // Fortsetzung von secret_meeting_3 (Verhör)
+            chapter: 3,
+            image: 'https://picsum.photos/seed/silent-torture/1200/400?grayscale',
+            text: 'Trotz der Drohungen und des psychischen Drucks durch Steinberg bleibst du standhaft und verrätst nichts über die Dokumente oder deine Mitstreiter. Steinberg wird wütend, die Verhörmethoden werden härter. Du klammerst dich an die Hoffnung auf Rettung.',
+            choices: [
+                { text: 'Weiter schweigen, auch unter Schmerzen', moralEffect: 2, nextScene: 'endure_torture_3', // Neue Szene, führt evtl. zu Rettung oder schlimmerem
+                  feedback: 'Dein Mut und deine Loyalität sind unerschütterlich. Ein wahrer Held. (+2)' },
+                { text: 'Versuchen, Zeit zu schinden, indem du vorgibst, nachzudenken', moralEffect: 1, nextScene: 'buy_time_verhor_3', // Neue Szene
+                  feedback: 'Ein kluger Schachzug, um deine Peiniger hinzuhalten und auf eine Chance zu warten. (+1)'}
+            ]
+        },
+        'give_false_info_3': { // Fortsetzung von secret_meeting_3 (Verhör)
+            chapter: 3,
+            image: 'https://picsum.photos/seed/false-information-verhor/1200/400?grayscale',
+            text: 'Du entscheidest dich, Steinberg gezielt falsche Informationen zu geben. Du nennst falsche Verstecke für Dokumente und erfindest Namen von Mitstreitern, die nicht existieren oder die Stadt längst verlassen haben. Steinberg scheint skeptisch, lässt aber erstmal nachforschen.',
+            choices: [
+                { text: 'Hoffen, dass die Lüge dir Zeit verschafft und die Gruppe warnt', moralEffect: 0, nextScene: 'hope_lie_works_3', // Neue Szene
+                  feedback: 'Ein riskantes Spiel. Wenn die Lüge auffliegt, könnte es schlimmer werden.' },
+                { text: 'Die Lügengeschichte weiter ausschmücken, um sie glaubhafter zu machen', moralEffect: -1, nextScene: 'elaborate_lie_3', // Neue Szene
+                  feedback: 'Du verstrickst dich immer tiefer in Lügen. Das kann nach hinten losgehen. (-1)' }
+            ]
+        },
+        'betray_all_3': { // Fortsetzung von secret_meeting_3 (Verhör)
+            chapter: 3,
+            image: 'https://picsum.photos/seed/betrayal-fear/1200/400?grayscale',
+            text: 'Die Angst und der Druck werden zu groß. Du brichst zusammen und verrätst Steinberg alles: die echten Verstecke der Dokumente, die Namen deiner wichtigsten Verbündeten, ihre Pläne. Steinberg lächelt triumphierend. "Ich wusste, dass Sie brechen werden."',
+            choices: [
+                { text: 'Um Gnade für dich und deine Freunde flehen', moralEffect: -2, nextScene: 'beg_mercy_betrayal_3', // Negativer Pfad
+                  feedback: 'Du hast alles verraten. Deine Freunde sind in höchster Gefahr. Dein moralischer Kompass ist zerbrochen. (-2)' },
+                { text: 'Versuchen, einen Deal für dich selbst auszuhandeln', moralEffect: -2, nextScene: 'deal_self_preservation_3', // Negativer Pfad
+                  feedback: 'Selbstsucht nach dem Verrat. Du stößt noch tiefer ins moralische Abseits. (-2)' }
+            ]
+        },
+        'seek_compromise_3': { // Fortsetzung von reject_offer_3
+            chapter: 3,
+            image: 'https://picsum.photos/seed/seeking-compromise-corp/1200/400?grayscale',
+            text: 'Angesichts der Eskalation durch OmniCorp schlägst du vor, einen Kompromiss zu suchen. Vielleicht gibt es eine Verhandlungslösung, die das Schlimmste verhindert, auch wenn nicht alle Forderungen erfüllt werden. Elara ist strikt dagegen, andere sind unsicher.',
+            choices: [
+                { text: 'Versuchen, heimlich Kontakt zu einem OmniCorp-Unterhändler aufzunehmen', moralEffect: -1, nextScene: 'secret_omnicorp_talks_3', // Negativer Pfad
+                  feedback: 'Hinter dem Rücken der Gruppe zu verhandeln ist Verrat und untergräbt das Vertrauen. (-1)' },
+                { text: 'Die Gruppe überzeugen, offiziell Verhandlungen anzubieten', moralEffect: 0, nextScene: 'offer_negotiations_3', // Neue Szene
+                  feedback: 'Ein kontroverser Vorschlag. Ob OmniCorp überhaupt verhandeln will?' }
+            ]
+        },
+        'call_violence_3': { // Fortsetzung von reject_offer_3
+            chapter: 3,
+            image: 'https://picsum.photos/seed/call-to-violence- desperation/1200/400?grayscale',
+            text: 'Die Brutalität von OmniCorp lässt dich verzweifeln. "Wir müssen zurückschlagen! Mit gleicher Münze!", rufst du in der Gruppe. "Gewalt ist die einzige Sprache, die sie verstehen!" Einige junge, hitzköpfige Mitglieder stimmen dir zu, die Älteren sind entsetzt.',
+            choices: [
+                { text: 'Einen Anschlag auf eine leere OmniCorp-Einrichtung vorschlagen', moralEffect: -2, nextScene: 'propose_attack_facility_3', // Negativer Pfad
+                  feedback: 'Du propagierst Gewalt und riskierst eine Spirale der Eskalation. Das ist nicht der Weg deiner Großmutter. (-2)' },
+                { text: 'Deine Worte zurücknehmen, als du die Bestürzung siehst', moralEffect: 1, nextScene: 'retract_violence_call_3', // Neue Szene
+                  feedback: 'Du erkennst, dass Gewalt keine Lösung ist und die Gruppe spalten würde. Einsicht ist der erste Schritt. (+1)' }
+            ]
+        },
+        'flee_with_evidence_3': { // Fortsetzung von volunteer_mission_3 (Wachmann)
+            chapter: 3,
+            image: 'https://picsum.photos/seed/fleeing-guard-evidence/1200/400?grayscale',
+            text: 'Du nutzt den Überraschungsmoment und die Dunkelheit zur Flucht. Der Wachmann ruft dir hinterher, schießt aber nicht. Du rennst, bis deine Lungen brennen, die wertvollen Wasserproben fest umklammert. Du hast es geschafft, die Beweise sind sicher!',
+            choices: [
+                { text: 'Sofort zur Widerstandsgruppe zurückkehren und die Proben präsentieren', moralEffect: 1, nextScene: 'return_group_probes_3', // Neue Szene
+                  feedback: 'Du hast unter Einsatz deines Lebens wichtige Beweise gesichert. Held der Stunde! (+1)' },
+                { text: 'Die Proben erst selbst an einem geheimen Ort analysieren lassen (falls möglich)', moralEffect: 0, nextScene: 'analyze_probes_secretly_3', // Neue Szene
+                  feedback: 'Vorsicht ist geboten. Eine unabhängige Analyse könnte klug sein.' }
+            ]
+        },
+        'attack_guard_3': { // Fortsetzung von volunteer_mission_3 (Wachmann)
+            chapter: 3,
+            image: 'https://picsum.photos/seed/attacking-guard-fail/1200/400?grayscale',
+            text: 'In Panik oder Wut greifst du den Wachmann an. Er ist jedoch besser trainiert und überwältigt dich schnell. Die Wasserproben gehen zu Bruch, du wirst gefangen genommen. "Das war dumm", sagt der Wachmann kalt.',
+            choices: [
+                { text: 'Versuchen zu fliehen, während er Verstärkung ruft', moralEffect: -1, nextScene: 'escape_attempt_capture_3', // Negativer Pfad
+                  feedback: 'Deine Situation ist aussichtslos. Gewalt war die falsche Antwort. (-1)' },
+                { text: 'Dich deinem Schicksal ergeben', moralEffect: -2, nextScene: 'surrender_capture_3', // Negativer Pfad
+                  feedback: 'Du bist gescheitert und gefangen. Die Mission ist fehlgeschlagen. (-2)' }
+            ]
+        },
+        'coordinate_media_3': { // Fortsetzung von advocate_nonviolence_3 (Hungerstreik)
+            chapter: 3,
+            image: 'https://picsum.photos/seed/media-coordination-strike/1200/400?grayscale',
+            text: 'Du übernimmst die Medienkoordination für den Hungerstreik. Du kontaktierst Journalisten, verfasst Pressemitteilungen, organisierst Interviews. Deine Arbeit sorgt dafür, dass die Geschichte von Grautal und der Mut der Streikenden weltweit bekannt wird.',
+            choices: [
+                { text: 'Einen besonders kritischen, aber einflussreichen Blogger einbeziehen', moralEffect: 1, nextScene: 'involve_blogger_3', // Neue Szene
+                  feedback: 'Du nutzt alle Kanäle, um maximalen Druck aufzubauen. Gute Strategie. (+1)' },
+                { text: 'Dich auf etablierte Medien konzentrieren, um Seriosität zu wahren', moralEffect: 0, nextScene: 'focus_mainstream_media_3', // Neue Szene
+                  feedback: 'Ein solider Ansatz, aber vielleicht verpasst du Reichweite.' }
+            ]
+        },
+        'secret_talks_3': { // Fortsetzung von advocate_nonviolence_3 (Hungerstreik)
+            chapter: 3,
+            image: 'https://picsum.photos/seed/secret-talks-betrayal/1200/400?grayscale',
+            text: 'Während deine Freunde hungern, führst du heimlich Gespräche mit einem Unterhändler von OmniCorp. Sie bieten dir persönliche Vorteile und vage Versprechungen für Grautal, wenn du den Streik beendest. Elara bekommt Wind davon und stellt dich zur Rede.',
+            choices: [
+                { text: 'Alles abstreiten und Elara der Lüge bezichtigen', moralEffect: -2, nextScene: 'deny_secret_talks_3', // Negativer Pfad
+                  feedback: 'Lügen und Verrat. Du isolierst dich und schadest der Sache enorm. (-2)' },
+                { text: 'Die Gespräche zugeben und versuchen, dich zu rechtfertigen', moralEffect: -1, nextScene: 'admit_secret_talks_3', // Negativer Pfad
+                  feedback: 'Immerhin ehrlich, aber der Vertrauensbruch ist immens. (-1)' }
+            ]
+        },
+        'thank_guard_3': { // Fortsetzung von convince_guard_3
+            chapter: 3,
+            image: 'https://picsum.photos/seed/thanking-guard-ally/1200/400?grayscale',
+            text: 'Du dankst dem Wachmann aufrichtig für sein Verständnis und seine Menschlichkeit. Du gibst ihm eine verschlüsselte Kontaktmöglichkeit, falls er sich entscheidet, dem Widerstand zu helfen. Er nickt nur, aber seine Augen zeigen Respekt.',
+            choices: [
+                { text: 'Mit den Beweisen zur Gruppe zurückkehren', moralEffect: 1, nextScene: 'return_group_probes_3', // Wie flee_with_evidence_3
+                  feedback: 'Du hast nicht nur Beweise, sondern vielleicht auch einen potenziellen Verbündeten gewonnen. (+1)' },
+                { text: 'Den Wachmann bitten, dir bei der Flucht aus dem Gelände zu helfen', moralEffect: 0, nextScene: 'ask_guard_escape_help_3', // Neue Szene
+                  feedback: 'Du versuchst, deinen Vorteil zu nutzen. Könnte klappen oder ihn in Gefahr bringen.' }
+            ]
+        },
+        'quick_escape_3': { // Fortsetzung von convince_guard_3
+            chapter: 3,
+            image: 'https://picsum.photos/seed/quick-escape-guard/1200/400?grayscale',
+            text: 'Du nickst dem Wachmann dankbar zu und verschwindest so schnell und leise wie möglich in der Dunkelheit, die Proben sicher bei dir. Keine Zeit für weitere Worte, die Gefahr ist noch nicht gebannt.',
+            choices: [
+                { text: 'Die nächste Ortschaft ansteuern, um nicht verfolgt zu werden', moralEffect: 0, nextScene: 'next_town_evade_3', // Neue Szene
+                  feedback: 'Sicherheit geht vor. Du versuchst, deine Spuren zu verwischen.' },
+                { text: 'Auf dem schnellsten Weg zur Widerstandsgruppe', moralEffect: 1, nextScene: 'return_group_probes_3', feedback: 'Die Gruppe wartet auf die wichtigen Beweise. (+1)'}
+            ]
+        },
+        'trust_mayor_3': { // Fortsetzung von lead_hunger_strike_3
+            chapter: 3,
+            image: 'https://picsum.photos/seed/trusting-mayor-gamble/1200/400?grayscale',
+            text: 'Du entscheidest dich, dem Bürgermeister zu vertrauen. Der Hungerstreik wird unter Jubel beendet. Die Stadt feiert. Doch in den folgenden Tagen wird klar, dass der Bürgermeister nur Zeit gewinnen wollte. OmniCorp setzt seine Pläne fort, subtiler, aber unaufhaltsam.',
+            choices: [
+                { text: 'Den Bürgermeister öffentlich der Lüge bezichtigen', moralEffect: 0, nextScene: 'accuse_mayor_publicly_3', // Neue Szene
+                  feedback: 'Deine Enttäuschung ist groß. Aber hast du Beweise für seine Doppelzüngigkeit?' },
+                { text: 'Einen noch entschlosseneren Widerstand organisieren', moralEffect: 1, nextScene: 'organize_new_resistance_3', // Neue Szene
+                  feedback: 'Du lässt dich nicht entmutigen und kämpfst weiter. Das ist der richtige Geist! (+1)' }
+            ]
+        },
+        'continue_strike_3': { // Fortsetzung von lead_hunger_strike_3
+            chapter: 3,
+            image: 'https://picsum.photos/seed/continuing-strike-resolve/1200/400?grayscale',
+            text: 'Du bestehst darauf, den Hungerstreik fortzusetzen, bis OmniCorp Grautal endgültig verlässt und alle Verträge annulliert sind. Deine Entschlossenheit ist unerbittlich. Einige Streikende geben auf, aber der harte Kern bleibt. Der Druck auf OmniCorp wird international unerträglich.',
+            choices: [
+                { text: 'OmniCorp zieht sich komplett zurück, ein vollständiger Sieg!', moralEffect: 2, nextScene: 'omnicorp_full_retreat_3', // Großer Sieg, führt evtl. zu speziellem Ende oder Kapitel 4
+                  feedback: 'Deine unnachgiebige Haltung hat zum totalen Sieg geführt! Grautal ist frei! (+2)' },
+                { text: 'Du brichst vor Erschöpfung zusammen, andere führen den Streik weiter', moralEffect: 1, nextScene: 'collapse_strike_lead_3', // Neue Szene
+                  feedback: 'Dein Opfer war immens. Du hast alles gegeben. (+1)' }
+            ]
+        },
+        // PLATZHALTER FÜR KAPITEL 4 und restliche Szenen
+        'go_quarry_4': { // Aus demand_guarantees_3 (Alleingang) oder inform_group_4
+            chapter: 4,
+            image: 'https://picsum.photos/seed/quarry-alone-meeting/1200/400?grayscale',
+            text: 'Du erreichst allein den alten Steinbruch. Die Atmosphäre ist unheimlich. Im fahlen Mondlicht erkennst du eine Gestalt. Als sie sich umdreht, stockt dir der Atem: Es ist deine Großmutter, Martha! Gezeichnet, aber am Leben.',
+            choices: [
+                { text: 'Ihr unter Tränen in die Arme fallen', moralEffect: 1, nextScene: 'embrace_grandma_4', feedback: 'Ein überwältigender Moment der Wiedervereinigung. Alle Vorsicht ist vergessen. (+1)'},
+                { text: 'Vorsichtig bleiben: "Bist du es wirklich? Ist das keine Falle?"', moralEffect: 0, nextScene: 'cautious_reunion_4', // Neue Szene
+                  feedback: 'Deine Vorsicht ist nach all dem Erlebten verständlich. Du willst sichergehen.'}
+            ]
+        },
+        'ignore_letter_4': { // Aus demand_guarantees_3
+            chapter: 4,
+            image: 'https://picsum.photos/seed/ignoring-dangerous-letter/1200/400?grayscale',
+            text: 'Du entscheidest, den mysteriösen Brief zu ignorieren. Es ist zu riskant, eine offensichtliche Falle. Du informierst die Gruppe über den Brief und ihr beschließt, die Sicherheitsmaßnahmen zu erhöhen und euch auf die nächsten Schritte gegen OmniCorp zu konzentrieren.',
+            choices: [
+                { text: 'Die Beweise nutzen, um eine landesweite Kampagne zu starten', moralEffect: 1, nextScene: 'nationwide_campaign_4', // Neue Szene
+                  feedback: 'Ihr lasst euch nicht ablenken und geht in die Offensive. Eine kluge Entscheidung. (+1)' },
+                { text: 'Versuchen, den Absender des Briefes unauffällig zu identifizieren', moralEffect: 0, nextScene: 'identify_letter_sender_4', // Neue Szene
+                  feedback: 'Neugier und der Wunsch, alle Fäden in der Hand zu halten, treiben dich an.' }
+            ]
+        },
+        'insist_alone_4': { // Aus inform_group_4
+            chapter: 4,
+            image: 'https://picsum.photos/seed/insist-going-alone-quarry/1200/400?grayscale',
+            text: 'Trotz der Bedenken der Gruppe bestehst du darauf, allein zum Steinbruch zu gehen. "Wenn es meine Großmutter ist, wird sie mir eher vertrauen. Wenn es eine Falle ist, will ich euch nicht gefährden." Schweren Herzens lassen sie dich ziehen.',
+            choices: [
+                { text: 'Alleine zum Steinbruch gehen', moralEffect: 0, nextScene: 'go_quarry_4', feedback: 'Dein Entschluss steht fest. Ein riskanter Alleingang.'}
+            ]
+        },
+        'call_police_4': { // Aus inform_group_4
+            chapter: 4,
+            image: 'https://picsum.photos/seed/calling-corrupt-police/1200/400?grayscale',
+            text: 'Du schlägst vor, die Polizei einzuschalten. Thomas und Elara sehen dich entgeistert an. "Hast du denn nichts gelernt? Die Polizei steckt mit OmniCorp unter einer Decke! Das wäre Selbstmord und würde alle gefährden!"',
+            choices: [
+                { text: 'Einsichtig sein und den Vorschlag zurückziehen', moralEffect: 1, nextScene: 'retract_police_idea_4', // Neue Szene
+                  feedback: 'Du hörst auf den Rat der Erfahreneren. Manchmal ist Misstrauen überlebenswichtig. (+1)' },
+                { text: 'Trotzdem anonym die Polizei informieren', moralEffect: -2, nextScene: 'anonymously_tip_police_4', // Negativer Pfad
+                  feedback: 'Deine Naivität oder dein Starrsinn bringen alle in Gefahr. (-2)' }
+            ]
+        },
+        'ask_evidence_4': { // Aus go_quarry_4 (Wiedersehen mit Großmutter)
+            chapter: 4,
+            image: 'https://picsum.photos/seed/grandma-reunion-evidence/1200/400?grayscale',
+            text: 'Nach der ersten emotionalen Begrüßung fragst du deine Großmutter direkt nach den Beweisen, von denen sie sprach. "Ja, mein Kind", sagt sie und zieht ein kleines, abgenutztes Notizbuch hervor. "Hier ist alles. Namen, Daten, Transaktionen. Genug, um sie alle zu Fall zu bringen."',
+            choices: [
+                { text: 'Das Notizbuch an dich nehmen und ihr versprechen, es sicher zu verwenden', moralEffect: 1, nextScene: 'take_notebook_promise_4', // Neue Szene
+                  feedback: 'Du übernimmst die Verantwortung für das gefährliche Erbe. (+1)' },
+                { text: 'Fragen, warum sie sich nicht früher gemeldet hat', moralEffect: 0, nextScene: 'ask_grandma_delay_4', // Neue Szene
+                  feedback: 'Eine berechtigte Frage, die Raum für weitere Enthüllungen lässt.' }
+            ]
+        },
+        'stay_suspicious_4': { // Aus go_quarry_4 (Wiedersehen mit Großmutter)
+            chapter: 4,
+            image: 'https://picsum.photos/seed/suspicious-grandma-reunion/1200/400?grayscale',
+            text: 'Obwohl die Gestalt deiner Großmutter ähnelt, bleibst du misstrauisch. "Beweise mir, dass du es bist!", forderst du. Sie nennt Details aus deiner Kindheit, die nur sie wissen kann. Langsam weicht dein Misstrauen.',
+            choices: [
+                { text: 'Sie schlussendlich doch umarmen', moralEffect: 1, nextScene: 'embrace_grandma_4', feedback: 'Nachdem deine Zweifel ausgeräumt sind, lässt du deinen Gefühlen freien Lauf. (+1)'},
+                { text: 'Weiterhin distanziert bleiben und nach ihren Motiven fragen', moralEffect: -1, nextScene: 'distant_grandma_motives_4', // Negativer Pfad
+                  feedback: 'Dein anhaltendes Misstrauen verletzt sie und erschwert die Zusammenarbeit. (-1)'}
+            ]
+        },
+        'deescalate_4': { // Aus follow_elara_plan_4 (Hinterhalt)
+            chapter: 4,
+            image: 'https://picsum.photos/seed/deescalate-ambush/1200/400?grayscale',
+            text: 'Mitten im Chaos des Kampfes versuchst du, die Situation zu deeskalieren. "Halt! Stoppt den Kampf!", rufst du. "Wir können reden!" Einige Söldner zögern, ihr Anführer brüllt sie jedoch an, weiterzukämpfen.',
+            choices: [
+                { text: 'Versuchen, den Anführer der Söldner direkt anzusprechen', moralEffect: 1, nextScene: 'address_mercenary_leader_4', // Neue Szene
+                  feedback: 'Ein mutiger Versuch, Vernunft in die Gewalt zu bringen. (+1)' },
+                { text: 'Deine Freunde zum Rückzug drängen, um Verluste zu vermeiden', moralEffect: 0, nextScene: 'urge_retreat_friends_4', // Neue Szene
+                  feedback: 'Manchmal ist ein taktischer Rückzug die klügere Option.' }
+            ]
+        },
+        'abandon_all_4': { // Aus follow_elara_plan_4 (Hinterhalt)
+            chapter: 4,
+            image: 'https://picsum.photos/seed/abandoning-all-cowardice/1200/400?grayscale',
+            text: 'Die Angst überwältigt dich. Während deine Freunde und deine Großmutter kämpfen oder bedroht werden, siehst du eine Lücke in der Umzingelung und fliehtst kopflos in die Nacht. Die Schreie deiner Freunde hallen in deinen Ohren wider.',
+            choices: [
+                { text: 'Als gebrochener Mensch die Stadt für immer verlassen', moralEffect: -2, nextScene: 'flee_town_broken_4', // Negatives Ende / Pfad
+                  feedback: 'Du hast alle im Stich gelassen. Diese Schuld wird dich ewig verfolgen. (-2)'}
+            ]
+        },
+        'ask_hide_4': { // Aus embrace_grandma_4
+            chapter: 4,
+            image: 'https://picsum.photos/seed/ask-grandma-to-hide/1200/400?grayscale',
+            text: 'Du bittest deine Großmutter, sich weiterhin zu verstecken, während du und die Gruppe die Beweise nutzt. "Es ist zu gefährlich für dich", sagst du besorgt. Sie schüttelt den Kopf. "Mein Platz ist hier, im Kampf. Aber ich werde vorsichtig sein."',
+            choices: [
+                { text: 'Ihren Entschluss respektieren und gemeinsam die nächsten Schritte planen', moralEffect: 1, nextScene: 'plan_with_grandma_4', // Neue Szene
+                  feedback: 'Du respektierst ihre Stärke und ihren Willen. Gemeinsam seid ihr stärker. (+1)' },
+                { text: 'Versuchen, sie mit Elaras Hilfe zu überzeugen, sich in Sicherheit zu bringen', moralEffect: 0, nextScene: 'convince_grandma_hide_elara_4', // Neue Szene
+                  feedback: 'Deine Sorge ist verständlich. Vielleicht hört sie auf Elara.' , condition: () => gameState.visitedScenes.has('trust_elara_2')}
+            ]
+        },
+        'take_evidence_leave_4': { // Aus embrace_grandma_4
+            chapter: 4,
+            image: 'https://picsum.photos/seed/take-evidence-abandon-grandma/1200/400?grayscale',
+            text: 'Du nimmst die Beweise an dich, drängst aber deine Großmutter, sofort wieder unterzutauchen oder gar die Stadt zu verlassen. "Ich kümmere mich darum, du musst sicher sein!", sagst du bestimmt, fast schon kalt. Deine Großmutter sieht dich traurig an.',
+            choices: [
+                { text: 'Die Beweise allein zur Widerstandsgruppe bringen', moralEffect: -1, nextScene: 'evidence_to_group_alone_4', // Negativer Pfad
+                  feedback: 'Du stößt deine Großmutter von dir, obwohl sie vielleicht kämpfen will. Das ist nicht richtig. (-1)' },
+                { text: 'Die Beweise nutzen, um anonym die Medien zu informieren und dann verschwinden', moralEffect: -2, nextScene: 'leak_anonymously_flee_4', // Negativer Pfad
+                  feedback: 'Du benutzt die Beweise für einen unpersönlichen Schlag und lässt alle im Stich, auch deine Familie. (-2)' }
+            ]
+        },
+        'get_doctor_4': { // Aus protect_grandma_4 (Elara verletzt)
+            chapter: 4,
+            image: 'https://picsum.photos/seed/getting-doctor-for-elara/1200/400?grayscale',
+            text: 'Trotz der Gefahr und der späten Stunde machst du dich auf den Weg, um einen Arzt für Elara zu holen. Du erinnerst dich an Dr. Weber, einen alten Freund deiner Großmutter, der diskret sein kann. Du klopfst an seine Tür und hoffst das Beste.',
+            choices: [
+                { text: 'Dr. Weber erklärt sich bereit zu helfen und kommt mit', moralEffect: 1, nextScene: 'doctor_helps_elara_4', // Neue Szene
+                  feedback: 'Dein Mut und deine Beziehungen zahlen sich aus. Elara hat eine Chance. (+1)' },
+                { text: 'Dr. Weber hat Angst und lehnt ab', moralEffect: -1, nextScene: 'doctor_refuses_elara_4', // Neue Szene
+                  feedback: 'Die Angst in Grautal ist tief verwurzelt. Du musst eine andere Lösung finden. (-1)' }
+            ]
+        },
+        'leave_elara_4': { // Aus protect_grandma_4 (Elara verletzt)
+            chapter: 4,
+            image: 'https://picsum.photos/seed/leaving-elara-behind/1200/400?grayscale',
+            text: 'So schwer es dir fällt, du entscheidest, dass die Mission und die Sicherheit der Beweise Vorrang haben. Du lässt die schwerverletzte Elara in der Obhut deiner Großmutter und einiger anderer zurück und konzentrierst dich darauf, die Enthüllung voranzutreiben.',
+            choices: [
+                { text: 'Die Beweise so schnell wie möglich veröffentlichen, um Elaras Opfer nicht umsonst sein zu lassen', moralEffect: -1, nextScene: 'publish_evidence_heavy_heart_4', // Negativer Beigeschmack
+                  feedback: 'Die Mission geht weiter, aber zu welchem Preis? Elaras Schicksal ist ungewiss. (-1)' },
+                { text: 'Dich von Schuldgefühlen zerfressen lassen', moralEffect: -2, nextScene: 'guilt_ridden_abandon_4', // Negativer Pfad
+                  feedback: 'Du hast eine Freundin im Stich gelassen. Diese Entscheidung wird dich verfolgen. (-2)' }
+            ]
+        },
+        'accept_deal_4': { // Aus promise_fight_together_4
+            chapter: 4,
+            image: 'https://picsum.photos/seed/accepting-compromise-deal/1200/400?grayscale',
+            text: 'Schweren Herzens nimmst du den Deal von OmniCorp an. Die Anklagen werden fallen gelassen, die Stadt wird in Ruhe gelassen – vorerst. Du übergibst die Beweise, die sofort vernichtet werden. Grautal atmet auf, aber die Wahrheit bleibt begraben. Ein bitterer Sieg.',
+            choices: [
+                { text: 'Versuchen, ein neues, ruhiges Leben in Grautal zu beginnen', moralEffect: 0, nextScene: 'check_ending', feedback: 'Du hast die Stadt gerettet, aber die Gerechtigkeit geopfert. Ein fauler Kompromiss.'}
+            ]
+        },
+        'fake_accept_4': { // Aus promise_fight_together_4
+            chapter: 4,
+            image: 'https://picsum.photos/seed/fake-accepting-deal-trick/1200/400?grayscale',
+            text: 'Du täuschst Zustimmung zum Deal vor, um Zeit zu gewinnen. Insgeheim hast du jedoch Kopien der Beweise angefertigt. Nachdem OmniCorp sich in Sicherheit wiegt, veröffentlichst du alles. Der Skandal ist gewaltig, aber OmniCorp ist nun dein unversöhnlicher Feind.',
+            choices: [
+                { text: 'Dich auf einen langen, gefährlichen Kampf einstellen', moralEffect: -1, nextScene: 'long_dangerous_fight_4', // Negativer Beigeschmack, da unehrlich
+                  feedback: 'Dein Wortbruch rächt sich. Der Kampf wird härter als je zuvor. (-1)' },
+                { text: 'Untertauchen und aus dem Exil weiterkämpfen', moralEffect: -2, nextScene: 'flee_exile_4', feedback: 'Du hast zwar die Wahrheit enthüllt, aber deine Methoden waren fragwürdig und du fliehst vor den Konsequenzen. (-2)'}
+            ]
+        },
+        'media_blast_4': { // Aus stay_with_elara_4
+            chapter: 4,
+            image: 'https://picsum.photos/seed/media-blast-truth/1200/400?grayscale',
+            text: 'Ihr entscheidet euch für einen massiven Medienschlag. Die Beweise werden gleichzeitig an Dutzende Nachrichtenagenturen, Blogger und soziale Netzwerke weltweit gesendet. Die Informationsflut ist nicht zu stoppen. OmniCorp gerät unter enormen internationalen Druck.',
+            choices: [
+                { text: 'Die Reaktionen der Weltöffentlichkeit abwarten und weitere Schritte planen', moralEffect: 1, nextScene: 'await_world_reaction_4', // Neue Szene
+                  feedback: 'Die Wahrheit ist entfesselt. Jetzt beginnt die eigentliche Arbeit, den Wandel zu gestalten. (+1)'}
+            ]
+        },
+        'competitor_deal_4': { // Aus stay_with_elara_4
+            chapter: 4,
+            image: 'https://picsum.photos/seed/deal-with-devil-competitor/1200/400?grayscale',
+            text: 'In eurer Verzweiflung oder als strategischer Zug kontaktiert ihr einen Konkurrenten von OmniCorp. Ihr bietet die Beweise im Austausch für Hilfe bei der Zerschlagung von OmniCorp und Garantien für Grautal an. Der Konkurrent zeigt Interesse, aber zu welchem Preis?',
+            choices: [
+                { text: 'Den Pakt mit dem "kleineren Übel" eingehen', moralEffect: -1, nextScene: 'pact_lesser_evil_4', // Negativer Beigeschmack
+                  feedback: 'Du ersetzt ein Monster durch ein anderes. Ist das wirklich ein Sieg für Grautal? (-1)' },
+                { text: 'Im letzten Moment ablehnen und einen anderen Weg suchen', moralEffect: 1, nextScene: 'reject_competitor_deal_4', // Neue Szene
+                  feedback: 'Du erkennst die Gefahr und bewahrst deine moralische Integrität. (+1)' }
+            ]
+        },
+        'underground_fight_4': { // Aus demand_full_justice_4
+            chapter: 4,
+            image: 'https://picsum.photos/seed/underground-resistance-fight/1200/400?grayscale',
+            text: 'Angesichts der offenen Feindseligkeit von OmniCorp und der Gefahr für dein Leben beschließt du, mit der Kerngruppe in den Untergrund zu gehen. Von geheimen Verstecken aus führt ihr einen Guerillakampf gegen OmniCorp, sabotiert ihre Pläne und veröffentlicht weiter Informationen.',
+            choices: [
+                { text: 'Jahre des Kampfes und der Entbehrungen auf dich nehmen', moralEffect: 1, nextScene: 'years_of_struggle_4', // Führt zu einem speziellen Ende oder späterem Sieg
+                  feedback: 'Ein langer, harter Weg, aber dein Engagement für Gerechtigkeit ist ungebrochen. (+1)' },
+                { text: 'Versuchen, einen entscheidenden Schlag gegen Steinbergs persönliche Machtbasis zu führen', moralEffect: 0, nextScene: 'strike_steinberg_personally_4', // Riskant
+                  feedback: 'Ein riskanter Plan, der das Blatt wenden oder alles verschlimmern könnte.' }
+            ]
+        },
+        'flee_exile_4': { // Aus demand_full_justice_4 oder fake_accept_4
+            chapter: 4,
+            image: 'https://picsum.photos/seed/fleeing-to-exile-fight/1200/400?grayscale',
+            text: 'Die Gefahr in Grautal wird zu groß. Du entscheidest dich, ins Exil zu gehen, um von dort aus den Kampf fortzusetzen. Du veröffentlichst weiter Beweise, hältst Reden und versuchst, internationale Unterstützung zu mobilisieren. Aber du bist fern der Heimat.',
+            choices: [
+                { text: 'Dein Leben dem Kampf aus der Ferne widmen', moralEffect: -1, nextScene: 'check_ending', // Spezielles "Exil-Kämpfer" Ende
+                  feedback: 'Du kämpfst weiter, aber ohne die direkte Verbindung zu deiner Gemeinschaft. Ein einsamer Weg. (-1)'}
+            ]
+        },
+        'take_money_betray': { // Aus plan_un_reveal_4
+            chapter: 4,
+            image: 'https://picsum.photos/seed/money-betrayal-un/1200/400?grayscale',
+            text: 'In einem Moment der Schwäche oder Gier nimmst du das Geld von OmniCorp an. Du hältst eine nichtssagende Rede vor der UN, die nichts enthüllt. OmniCorp triumphiert. Du bist reich, aber du hast alles verraten, wofür du und deine Großmutter gekämpft haben.',
+            choices: [
+                { text: 'Mit dem Geld ein luxuriöses, aber leeres Leben führen', moralEffect: -2, nextScene: 'check_ending', // Führt zu einem sehr negativen Ende
+                  feedback: 'Du hast deine Seele verkauft. Das Geld wird dich nicht glücklich machen. (-2)'}
+            ]
+        },
+        'demand_punishment': { // Aus public_testimony_4
+            chapter: 4,
+            image: 'https://picsum.photos/seed/demanding-full-punishment/1200/400?grayscale',
+            text: 'Nach dem Schuldspruch forderst du die volle Härte des Gesetzes für alle Verantwortlichen bei OmniCorp. Keine Gnade, keine milden Strafen. Die Öffentlichkeit ist gespalten zwischen Rache und dem Wunsch nach einem Neuanfang.',
+            choices: [
+                { text: 'Die juristischen Prozesse weiterverfolgen, bis alle verurteilt sind', moralEffect: 0, nextScene: 'check_ending', // Führt zu einem "Gerechtigkeits"-Ende, aber vielleicht ohne Versöhnung
+                  feedback: 'Gerechtigkeit muss sein, aber ist Rache der richtige Weg zur Heilung?' }
+            ]
+        },
+        // NEUE SZENEN aus den Entscheidungen oben (Kapitel 4 oder Übergänge)
+        'omnicorp_full_retreat_3': {
+            chapter: 3, // Könnte auch als Start von K4 dienen
+            image: 'https://picsum.photos/seed/omnicorp-retreat-victory/1200/400?grayscale',
+            text: 'Ein Wunder geschieht! Angesichts des unnachgiebigen Widerstands und des internationalen Drucks kündigt OmniCorp den vollständigen Rückzug aus Grautal an. Alle Verträge werden aufgelöst, alle Pläne gestoppt. Die Stadt explodiert vor Jubel. Ihr habt gesiegt!',
+            choices: [
+                { text: 'Eine große Siegesfeier in Grautal organisieren', moralEffect: 1, nextScene: 'victory_celebration_4', // Neue Szene K4
+                  feedback: 'Ein verdienter Triumph! Lasst die Korken knallen! (+1)'},
+                { text: 'Sofort mit dem Wiederaufbau und der Heilung der Stadt beginnen', moralEffect: 1, nextScene: 'rebuild_grautal_4', // Neue Szene K4
+                  feedback: 'Der Sieg ist errungen, jetzt beginnt die Arbeit, Grautal wieder lebenswert zu machen. (+1)'}
+            ]
+        },
+        'collapse_strike_lead_3': {
+            chapter: 3,
+            image: 'https://picsum.photos/seed/strike-collapse-exhaustion/1200/400?grayscale',
+            text: 'Nach Tagen ohne Nahrung und Schlaf bricht dein Körper unter der Last zusammen. Du wirst medizinisch versorgt, während andere Mitglieder der Gruppe den Hungerstreik mit neuer Entschlossenheit weiterführen, inspiriert von deinem Opfer. Du hörst aus dem Krankenbett, wie der Kampf weitergeht.',
+            choices: [
+                { text: 'Dich erholen und so bald wie möglich wieder zum Kampf stoßen', moralEffect: 1, nextScene: 'recover_join_fight_4', // Neue Szene K4
+                  feedback: 'Dein Wille ist ungebrochen. Du bist ein Symbol des Widerstands. (+1)'},
+                { text: 'Die Führung an Elara oder Thomas abgeben und dich auf die Genesung konzentrieren', moralEffect: 0, nextScene: 'delegate_leadership_recovery_4', // Neue Szene K4
+                  feedback: 'Manchmal ist es klug, neue Kräfte sammeln zu lassen und Verantwortung abzugeben.'}
+            ]
+        }
+        // Weitere neu erstellte Szenen hier einfügen, falls notwendig
+    };
 
         // Noch fehlende Szenen aus Kapitel 1
-        'return_help_1': { chapter: 1, image: '', text: 'PLACEHOLDER', choices: [{ text: 'Weiter', moralEffect: 0, nextScene: 'check_ending', feedback: 'Placeholder' }] },
-        'ignore_guilt_1': { chapter: 1, image: '', text: 'PLACEHOLDER', choices: [{ text: 'Weiter', moralEffect: 0, nextScene: 'check_ending', feedback: 'Placeholder' }] },
-        'pack_documents_1': { chapter: 1, image: '', text: 'PLACEHOLDER', choices: [{ text: 'Weiter', moralEffect: 0, nextScene: 'check_ending', feedback: 'Placeholder' }] },
-        'social_media_1': { chapter: 1, image: '', text: 'PLACEHOLDER', choices: [{ text: 'Weiter', moralEffect: 0, nextScene: 'check_ending', feedback: 'Placeholder' }] },
-        'read_letter_1': { chapter: 1, image: '', text: 'PLACEHOLDER', choices: [{ text: 'Weiter', moralEffect: 0, nextScene: 'check_ending', feedback: 'Placeholder' }] },
-        'take_album_1': { chapter: 1, image: '', text: 'PLACEHOLDER', choices: [{ text: 'Weiter', moralEffect: 0, nextScene: 'check_ending', feedback: 'Placeholder' }] },
-        'grandma_fate_1': { chapter: 1, image: '', text: 'PLACEHOLDER', choices: [{ text: 'Weiter', moralEffect: 0, nextScene: 'check_ending', feedback: 'Placeholder' }] },
-        'ask_evidence_1': { chapter: 1, image: '', text: 'PLACEHOLDER', choices: [{ text: 'Weiter', moralEffect: 0, nextScene: 'check_ending', feedback: 'Placeholder' }] },
-        'change_topic_1': { chapter: 1, image: '', text: 'PLACEHOLDER', choices: [{ text: 'Weiter', moralEffect: 0, nextScene: 'check_ending', feedback: 'Placeholder' }] },
-        'commit_meeting_1': { chapter: 1, image: '', text: 'PLACEHOLDER', choices: [{ text: 'Weiter', moralEffect: 0, nextScene: 'check_ending', feedback: 'Placeholder' }] },
-        'cautious_commit_1': { chapter: 1, image: '', text: 'PLACEHOLDER', choices: [{ text: 'Weiter', moralEffect: 0, nextScene: 'check_ending', feedback: 'Placeholder' }] },
-        'immediate_help_1': { chapter: 1, image: '', text: 'PLACEHOLDER', choices: [{ text: 'Weiter', moralEffect: 0, nextScene: 'check_ending', feedback: 'Placeholder' }] },
-        'need_info_1': { chapter: 1, image: '', text: 'PLACEHOLDER', choices: [{ text: 'Weiter', moralEffect: 0, nextScene: 'check_ending', feedback: 'Placeholder' }] },
-        'evade_responsibility_1': { chapter: 1, image: '', text: 'PLACEHOLDER', choices: [{ text: 'Weiter', moralEffect: 0, nextScene: 'check_ending', feedback: 'Placeholder' }] },
-        'ask_situation_1': { chapter: 1, image: '', text: 'PLACEHOLDER', choices: [{ text: 'Weiter', moralEffect: 0, nextScene: 'check_ending', feedback: 'Placeholder' }] }
+        'return_help_1': { // Fortsetzung von avoid_1
+            chapter: 1,
+            image: 'https://picsum.photos/seed/return-to-help/1200/400?grayscale',
+            text: 'Du überwindest dein Zögern und eilst zurück zur gestürzten Frau. Andere Helfer sehen dich misstrauisch, aber als du anpackst und Gertrud hilfst, ihre verstreuten Einkäufe einzusammeln, weichen ihre Blicke. "Danke, junger Mensch. Es ist gut zu sehen, dass es noch Anstand gibt."',
+            choices: [
+                { text: 'Dich aufrichtig entschuldigen und sie nach Hause begleiten', moralEffect: 2, nextScene: 'help_woman_1', feedback: 'Einsicht und tätige Reue sind Zeichen wahrer Größe. Du hast einen Fehler korrigiert und Gutes getan. (+2)' },
+                { text: 'Murmeln, dass es dir leidtut und schnell weitergehen', moralEffect: 0, nextScene: 'house_1', feedback: 'Eine halbherzige Entschuldigung ist besser als keine, aber wahre Verantwortung sieht anders aus.' }
+            ]
+        },
+        'ignore_guilt_1': { // Fortsetzung von avoid_1
+            chapter: 1,
+            image: 'https://picsum.photos/seed/ignoring-guilt/1200/400?grayscale',
+            text: 'Du zwingst dich, weiterzugehen, obwohl dich die Schuldgefühle plagen. Die vorwurfsvollen Blicke der anderen brennen sich in dein Gedächtnis. Der Rest des Tages ist von einem unguten Gefühl überschattet. Du erreichst das Haus deiner Großmutter, fühlst dich aber innerlich leer.',
+            choices: [
+                { text: 'Versuchen, das Ereignis zu verdrängen und den Keller erkunden', moralEffect: -1, nextScene: 'basement_1', feedback: 'Verdrängung löst keine Probleme und nagt am Gewissen. Dein moralischer Kompass leidet. (-1)' },
+                { text: 'Dir schwören, es beim nächsten Mal besser zu machen', moralEffect: 0, nextScene: 'house_1', feedback: 'Gute Vorsätze sind ein Anfang, aber Taten zählen mehr. Du bist noch nicht im Reinen mit dir.' }
+            ]
+        },
+        'pack_documents_1': { // Fortsetzung von basement_1
+            chapter: 1,
+            image: 'https://picsum.photos/seed/packing-docs/1200/400?grayscale',
+            text: 'Du entscheidest dich für einen pragmatischen Ansatz und packst die Dokumente ein, die am wichtigsten erscheinen: Karten, einige offizielle Briefe und das Tagebuch. Es ist viel Material, aber du hoffst, das Wesentliche erwischt zu haben. Plötzlich hörst du Schritte im Obergeschoss.',
+            choices: [
+                { text: 'Schnell ein Versteck suchen', moralEffect: 0, nextScene: 'hide_docs_2', feedback: 'Vorsicht ist in dieser Situation angebracht. Du versuchst, die wichtigen Informationen zu sichern.' },
+                { text: 'Den Schritten nachgehen und nachsehen, wer da ist', moralEffect: 0, nextScene: 'confront_intruder_1', // Neue Szene
+                  feedback: 'Neugier oder der Wunsch, die Kontrolle zu behalten, treiben dich an.' }
+            ]
+        },
+        'social_media_1': { // Fortsetzung von basement_1
+            chapter: 1,
+            image: 'https://picsum.photos/seed/social-fail/1200/400?grayscale',
+            text: 'In einem unüberlegten Moment zückst du dein Handy und machst ein Foto von der geheimnisvollen Karte an der Wand, postest es mit dem Kommentar "Mysteriöse Entdeckungen in Grautal #urbex #secrets". Sekunden später bereust du es, aber es ist zu spät. Dein Post bekommt erste Likes von Unbekannten.',
+            choices: [
+                { text: 'Den Post sofort löschen und hoffen, dass es niemand Wichtiges gesehen hat', moralEffect: 1, nextScene: 'study_documents_1', feedback: 'Du erkennst deinen Fehler und versuchst, den Schaden zu begrenzen. Eine wichtige Lektion in Diskretion. (+1)' },
+                { text: 'Den Post stehen lassen - vielleicht hilft die Aufmerksamkeit ja?', moralEffect: -2, nextScene: 'omnicorp_raid_1', // Neue Szene: OmniCorp wird aufmerksam
+                  feedback: 'Leichtsinn mit potenziell gefährlichen Informationen ist unverantwortlich und naiv. (-2)' }
+            ]
+        },
+        'read_letter_1': { // Fortsetzung von memories_1
+            chapter: 1,
+            image: 'https://picsum.photos/seed/reading-letter/1200/400?grayscale',
+            text: 'Der Brief ist von deiner Großmutter, datiert kurz vor ihrem Verschwinden: "Mein liebes Kind, vertraue niemandem leichtfertig. Die Wahrheit über Grautal ist gefährlich. Elara in der Bibliothek ist eine der wenigen, denen ich noch traue. Suche sie auf, wenn du Fragen hast. Sei stark. - M."',
+            choices: [
+                { text: 'Elara in der Bibliothek aufsuchen', moralEffect: 1, nextScene: 'seek_elara_1', // Neue Szene
+                  feedback: 'Du folgst dem Rat deiner Großmutter. Vertrauen aufzubauen ist jetzt wichtig. (+1)' },
+                { text: 'Den Brief als sentimentales Andenken behalten und weiter im Haus suchen', moralEffect: 0, nextScene: 'basement_1', feedback: 'Du bist noch nicht bereit, externen Hinweisen zu folgen. Das Erbe deiner Großmutter wiegt schwer.' }
+            ]
+        },
+        'take_album_1': { // Fortsetzung von memories_1
+            chapter: 1,
+            image: 'https://picsum.photos/seed/photo-album/1200/400?grayscale',
+            text: 'Du nimmst das alte Fotoalbum an dich. Die Bilder zeigen eine lebendige Gemeinschaft und eine kämpferische Großmutter. Es ist ein wertvolles Zeugnis der Vergangenheit und eine Quelle der Inspiration. Du beschließt, es sicher aufzubewahren und später genauer anzusehen.',
+            choices: [
+                { text: 'Nun in den Keller gehen, wie im ersten Brief angewiesen', moralEffect: 0, nextScene: 'basement_1', feedback: 'Mit gestärktem Herzen durch die Erinnerungen wendest du dich der Aufgabe zu.' },
+                { text: 'Das Album einer vertrauten Person zeigen (z.B. Elara, falls bekannt)', moralEffect: 1, nextScene: 'show_album_elara_1', // Neue Szene, falls Elara schon getroffen/bekannt
+                  feedback: 'Geteilte Erinnerungen können Verbindungen schaffen und neue Perspektiven eröffnen. (+1)', condition: () => gameState.visitedScenes.has('seek_elara_1') } // Beispiel für bedingte Wahl
+            ]
+        },
+        'grandma_fate_1': { // Fortsetzung von omnicorp_info_1
+            chapter: 1,
+            image: 'https://picsum.photos/seed/grandma-question/1200/400?grayscale',
+            text: 'Du fragst Gertrud behutsam, was mit deiner Großmutter geschehen ist. Sie seufzt tief. "Martha wurde immer lauter in ihrem Protest. Eines Tages war sie einfach weg. Die Polizei sagte, sie sei verreist. Aber wir... wir glauben das nicht. OmniCorp hat zu viel Einfluss."',
+            choices: [
+                { text: 'Dein Beileid ausdrücken und versprechen, die Wahrheit herauszufinden', moralEffect: 1, nextScene: 'promise_truth_1', // Neue Szene
+                  feedback: 'Dein Mitgefühl und deine Entschlossenheit ehren deine Großmutter. (+1)' },
+                { text: 'Nach Beweisen für OmniCorps Verwicklung fragen', moralEffect: 1, nextScene: 'ask_evidence_1', feedback: 'Du bleibst sachlich und suchst nach Fakten, um handeln zu können. (+1)' }
+            ]
+        },
+        'ask_evidence_1': { // Fortsetzung von omnicorp_info_1 oder grandma_fate_1
+            chapter: 1,
+            image: 'https://picsum.photos/seed/evidence-quest/1200/400?grayscale',
+            text: 'Gertrud schüttelt den Kopf. "Handfeste Beweise? Die sind schwer zu finden. OmniCorp ist clever. Aber es gibt Gerüchte... und das Verschwinden von Leuten, die sich gegen sie gestellt haben. Deine Großmutter hat alles dokumentiert. Vielleicht findest du ja was in ihrem Haus."',
+            choices: [
+                { text: 'Dich bedanken und zum Haus deiner Großmutter eilen', moralEffect: 0, nextScene: 'house_1', feedback: 'Die Informationen bestärken dich in deinem Plan, das Haus zu untersuchen.' },
+                { text: 'Fragen, ob es eine Widerstandsgruppe gibt', moralEffect: 1, nextScene: 'ask_resistance_1', // Neue Szene
+                  feedback: 'Du suchst nach Verbündeten. Gemeinsam ist man stärker. (+1)' }
+            ]
+        },
+        'change_topic_1': { // Fortsetzung von omnicorp_info_1
+            chapter: 1,
+            image: 'https://picsum.photos/seed/topic-change/1200/400?grayscale',
+            text: 'Du spürst die Gefahr in Gertruds Worten und beschließt, das Thema zu wechseln. "Das Wetter ist aber auch trüb heute, nicht wahr?" Gertrud sieht dich enttäuscht an, nickt aber. Das Gespräch endet bald darauf. Du fühlst dich feige.',
+            choices: [
+                { text: 'Dich von Gertrud verabschieden und zum Haus deiner Großmutter gehen', moralEffect: -1, nextScene: 'house_1', feedback: 'Du weichst der Konfrontation aus. Das Gefühl der Feigheit bleibt. (-1)' },
+                { text: 'Gertrud später unter vier Augen erneut ansprechen', moralEffect: 1, nextScene: 're_approach_gertrud_1', // Neue Szene
+                  feedback: 'Du überdenkst deine Reaktion und suchst eine zweite Chance für Mut. (+1)'}
+            ]
+        },
+        'commit_meeting_1': { // Fortsetzung von offer_help_1
+            chapter: 1,
+            image: 'https://picsum.photos/seed/meeting-commit/1200/400?grayscale',
+            text: 'Du sagst Gertrud fest zu, zum Treffen in der alten Bibliothek zu kommen. Ihre Augen leuchten vor Dankbarkeit. "Das bedeutet uns viel. Elara wird sich freuen. Mittwochabend, nach Einbruch der Dunkelheit." Sie gibt dir eine kleine, handgezeichnete Karte.',
+            choices: [
+                { text: 'Die Karte sicher verstauen und dich auf das Treffen vorbereiten', moralEffect: 1, nextScene: 'prepare_meeting_1', // Neue Szene
+                  feedback: 'Du nimmst die Verabredung ernst und zeigst Verantwortung. (+1)' },
+                { text: 'Noch fragen, ob es bestimmte Risiken gibt', moralEffect: 0, nextScene: 'ask_risks_1', // Neue Szene
+                  feedback: 'Vorsicht ist verständlich, aber deine Zusage steht.' }
+            ]
+        },
+        'cautious_commit_1': { // Fortsetzung von offer_help_1
+            chapter: 1,
+            image: 'https://picsum.photos/seed/meeting-cautious/1200/400?grayscale',
+            text: 'Du sagst zu, dir das Treffen anzusehen, betonst aber, dass du dich erst einmal nur umhören möchtest. Gertrud nickt verständnisvoll. "Jede Hilfe, und sei es nur ein offenes Ohr, ist willkommen. Mittwochabend in der Bibliothek." ',
+            choices: [
+                { text: 'Dich bedanken und innerlich überlegen, ob du wirklich hingehst', moralEffect: 0, nextScene: 'house_1', feedback: 'Du hältst dir Optionen offen, was in unsicheren Zeiten klug sein kann, aber auch als Unverbindlichkeit gesehen wird.' },
+                { text: 'Dennoch hingehen, um dir ein Bild zu machen', moralEffect: 1, nextScene: 'prepare_meeting_1', // Führt zur gleichen Vorbereitungsszene
+                  feedback: 'Neugier und ein Funken Verantwortungsgefühl siegen. Du gibst der Sache eine Chance. (+1)'}
+            ]
+        },
+        'immediate_help_1': { // Fortsetzung von promise_legacy_1
+            chapter: 1,
+            image: 'https://picsum.photos/seed/legacy-help/1200/400?grayscale',
+            text: 'Deine sofortige Bereitschaft, zu helfen, beeindruckt die Gruppe. Thomas, der junge Mann, erklärt: "Die Dokumente deiner Großmutter sind der Schlüssel. Sie hat sie irgendwo im Haus versteckt. Wir müssen sie finden, bevor OmniCorp alles dem Erdboden gleichmacht."',
+            choices: [
+                { text: 'Anbieten, sofort mit der Suche im Haus zu beginnen', moralEffect: 1, nextScene: 'house_1', // oder spezifischer 'search_house_mission_1'
+                  feedback: 'Dein Tatendrang ist ansteckend. Du übernimmst direkt Verantwortung. (+1)' },
+                { text: 'Die Gruppe bitten, dich zum Haus zu begleiten und gemeinsam zu suchen', moralEffect: 1, nextScene: 'group_search_1', // Neue Szene
+                  feedback: 'Gemeinsam seid ihr stärker und könnt euch besser schützen. Kluge Entscheidung. (+1)' }
+            ]
+        },
+        'need_info_1': { // Fortsetzung von promise_legacy_1
+            chapter: 1,
+            image: 'https://picsum.photos/seed/legacy-info/1200/400?grayscale',
+            text: 'Du bittest um mehr Informationen, bevor du dich festlegst. Thomas erklärt geduldig die Dringlichkeit: OmniCorp plant den Abriss alter Stadtteile, um Platz für ihre neue Fabrik zu schaffen. Die Dokumente könnten das verhindern. Aber die Zeit drängt.',
+            choices: [
+                { text: 'Zusagen, bei der Suche nach den Dokumenten zu helfen', moralEffect: 1, nextScene: 'house_1', // oder spezifischer 'search_house_mission_1'
+                  feedback: 'Nachdem du mehr weißt, triffst du eine informierte und moralisch richtige Entscheidung. (+1)' },
+                { text: 'Vorschlagen, erst andere Wege des Widerstands zu prüfen', moralEffect: 0, nextScene: 'suggest_alternatives_1', // Neue Szene
+                  feedback: 'Du bist vorsichtig und wägst ab, aber Zögern kann in dieser Situation gefährlich sein.' }
+            ]
+        },
+        'evade_responsibility_1': { // Fortsetzung von promise_legacy_1
+            chapter: 1,
+            image: 'https://picsum.photos/seed/legacy-evade/1200/400?grayscale',
+            text: 'Du antwortest ausweichend, betonst, dass du gerade erst angekommen bist und dich orientieren musst. Die Gesichter der Gruppe werden lang. Enttäuschung macht sich breit. "Verstehe", sagt Thomas leise. "Dann müssen wir wohl allein weitermachen."',
+            choices: [
+                { text: 'Dich schlecht fühlen und doch noch Hilfe anbieten', moralEffect: 1, nextScene: 'immediate_help_1', feedback: 'Du korrigierst deinen Fehler und stellst dich deiner Verantwortung. Besser spät als nie. (+1)' },
+                { text: 'Dabei bleiben und dich diskret entfernen', moralEffect: -2, nextScene: 'house_1', feedback: 'Du lässt die Gruppe im Stich. Diese Feigheit wird dich verfolgen. (-2)' }
+            ]
+        },
+        'ask_situation_1': { // Fortsetzung von market_group_1
+            chapter: 1,
+            image: 'https://picsum.photos/seed/market-ask/1200/400?grayscale',
+            text: 'Du fragst vorsichtig nach der aktuellen Situation. Ein älterer Mann, Karl, ergreift das Wort: "OmniCorp macht uns das Leben zur Hölle. Sie kaufen Land, verschmutzen den Fluss. Deine Großmutter war unsere letzte Hoffnung. Sie hatte Beweise gesammelt."',
+            choices: [
+                { text: 'Anbieten, nach den Beweisen im Haus deiner Großmutter zu suchen', moralEffect: 1, nextScene: 'house_1', // oder spezifischer 'search_evidence_quest_1'
+                  feedback: 'Du zeigst Initiative und bietest konkrete Hilfe an. Das ist der richtige Weg. (+1)' },
+                { text: 'Fragen, warum sich niemand an die Behörden wendet', moralEffect: 0, nextScene: 'ask_authorities_1', // Neue Szene
+                  feedback: 'Eine naheliegende Frage, aber in Grautal könnten die Dinge komplizierter sein.' }
+            ]
+        },
+        // NEUE SZENEN, die aus den obigen Choices resultieren (Kapitel 1)
+        'confront_intruder_1': {
+            chapter: 1,
+            image: 'https://picsum.photos/seed/intruder-confront/1200/400?grayscale',
+            text: 'Du gehst den Schritten nach oben nach. Im Flur steht ein Mann in dunkler Kleidung, der offensichtlich nicht hierher gehört. Erschrocken dreht er sich um. "Wer sind Sie? Was machen Sie hier?"',
+            choices: [
+                { text: 'Ruhig, aber bestimmt antworten und nach seinem Anliegen fragen', moralEffect: 1, nextScene: 'intruder_talk_1', feedback: 'Du bleibst trotz der Überraschung gefasst und versuchst, die Situation zu klären. (+1)'},
+                { text: 'Laut um Hilfe rufen und ihn in die Flucht schlagen', moralEffect: 0, nextScene: 'intruder_flees_1', feedback: 'Eine verständliche Reaktion, aber vielleicht verpasst du wichtige Informationen.'}
+            ]
+        },
+        'omnicorp_raid_1': {
+            chapter: 1,
+            image: 'https://picsum.photos/seed/omnicorp-raid/1200/400?grayscale',
+            text: 'Dein unbedachter Social Media Post hat fatale Folgen. Keine Stunde später brechen OmniCorp Sicherheitsleute die Tür auf. "Wir haben da was im Internet gesehen. Sie scheinen ja sehr neugierig zu sein." Sie durchsuchen alles brutal.',
+            choices: [
+                { text: 'Versuchen, die wichtigsten Dokumente zu verstecken (falls noch nicht geschehen)', moralEffect: 1, nextScene: 'hide_docs_2', feedback: 'Ein verzweifelter Versuch, zu retten, was zu retten ist. (+1)', condition: () => !gameState.visitedScenes.has('study_documents_1')},
+                { text: 'Kooperieren und hoffen, dass es schnell vorbei ist', moralEffect: -2, nextScene: 'cooperate_2', feedback: 'Unterwerfung unter die Aggressoren. Das wird Konsequenzen haben. (-2)'}
+            ]
+        },
+        'seek_elara_1': {
+            chapter: 1,
+            image: 'https://picsum.photos/seed/seek-elara/1200/400?grayscale',
+            text: 'Du gehst zur alten Bibliothek, einem ehrwürdigen Gebäude im Herzen von Grautal. Im Inneren ist es still. Hinter einem Tresen aus dunklem Holz findest du Elara, eine Frau mit wachen Augen und einem Stapel Bücher vor sich. Sie mustert dich freundlich.',
+            choices: [
+                { text: 'Dich als Enkel von Martha vorstellen und den Brief erwähnen', moralEffect: 1, nextScene: 'elara_talk_1', feedback: 'Du folgst dem Rat deiner Großmutter und baust auf Vertrauen. (+1)'},
+                { text: 'Zuerst unauffällig die Bibliothek erkunden', moralEffect: 0, nextScene: 'library_explore_1', feedback: 'Du bist vorsichtig und möchtest dir erst ein Bild machen.'}
+            ]
+        },
+        'show_album_elara_1': {
+            chapter: 1,
+            image: 'https://picsum.photos/seed/album-elara/1200/400?grayscale',
+            text: 'Du zeigst Elara das Fotoalbum. Sie blättert ergriffen darin. "Ja, das war Martha. Immer mutig. Diese Bilder... sie erinnern uns daran, wofür wir kämpfen." Ihre Stimme wird leise. "Viele dieser Menschen sind nicht mehr hier oder haben aufgegeben."',
+            choices: [
+                { text: 'Elara nach der aktuellen Widerstandsgruppe fragen', moralEffect: 1, nextScene: 'elara_resistance_info_1', feedback: 'Du zeigst dein Engagement und suchst nach Wegen, dich einzubringen. (+1)'},
+                { text: 'Das Gespräch auf die Dokumente deiner Großmutter lenken', moralEffect: 0, nextScene: 'elara_documents_talk_1', feedback: 'Du fokussierst dich auf die konkreten Hinweise deiner Großmutter.'}
+            ]
+        },
+        'promise_truth_1': {
+            chapter: 1,
+            image: 'https://picsum.photos/seed/promise-truth/1200/400?grayscale',
+            text: 'Du versprichst Gertrud, alles in deiner Macht Stehende zu tun, um die Wahrheit über das Schicksal deiner Großmutter herauszufinden. Gertrud ist sichtlich gerührt. "Sei vorsichtig, Kind. OmniCorp ist mächtig und skrupellos."',
+            choices: [
+                { text: 'Dich bedanken und zum Haus deiner Großmutter gehen, um nach Hinweisen zu suchen', moralEffect: 1, nextScene: 'house_1', feedback: 'Dein Versprechen gibt dir neue Entschlossenheit. (+1)'},
+                { text: 'Fragen, ob es andere gibt, die dir helfen könnten', moralEffect: 1, nextScene: 'ask_resistance_1', feedback: 'Du erkennst, dass du diese Aufgabe nicht allein bewältigen kannst. (+1)'}
+            ]
+        },
+        'ask_resistance_1': {
+            chapter: 1,
+            image: 'https://picsum.photos/seed/ask-resistance/1200/400?grayscale',
+            text: 'Auf deine Frage nach einer Widerstandsgruppe zögert Gertrud kurz, dann nickt sie. "Es gibt uns. Wir sind nicht viele, und wir müssen vorsichtig sein. Elara in der Bibliothek ist unsere Ansprechpartnerin. Sag ihr, Gertrud schickt dich."',
+            choices: [
+                { text: 'Sofort zur Bibliothek gehen, um Elara zu treffen', moralEffect: 1, nextScene: 'seek_elara_1', feedback: 'Du ergreifst die Initiative und suchst die Verbindung zum Widerstand. (+1)'},
+                { text: 'Erst zum Haus deiner Großmutter gehen, um eigene Informationen zu sammeln', moralEffect: 0, nextScene: 'house_1', feedback: 'Du möchtest gut vorbereitet sein, bevor du dich dem Widerstand anschließt.'}
+            ]
+        },
+        're_approach_gertrud_1': {
+            chapter: 1,
+            image: 'https://picsum.photos/seed/re-approach/1200/400?grayscale',
+            text: 'Später am Tag suchst du Gertrud erneut auf, als sie allein ist. Du entschuldigst dich für deine frühere Zurückhaltung und erklärst deine Sorgen. Gertrud lächelt milde. "Ich verstehe deine Vorsicht. Aber manchmal muss man Mut zeigen, um etwas zu verändern."',
+            choices: [
+                { text: 'Ihr von den Plänen deiner Großmutter erzählen und um Rat fragen', moralEffect: 1, nextScene: 'gertrud_advice_1', feedback: 'Du öffnest dich und zeigst Bereitschaft, dich der Gefahr zu stellen. (+1)'},
+                { text: 'Erneut nach OmniCorps Machenschaften fragen, diesmal entschlossener', moralEffect: 1, nextScene: 'omnicorp_info_1', feedback: 'Du zeigst, dass du es ernst meinst. (+1)'}
+            ]
+        },
+        'prepare_meeting_1': {
+            chapter: 1,
+            image: 'https://picsum.photos/seed/meeting-prep/1200/400?grayscale',
+            text: 'Du nimmst dir vor, zum Treffen zu gehen. Es fühlt sich richtig an, auch wenn ein mulmiges Gefühl bleibt. Du überlegst, wie du dich am besten vorbereitest und was du von dem Treffen erwarten kannst.',
+            choices: [
+                { text: 'Pünktlich und unauffällig zum Treffpunkt gehen', moralEffect: 1, nextScene: 'library_meeting_start_1', // Neue Szene für den Beginn des Treffens
+                  feedback: 'Du hältst dein Wort und stellst dich der Situation. (+1)'},
+                { text: 'Versuchen, vorab mehr über Elara und die Gruppe herauszufinden', moralEffect: 0, nextScene: 'gather_intel_elara_1', feedback: 'Vorbereitung ist klug, aber pass auf, dass du nicht verdächtig wirkst.'}
+            ]
+        },
+        'ask_risks_1': {
+            chapter: 1,
+            image: 'https://picsum.photos/seed/ask-risks/1200/400?grayscale',
+            text: 'Du fragst Gertrud nach den Risiken. "Jeder, der sich OmniCorp widersetzt, lebt gefährlich", sagt sie ernst. "Aber nichts zu tun, ist noch gefährlicher für uns alle. Elara wird dir mehr erzählen können. Sei einfach wachsam."',
+            choices: [
+                { text: 'Deine Zusage bekräftigen und dich auf das Treffen vorbereiten', moralEffect: 1, nextScene: 'prepare_meeting_1', feedback: 'Trotz der Warnung bleibst du standhaft. Das zeugt von Mut. (+1)'},
+                { text: 'Bedenkzeit erbitten', moralEffect: -1, nextScene: 'house_1', feedback: 'Deine Verunsicherung ist verständlich, aber die Gruppe braucht Entschlossenheit. (-1)'}
+            ]
+        },
+        'group_search_1': {
+            chapter: 1,
+            image: 'https://picsum.photos/seed/group-search/1200/400?grayscale',
+            text: 'Die Gruppe willigt ein, dich zum Haus zu begleiten. Gemeinsam fühlt ihr euch sicherer. Ihr teilt euch auf, um das Haus systematisch nach den Dokumenten deiner Großmutter zu durchsuchen.',
+            choices: [
+                { text: 'Den Keller übernehmen, da er im Brief erwähnt wurde', moralEffect: 1, nextScene: 'basement_1', // Führt zur bekannten Kellerszene, aber Kontext ist anders
+                  feedback: 'Du konzentrierst dich auf den wichtigsten Hinweis. (+1)'},
+                { text: 'Das Arbeitszimmer deiner Großmutter gründlich untersuchen', moralEffect: 1, nextScene: 'study_search_1', // Neue Szene
+                  feedback: 'Ein logischer Ort für wichtige Unterlagen. Gute Idee. (+1)'}
+            ]
+        },
+        'suggest_alternatives_1': {
+            chapter: 1,
+            image: 'https://picsum.photos/seed/suggest-alternatives/1200/400?grayscale',
+            text: 'Du schlägst vor, zuerst andere, vielleicht weniger direkte Wege des Widerstands zu prüfen, wie z.B. eine Petition oder Medien einzuschalten. Thomas seufzt. "Das haben wir versucht. OmniCorp hat zu viele Verbindungen. Die Dokumente sind unsere einzige echte Waffe."',
+            choices: [
+                { text: 'Einsehen, dass die Dokumente Priorität haben, und Hilfe zusagen', moralEffect: 1, nextScene: 'immediate_help_1', feedback: 'Du akzeptierst die Erfahrung der Gruppe und schließt dich an. (+1)'},
+                { text: 'Weiterhin skeptisch bleiben und eigene Nachforschungen anstellen', moralEffect: 0, nextScene: 'personal_investigation_1', // Neue Szene
+                  feedback: 'Dein Misstrauen ist nicht unbegründet, aber es kostet wertvolle Zeit.'}
+            ]
+        },
+        'ask_authorities_1': {
+            chapter: 1,
+            image: 'https://picsum.photos/seed/ask-authorities/1200/400?grayscale',
+            text: 'Auf deine Frage nach den Behörden lachen einige bitter auf. "Die Polizei? Der Bürgermeister? Die stecken doch alle mit OmniCorp unter einer Decke!", sagt eine Frau. "Deine Großmutter hat versucht, offiziell vorzugehen. Gebracht hat es nichts, außer dass sie ins Visier geriet."',
+            choices: [
+                { text: 'Verstehen, dass konventionelle Wege hier nicht fruchten', moralEffect: 1, nextScene: 'house_1', // Zurück zur Dokumentensuche oder anderem Pfad
+                  feedback: 'Du erkennst die bittere Realität von Grautal. Das System ist korrupt. (+1)'},
+                { text: 'Dennoch versuchen, anonym einen Hinweis bei einer überregionalen Zeitung zu platzieren', moralEffect: 0, nextScene: 'tip_newspaper_1', // Neue Szene
+                  feedback: 'Ein mutiger, aber vielleicht naiver Versuch, externe Hilfe zu bekommen.'}
+            ]
+        }
+        // Die restlichen Platzhalter folgen in den nächsten Schritten.
     };
 
     // Ende-Definitionen
