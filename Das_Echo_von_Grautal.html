@@ -1,0 +1,1855 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Das Echo von Grautal - Eine moralische Odyssee</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap');
+
+        :root {
+            --primary-gold: #d4af37;
+            --secondary-crimson: #dc143c;
+            --deep-black: #0a0a0a;
+            --soft-white: #f5f5f0;
+            --shadow-gray: #2a2a2a;
+            --positive-green: #228b22;
+            --negative-red: #b22222;
+            --neutral-blue: #4169e1;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Crimson Text', serif;
+            background: linear-gradient(135deg, var(--deep-black) 0%, var(--shadow-gray) 100%);
+            color: var(--soft-white);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,%3Csvg width="100" height="100" xmlns="http://www.w3.org/2000/svg"%3E%3Cdefs%3E%3Cpattern id="grid" width="100" height="100" patternUnits="userSpaceOnUse"%3E%3Cpath d="M 100 0 L 0 0 0 100" fill="none" stroke="rgba(212, 175, 55, 0.05)" stroke-width="1"/%3E%3C/pattern%3E%3C/defs%3E%3Crect width="100" height="100" fill="url(%23grid)" /%3E%3C/svg%3E');
+            pointer-events: none;
+            opacity: 0.3;
+            animation: drift 20s linear infinite;
+        }
+
+        @keyframes drift {
+            from { transform: translate(0, 0); }
+            to { transform: translate(100px, 100px); }
+        }
+
+        #game-container {
+            width: 100%;
+            max-width: 1200px;
+            background: rgba(10, 10, 10, 0.95);
+            border: 3px solid var(--primary-gold);
+            border-radius: 20px;
+            box-shadow:
+                0 0 50px rgba(212, 175, 55, 0.3),
+                inset 0 0 30px rgba(0, 0, 0, 0.5);
+            padding: 3rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* Titel und Überschriften */
+        h1, h2 {
+            font-family: 'Cinzel', serif;
+            text-align: center;
+            margin-bottom: 2rem;
+            text-shadow: 0 0 20px rgba(212, 175, 55, 0.5);
+        }
+
+        h1 {
+            font-size: 3rem;
+            color: var(--primary-gold);
+            letter-spacing: 3px;
+        }
+
+        h2 {
+            font-size: 2rem;
+            color: var(--soft-white);
+        }
+
+        /* Kapitel-Indikator */
+        #chapter-indicator {
+            position: absolute;
+            top: 2rem;
+            left: 2rem;
+            font-family: 'Cinzel', serif;
+            font-size: 1.2rem;
+            color: var(--primary-gold);
+            opacity: 0.8;
+        }
+
+        /* Moral-Score Display */
+        #moral-display {
+            position: absolute;
+            top: 2rem;
+            right: 2rem;
+            text-align: center;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 1rem;
+            border-radius: 10px;
+            border: 2px solid var(--primary-gold);
+        }
+
+        #moral-label {
+            font-family: 'Cinzel', serif;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+            color: var(--primary-gold);
+        }
+
+        #moral-score {
+            font-family: 'Cinzel', serif;
+            font-size: 3rem;
+            font-weight: 600;
+            transition: all 0.5s ease;
+        }
+
+        .score-positive {
+            color: var(--positive-green);
+            text-shadow: 0 0 15px var(--positive-green);
+        }
+
+        .score-negative {
+            color: var(--negative-red);
+            text-shadow: 0 0 15px var(--negative-red);
+        }
+
+        .score-neutral {
+            color: var(--neutral-blue);
+            text-shadow: 0 0 15px var(--neutral-blue);
+        }
+
+        /* Szenen-Bereich */
+        #scene-image-container {
+            width: 100%;
+            height: 400px;
+            margin-bottom: 2rem;
+            border-radius: 15px;
+            overflow: hidden;
+            border: 2px solid var(--primary-gold);
+            position: relative;
+            background: #000;
+        }
+
+        #scene-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: opacity 1.5s ease;
+        }
+
+        #scene-text {
+            font-size: 1.3rem;
+            line-height: 1.8;
+            margin-bottom: 2rem;
+            text-align: justify;
+            animation: fadeIn 1s ease;
+        }
+
+        /* Entscheidungsbereich */
+        #choices-container {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .choice-button {
+            font-family: 'Crimson Text', serif;
+            font-size: 1.1rem;
+            padding: 1.5rem;
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.1) 0%, rgba(212, 175, 55, 0.05) 100%);
+            color: var(--soft-white);
+            border: 2px solid var(--primary-gold);
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: left;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .choice-button:hover {
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.3) 0%, rgba(212, 175, 55, 0.15) 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(212, 175, 55, 0.4);
+        }
+
+        .choice-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.3), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .choice-button:hover::before {
+            left: 100%;
+        }
+
+        /* Feedback-Bereich */
+        #feedback-container {
+            background: rgba(0, 0, 0, 0.8);
+            border: 2px solid var(--primary-gold);
+            border-radius: 15px;
+            padding: 2rem;
+            margin: 2rem 0;
+            position: relative;
+        }
+
+        #feedback-header {
+            font-family: 'Cinzel', serif;
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        #feedback-text {
+            font-size: 1.1rem;
+            line-height: 1.7;
+            text-align: justify;
+        }
+
+        .feedback-positive {
+            border-color: var(--positive-green);
+            box-shadow: 0 0 20px rgba(34, 139, 34, 0.3);
+        }
+
+        .feedback-positive #feedback-header {
+            color: var(--positive-green);
+        }
+
+        .feedback-negative {
+            border-color: var(--negative-red);
+            box-shadow: 0 0 20px rgba(178, 34, 34, 0.3);
+        }
+
+        .feedback-negative #feedback-header {
+            color: var(--negative-red);
+        }
+
+        #continue-button {
+            display: block;
+            margin: 1.5rem auto 0;
+            padding: 1rem 3rem;
+            font-family: 'Cinzel', serif;
+            font-size: 1.1rem;
+            background: var(--primary-gold);
+            color: var(--deep-black);
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        #continue-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 20px rgba(212, 175, 55, 0.5);
+        }
+
+        /* Timer-Anzeige */
+        #timer-display {
+            position: absolute;
+            bottom: 1rem;
+            right: 1rem;
+            font-family: 'Cinzel', serif;
+            color: var(--primary-gold);
+            opacity: 0.7;
+        }
+
+        /* Start- und End-Screens */
+        .screen-content {
+            max-width: 800px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .intro-text {
+            font-size: 1.2rem;
+            line-height: 1.8;
+            margin-bottom: 2rem;
+            text-align: justify;
+        }
+
+        .start-button, .end-button {
+            padding: 1.5rem 4rem;
+            font-family: 'Cinzel', serif;
+            font-size: 1.3rem;
+            background: var(--primary-gold);
+            color: var(--deep-black);
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 1rem;
+        }
+
+        .start-button:hover, .end-button:hover {
+            transform: scale(1.1);
+            box-shadow: 0 8px 30px rgba(212, 175, 55, 0.6);
+        }
+
+        /* Endbildschirm Statistiken */
+        .end-stats {
+            background: rgba(0, 0, 0, 0.5);
+            border: 2px solid var(--primary-gold);
+            border-radius: 15px;
+            padding: 2rem;
+            margin: 2rem 0;
+        }
+
+        .stat-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid rgba(212, 175, 55, 0.3);
+        }
+
+        .stat-label {
+            color: var(--primary-gold);
+        }
+
+        /* Animationen */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        /* Progress Bar */
+        #progress-container {
+            width: 100%;
+            height: 10px;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 5px;
+            margin-bottom: 2rem;
+            overflow: hidden;
+        }
+
+        #progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary-gold), var(--secondary-crimson));
+            transition: width 0.5s ease;
+            width: 0%;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            h1 { font-size: 2rem; }
+            h2 { font-size: 1.5rem; }
+
+            #game-container {
+                padding: 1.5rem;
+            }
+
+            #moral-display {
+                position: static;
+                margin-bottom: 1rem;
+            }
+
+            #chapter-indicator {
+                position: static;
+                margin-bottom: 1rem;
+                text-align: center;
+            }
+
+            #scene-image-container {
+                height: 250px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="game-container">
+        <!-- Start Screen -->
+        <div id="start-screen" class="screen-content">
+            <h1>Das Echo von Grautal</h1>
+            <h2>Eine moralische Odyssee</h2>
+            <div class="intro-text">
+                <p>Nach zehn Jahren kehrst du in deine Heimatstadt Grautal zurück. Das Erbe deiner Großmutter - ein altes Haus und geheimnisvolle Aufzeichnungen - erwarten dich. Doch Grautal hat sich verändert. Dunkle Mächte bedrohen die Gemeinschaft, und jede deiner Entscheidungen wird nicht nur dein eigenes Schicksal, sondern das der ganzen Stadt prägen.</p>
+
+                <p style="margin-top: 1.5rem; font-style: italic; color: var(--primary-gold);">
+                    "Handle nur nach derjenigen Maxime, durch die du zugleich wollen kannst, dass sie ein allgemeines Gesetz werde." - Immanuel Kant
+                </p>
+
+                <p style="margin-top: 1.5rem;">
+                    Deine moralischen Entscheidungen werden dich durch vier Kapitel und verschiedene Handlungsstränge führen. Wirst du ein Leuchtfeuer der Hoffnung oder ein Schatten der Verzweiflung?
+                </p>
+            </div>
+            <button class="start-button" onclick="startGame()">Die Reise beginnen</button>
+        </div>
+
+        <!-- Game Play Area -->
+        <div id="game-play" class="hidden">
+            <div id="chapter-indicator"></div>
+            <div id="moral-display">
+                <div id="moral-label">Moralischer Kompass</div>
+                <div id="moral-score">0</div>
+            </div>
+
+            <div id="progress-container">
+                <div id="progress-bar"></div>
+            </div>
+
+            <div id="scene-image-container">
+                <img id="scene-image" src="" alt="Szenenbild">
+            </div>
+
+            <div id="scene-text"></div>
+
+            <div id="choices-container"></div>
+
+            <div id="feedback-container" class="hidden">
+                <div id="feedback-header"></div>
+                <div id="feedback-text"></div>
+                <div id="timer-display"></div>
+                <button id="continue-button" onclick="continueFeedback()">Weiter</button>
+            </div>
+        </div>
+
+        <!-- End Screen -->
+        <div id="end-screen" class="screen-content hidden">
+            <h1 id="end-title"></h1>
+            <div id="end-description"></div>
+            <div class="end-stats">
+                <div class="stat-row">
+                    <span class="stat-label">Finaler Moralwert:</span>
+                    <span id="final-score"></span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">Getroffene Entscheidungen:</span>
+                    <span id="decisions-made"></span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">Positive Handlungen:</span>
+                    <span id="positive-actions"></span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">Negative Handlungen:</span>
+                    <span id="negative-actions"></span>
+                </div>
+            </div>
+            <button class="end-button" onclick="startGame()">Neue Reise beginnen</button>
+            <button class="end-button" onclick="location.reload()">Neustart</button>
+        </div>
+    </div>
+
+    <script>
+    // Globaler Spielzustand
+    let gameState = {
+        moralScore: 0,
+        currentScene: 'intro_1',
+        decisionsCount: 0,
+        positiveActions: 0,
+        negativeActions: 0,
+        currentChapter: 1,
+        storyPath: 'main', // main, water, resistance, power, truth, redemption
+        visitedScenes: new Set(),
+        specialFlags: new Set() // Für besondere Entscheidungen
+    };
+
+    // Timer-Variablen
+    let feedbackTimer = null;
+    let timerInterval = null;
+
+    // Story-Datenstruktur mit 45 Entscheidungen
+    const storyData = {
+        // KAPITEL 1: DIE RÜCKKEHR (Entscheidungen 1-12)
+        'intro_1': {
+            chapter: 1,
+            image: 'https://picsum.photos/seed/grautal-return/1200/400?grayscale',
+            text: 'Das verwitterte Ortsschild von Grautal ragt vor dir auf. Nach zehn Jahren kommst du zurück, das Testament deiner Großmutter in der Tasche. Die Stadt wirkt verlassen, nur wenige Gestalten huschen durch die Straßen. Ein kalter Wind trägt den Geruch von Verfall mit sich.',
+            choices: [
+                {
+                    text: 'Direkt zum Haus deiner Großmutter gehen',
+                    moralEffect: 0,
+                    nextScene: 'house_1',
+                    feedback: 'Du respektierst das Erbe deiner Großmutter und gehst direkt zu ihrem Haus. Eine neutrale, aber respektvolle Entscheidung.'
+                },
+                {
+                    text: 'Erst durch die Stadt gehen und die Veränderungen erkunden',
+                    moralEffect: 1,
+                    nextScene: 'town_1',
+                    feedback: 'Du zeigst Interesse an deiner Heimat und ihren Menschen. Verbundenheit mit der Gemeinschaft ist die Grundlage moralischen Handelns. (+1)'
+                }
+            ]
+        },
+
+        'house_1': {
+            chapter: 1,
+            image: 'https://picsum.photos/seed/grandma-house/1200/400?grayscale',
+            text: 'Das Haus deiner Großmutter steht unverändert da, umgeben von einem verwilderten Garten. Als du die Tür öffnest, findest du einen Brief auf dem Küchentisch: "Liebes Kind, wenn du dies liest, bin ich fort. Aber mein Kampf für Grautal muss weitergehen. Im Keller findest du die Wahrheit."',
+            choices: [
+                {
+                    text: 'Sofort in den Keller gehen',
+                    moralEffect: 0,
+                    nextScene: 'basement_1',
+                    feedback: 'Neugier ist menschlich. Du folgst den Anweisungen deiner Großmutter.'
+                },
+                {
+                    text: 'Erst das Haus erkunden und Erinnerungen sammeln',
+                    moralEffect: 1,
+                    nextScene: 'memories_1',
+                    feedback: 'Du ehrst das Andenken deiner Großmutter, indem du dir Zeit für Erinnerungen nimmst. Respekt vor der Vergangenheit zeigt Charakterstärke. (+1)'
+                }
+            ]
+        },
+
+        'town_1': {
+            chapter: 1,
+            image: 'https://picsum.photos/seed/grautal-streets/1200/400?grayscale',
+            text: 'Die Hauptstraße ist fast leer. Viele Geschäfte sind geschlossen, Fenster vernagelt. Am Marktplatz siehst du eine kleine Gruppe Menschen, die sich leise unterhält. Eine alte Frau mit einem schweren Korb kämpft sich die Stufen zur Kirche hinauf.',
+            choices: [
+                {
+                    text: 'Der alten Frau helfen',
+                    moralEffect: 1,
+                    nextScene: 'help_woman_1',
+                    feedback: 'Spontane Hilfsbereitschaft ohne Erwartung einer Gegenleistung ist ein Grundpfeiler der Moral. Würde jeder so handeln, wäre die Welt besser. (+1)'
+                },
+                {
+                    text: 'Die Gruppe am Marktplatz ansprechen',
+                    moralEffect: 0,
+                    nextScene: 'market_group_1',
+                    feedback: 'Du suchst Informationen. Eine neutrale Handlung, die weder hilft noch schadet.'
+                },
+                {
+                    text: 'Schnell weitergehen und nicht auffallen',
+                    moralEffect: -2,
+                    nextScene: 'avoid_1',
+                    feedback: 'Wegschauen, wenn Hilfe benötigt wird, ist moralisch verwerflich. Eine Gesellschaft des Wegschauens führt zu Isolation und Leid. (-2)'
+                }
+            ]
+        },
+
+        'help_woman_1': {
+            chapter: 1,
+            image: 'https://picsum.photos/seed/helping-elder/1200/400?grayscale',
+            text: 'Die Frau, Gertrud Müller, ist dankbar für deine Hilfe. "Du bist nicht von hier, oder? Doch... warte, du bist das Enkelkind von Martha! Sie hat oft von dir gesprochen. Sei vorsichtig, mein Kind. OmniCorp hat fast die halbe Stadt aufgekauft. Sie versprechen Arbeitsplätze, aber bringen nur Zerstörung."',
+            choices: [
+                {
+                    text: 'Nach mehr Details über OmniCorp fragen',
+                    moralEffect: 1,
+                    nextScene: 'omnicorp_info_1',
+                    feedback: 'Sich über Ungerechtigkeiten zu informieren ist der erste Schritt zum Widerstand. Wissen ermöglicht moralisches Handeln. (+1)'
+                },
+                {
+                    text: 'Ihr deine Hilfe für die Zukunft anbieten',
+                    moralEffect: 1,
+                    nextScene: 'offer_help_1',
+                    feedback: 'Langfristige Hilfsbereitschaft zeigt wahren Charakter. Du denkst über den Moment hinaus. (+1)'
+                }
+            ]
+        },
+
+        'market_group_1': {
+            chapter: 1,
+            image: 'https://picsum.photos/seed/market-group/1200/400?grayscale',
+            text: 'Die Gruppe verstummt, als du näher kommst. Ein Mann mit müden Augen mustert dich. "Neu in der Stadt? Oder zurückgekehrt?" Als du dich als Marthas Enkel zu erkennen gibst, werden die Gesichter weicher. "Deine Großmutter war eine Kämpferin. Wir könnten jemanden wie sie jetzt gut gebrauchen."',
+            choices: [
+                {
+                    text: 'Versprechen, das Erbe deiner Großmutter fortzuführen',
+                    moralEffect: 1,
+                    nextScene: 'promise_legacy_1',
+                    feedback: 'Ein Versprechen zu geben bedeutet Verantwortung zu übernehmen. Du stellst dich in die Tradition des Widerstands. (+1)'
+                },
+                {
+                    text: 'Vorsichtig nach der aktuellen Situation fragen',
+                    moralEffect: 0,
+                    nextScene: 'ask_situation_1',
+                    feedback: 'Vorsicht ist verständlich, aber Neutralität in Zeiten der Not kann als Feigheit gedeutet werden.'
+                }
+            ]
+        },
+
+        'avoid_1': {
+            chapter: 1,
+            image: 'https://picsum.photos/seed/empty-street/1200/400?grayscale',
+            text: 'Du eilst davon, aber das Bild der kämpfenden alten Frau verfolgt dich. Als du um die Ecke biegst, hörst du ein Poltern. Sie ist gestürzt. Andere eilen zu Hilfe und werfen dir vorwurfsvolle Blicke zu.',
+            choices: [
+                {
+                    text: 'Zurückgehen und helfen',
+                    moralEffect: 1,
+                    nextScene: 'return_help_1',
+                    feedback: 'Fehler einzugestehen und zu korrigieren zeigt moralische Größe. Besser spät als nie. (+1)'
+                },
+                {
+                    text: 'Weitergehen und die Schuldgefühle ignorieren',
+                    moralEffect: -2,
+                    nextScene: 'ignore_guilt_1',
+                    feedback: 'Das Ignorieren des Gewissens führt zur moralischen Abstumpfung. Jede weitere Grausamkeit wird leichter. (-2)'
+                }
+            ]
+        },
+
+        'basement_1': {
+            chapter: 1,
+            image: 'https://picsum.photos/seed/secret-basement/1200/400?grayscale',
+            text: 'Der Keller ist voller Dokumente, Karten und Fotos. An der Wand hängt eine große Karte von Grautal mit mysteriösen Markierungen. Ein Tagebuch liegt aufgeschlagen da: "Die Wasserader unter Grautal ist unsere letzte Hoffnung. OmniCorp darf sie niemals finden."',
+            choices: [
+                {
+                    text: 'Alle Dokumente sorgfältig studieren',
+                    moralEffect: 1,
+                    nextScene: 'study_documents_1',
+                    feedback: 'Gründlichkeit und der Wille zur Wahrheit sind Tugenden. Du ehrst das Vermächtnis deiner Großmutter. (+1)'
+                },
+                {
+                    text: 'Die wichtigsten Dokumente schnell einpacken',
+                    moralEffect: 0,
+                    nextScene: 'pack_documents_1',
+                    feedback: 'Pragmatismus hat seinen Platz, aber Eile kann zu Fehlern führen.'
+                },
+                {
+                    text: 'Ein Foto für soziale Medien machen',
+                    moralEffect: -2,
+                    nextScene: 'social_media_1',
+                    feedback: 'Sensible Informationen leichtfertig zu teilen gefährdet andere. Selbstdarstellung über Sicherheit zu stellen ist moralisch verwerflich. (-2)'
+                }
+            ]
+        },
+
+        'memories_1': {
+            chapter: 1,
+            image: 'https://picsum.photos/seed/childhood-memories/1200/400?grayscale',
+            text: 'In deinem alten Kinderzimmer findest du Fotos von glücklicheren Zeiten. Grautal war einmal voller Leben. Ein Fotoalbum zeigt deine Großmutter bei Demonstrationen, immer in der ersten Reihe. Ein Brief fällt heraus.',
+            choices: [
+                {
+                    text: 'Den Brief lesen',
+                    moralEffect: 0,
+                    nextScene: 'read_letter_1',
+                    feedback: 'Neugier auf Familiengeheimnisse ist natürlich und moralisch neutral.'
+                },
+                {
+                    text: 'Das Album mitnehmen und später in Ruhe durchsehen',
+                    moralEffect: 1,
+                    nextScene: 'take_album_1',
+                    feedback: 'Erinnerungen zu bewahren ehrt die Vergangenheit und gibt Kraft für die Zukunft. (+1)'
+                }
+            ]
+        },
+
+        'omnicorp_info_1': {
+            chapter: 1,
+            image: 'https://picsum.photos/seed/omnicorp-shadow/1200/400?grayscale',
+            text: 'Gertrud flüstert: "OmniCorp kam vor drei Jahren. Erst kauften sie das alte Fabrikgelände, dann die Häuser drumherum. Wer nicht verkaufen wollte, hatte plötzlich \'Unfälle\'. Deine Großmutter hat eine Bürgerinitiative gegründet, aber dann..." Sie verstummt.',
+            choices: [
+                {
+                    text: 'Behutsam nach dem Schicksal deiner Großmutter fragen',
+                    moralEffect: 1,
+                    nextScene: 'grandma_fate_1',
+                    feedback: 'Mitgefühl und Respekt im Umgang mit Trauer zeigen emotionale Reife und Menschlichkeit. (+1)'
+                },
+                {
+                    text: 'Nach Beweisen für die Verbrechen fragen',
+                    moralEffect: 1,
+                    nextScene: 'ask_evidence_1',
+                    feedback: 'Der Wunsch nach Gerechtigkeit und Beweisen zeigt moralische Integrität. (+1)'
+                },
+                {
+                    text: 'Das Thema wechseln, es ist zu gefährlich',
+                    moralEffect: -2,
+                    nextScene: 'change_topic_1',
+                    feedback: 'Aus Angst vor Unrecht zu schweigen macht dich zum Komplizen. Feigheit ermöglicht Tyrannei. (-2)'
+                }
+            ]
+        },
+
+        'offer_help_1': {
+            chapter: 1,
+            image: 'https://picsum.photos/seed/helping-hand/1200/400?grayscale',
+            text: 'Gertrude Augen füllen sich mit Tränen. "Das ist das Erste Mal seit Monaten, dass mir jemand Hilfe anbietet. Die meisten haben Angst oder sind weggezogen. Wenn du es ernst meinst... wir treffen uns jeden Mittwoch in der alten Bibliothek. Elara leitet jetzt die Gruppe."',
+            choices: [
+                {
+                    text: 'Fest zusagen, am Treffen teilzunehmen',
+                    moralEffect: 1,
+                    nextScene: 'commit_meeting_1',
+                    feedback: 'Ein gegebenes Versprechen zu halten ist die Basis von Vertrauen und Gemeinschaft. (+1)'
+                },
+                {
+                    text: 'Vorsichtig zusagen, erstmal nur zuzuhören',
+                    moralEffect: 0,
+                    nextScene: 'cautious_commit_1',
+                    feedback: 'Vorsicht ist verständlich, aber in Krisenzeiten braucht es mutige Taten, nicht nur Beobachter.'
+                }
+            ]
+        },
+
+        'promise_legacy_1': {
+            chapter: 1,
+            image: 'https://picsum.photos/seed/legacy-promise/1200/400?grayscale',
+            text: 'Die Gruppe schöpft Hoffnung aus deinen Worten. Ein junger Mann namens Thomas tritt vor: "Deine Großmutter hat uns die Wahrheit über das Wasser unter der Stadt gezeigt. OmniCorp will es privatisieren. Wir brauchen jemanden, der mutig genug ist, die Dokumente zu veröffentlichen."',
+            choices: [
+                {
+                    text: 'Sofort Bereitschaft signalisieren zu helfen',
+                    moralEffect: 1,
+                    nextScene: 'immediate_help_1',
+                    feedback: 'Spontane Hilfsbereitschaft in der Not zeigt wahren Charakter. Du stellst das Gemeinwohl über persönliche Risiken. (+1)'
+                },
+                {
+                    text: 'Nach mehr Informationen verlangen',
+                    moralEffect: 0,
+                    nextScene: 'need_info_1',
+                    feedback: 'Informierte Entscheidungen zu treffen ist weise, kann aber als Zögern interpretiert werden.'
+                },
+                {
+                    text: 'Ausweichend antworten, du bist gerade erst angekommen',
+                    moralEffect: -2,
+                    nextScene: 'evade_responsibility_1',
+                    feedback: 'Hoffnung zu wecken und dann zu enttäuschen ist grausam. Verantwortung abzulehnen, wenn man gebraucht wird, ist feige. (-2)'
+                }
+            ]
+        },
+
+        // Übergang zu Kapitel 2
+        'study_documents_1': {
+            chapter: 1,
+            image: 'https://picsum.photos/seed/documents-study/1200/400?grayscale',
+            text: 'Die Dokumente enthüllen ein erschreckendes Bild: OmniCorp plant, die gesamte Wasserversorgung der Region zu kontrollieren. Plötzlich klopft es an der Tür. "Aufmachen! Sicherheitsdienst von OmniCorp. Wir haben einen Durchsuchungsbefehl!"',
+            choices: [
+                {
+                    text: 'Die wichtigsten Dokumente verstecken und dann öffnen',
+                    moralEffect: 1,
+                    nextScene: 'hide_docs_2',
+                    feedback: 'Beweise für Unrecht zu schützen ist moralisch gerechtfertigt. Widerstand gegen Tyrannei ist eine Pflicht. (+1)'
+                },
+                {
+                    text: 'Durch den Hinterausgang fliehen',
+                    moralEffect: 0,
+                    nextScene: 'escape_2',
+                    feedback: 'Selbstschutz ist verständlich, aber Flucht löst keine Probleme.'
+                },
+                {
+                    text: 'Sofort öffnen und kooperieren',
+                    moralEffect: -2,
+                    nextScene: 'cooperate_2',
+                    feedback: 'Blindes Gehorchen gegenüber ungerechter Autorität macht dich zum Werkzeug der Unterdrückung. (-2)'
+                }
+            ]
+        },
+
+        // KAPITEL 2: DIE VERSCHWÖRUNG (Entscheidungen 13-24)
+        'hide_docs_2': {
+            chapter: 2,
+            image: 'https://picsum.photos/seed/hiding-documents/1200/400?grayscale',
+            text: 'Du versteckst die wichtigsten Dokumente hastig unter losen Bodenbrettern. Die Sicherheitsleute durchsuchen das Haus grob, finden aber nichts. Ihr Anführer, ein Mann mit kalten Augen, warnt dich: "Wir beobachten Sie. Ein falscher Schritt und Sie verschwinden wie Ihre Großmutter."',
+            choices: [
+                {
+                    text: 'Mutig entgegnen: "Ist das eine Drohung?"',
+                    moralEffect: 1,
+                    nextScene: 'confront_threat_2',
+                    feedback: 'Mut angesichts von Einschüchterung zu zeigen inspiriert andere und zeigt moralische Stärke. (+1)'
+                },
+                {
+                    text: 'Schweigen und abwarten bis sie gehen',
+                    moralEffect: 0,
+                    nextScene: 'silent_wait_2',
+                    feedback: 'Manchmal ist Schweigen die klügere Wahl, aber es kann auch als Schwäche gedeutet werden.'
+                },
+                {
+                    text: 'Vorgeben, von nichts zu wissen und um Entschuldigung bitten',
+                    moralEffect: -2,
+                    nextScene: 'feign_ignorance_2',
+                    feedback: 'Sich feige zu verstellen und um Verzeihung zu betteln, wenn man im Recht ist, verrät die eigenen Prinzipien. (-2)'
+                }
+            ]
+        },
+
+        'escape_2': {
+            chapter: 2,
+            image: 'https://picsum.photos/seed/night-escape/1200/400?grayscale',
+            text: 'Du flüchtest mit den Dokumenten durch den Garten. In der Dunkelheit stolperst du fast über eine Gestalt - es ist Elara, die Bibliothekarin. "Ich habe die Durchsuchung kommen sehen. Komm mit, ich kenne einen sicheren Ort."',
+            choices: [
+                {
+                    text: 'Elara vertrauen und mitgehen',
+                    moralEffect: 1,
+                    nextScene: 'trust_elara_2',
+                    feedback: 'In Zeiten der Not anderen zu vertrauen und Hilfe anzunehmen zeigt Weisheit und Demut. (+1)'
+                },
+                {
+                    text: 'Dankend ablehnen und alleine weiter',
+                    moralEffect: 0,
+                    nextScene: 'go_alone_2',
+                    feedback: 'Eigenständigkeit ist gut, aber Einzelkämpfertum kann in gefährlichen Zeiten fatal sein.'
+                }
+            ]
+        },
+
+        'cooperate_2': {
+            chapter: 2,
+            image: 'https://picsum.photos/seed/cooperation-dark/1200/400?grayscale',
+            text: 'Du öffnest die Tür und zeigst dich kooperativ. Die Sicherheitsleute finden die Dokumente im Keller. Der Anführer grinst: "Danke für Ihre Mitarbeit. Sie werden von uns hören." Sie nehmen alles mit - das Vermächtnis deiner Großmutter ist verloren.',
+            choices: [
+                {
+                    text: 'Versuchen, wenigstens einige Dokumente zu retten',
+                    moralEffect: 1,
+                    nextScene: 'save_some_docs_2',
+                    feedback: 'Später Mut ist besser als gar keiner. Der Versuch, den Fehler wiedergutzumachen, zeigt Reue. (+1)'
+                },
+                {
+                    text: 'Aufgeben und das Haus verlassen',
+                    moralEffect: -2,
+                    nextScene: 'give_up_2',
+                    feedback: 'Nach einem Fehler aufzugeben multipliziert den Schaden. Resignation ist der Tod der Hoffnung. (-2)'
+                }
+            ]
+        },
+
+        'confront_threat_2': {
+            chapter: 2,
+            image: 'https://picsum.photos/seed/confrontation/1200/400?grayscale',
+            text: 'Der Anführer lacht kalt. "Nehmen Sie es, wie Sie wollen. Grautal gehört bald uns." Nach ihrem Abgang findest du einen USB-Stick, den einer der Männer verloren hat. Er enthält interne OmniCorp-Dokumente - ein unerwarteter Glücksfall.',
+            choices: [
+                {
+                    text: 'Die Daten sofort an die Widerstandsgruppe weitergeben',
+                    moralEffect: 1,
+                    nextScene: 'share_data_2',
+                    feedback: 'Wichtige Informationen mit Verbündeten zu teilen stärkt den gemeinsamen Widerstand. Transparenz schafft Vertrauen. (+1)'
+                },
+                {
+                    text: 'Die Daten erst gründlich analysieren',
+                    moralEffect: 0,
+                    nextScene: 'analyze_data_2',
+                    feedback: 'Vorsicht ist gut, aber zu langes Zögern kann Chancen verpassen.'
+                },
+                {
+                    text: 'Überlegen, ob man die Daten an OmniCorp verkaufen könnte',
+                    moralEffect: -2,
+                    nextScene: 'consider_selling_2',
+                    feedback: 'Auch nur zu erwägen, aus dem Leid anderer Profit zu schlagen, zeigt moralische Verkommenheit. (-2)'
+                }
+            ]
+        },
+
+        'trust_elara_2': {
+            chapter: 2,
+            image: 'https://picsum.photos/seed/secret-library/1200/400?grayscale',
+            text: 'Elara führt dich zur alten Bibliothek. Im Keller hat die Widerstandsgruppe ein geheimes Hauptquartier eingerichtet. Dutzende Menschen arbeiten hier, sammeln Beweise, planen Aktionen. "Willkommen im echten Grautal", sagt Elara.',
+            choices: [
+                {
+                    text: 'Sofort deine Hilfe und die Dokumente anbieten',
+                    moralEffect: 1,
+                    nextScene: 'offer_immediate_help_2',
+                    feedback: 'Ressourcen und Wissen bereitwillig zu teilen zeigt wahre Gemeinschaftsgesinnung. (+1)'
+                },
+                {
+                    text: 'Erst mehr über die Gruppe erfahren wollen',
+                    moralEffect: 0,
+                    nextScene: 'learn_about_group_2',
+                    feedback: 'Vorsicht ist verständlich, kann aber als Misstrauen interpretiert werden.'
+                },
+                {
+                    text: 'Nach einer Führungsposition in der Gruppe fragen',
+                    moralEffect: -2,
+                    nextScene: 'seek_power_2',
+                    feedback: 'Sofort nach Macht zu streben, statt zu dienen, offenbart egoistische Motive. Wahre Führung muss verdient werden. (-2)'
+                }
+            ]
+        },
+
+        'share_data_2': {
+            chapter: 2,
+            image: 'https://picsum.photos/seed/data-sharing/1200/400?grayscale',
+            text: 'Die Widerstandsgruppe ist elektrisiert. Die Daten enthüllen, dass OmniCorp plant, das Wasser mit Chemikalien zu versetzen, um die Bevölkerung gefügig zu machen. Thomas schlägt vor: "Wir könnten das sofort veröffentlichen oder einen Journalisten einschalten."',
+            choices: [
+                {
+                    text: 'Für sofortige Veröffentlichung plädieren',
+                    moralEffect: 1,
+                    nextScene: 'immediate_publish_2',
+                    feedback: 'Die Wahrheit schnell ans Licht zu bringen kann Leben retten. Mut zur Aktion ist lobenswert. (+1)'
+                },
+                {
+                    text: 'Einen vertrauenswürdigen Journalisten suchen',
+                    moralEffect: 1,
+                    nextScene: 'find_journalist_2',
+                    feedback: 'Professionelle Hilfe zu suchen zeigt Weisheit. Die Wahrheit braucht manchmal die richtigen Kanäle. (+1)'
+                },
+                {
+                    text: 'Vorschlagen, OmniCorp damit zu erpressen',
+                    moralEffect: -2,
+                    nextScene: 'suggest_blackmail_2',
+                    feedback: 'Erpressung, selbst gegen Verbrecher, korrumpiert die eigene Moral. Der Zweck heiligt nicht die Mittel. (-2)'
+                }
+            ]
+        },
+
+        'offer_immediate_help_2': {
+            chapter: 2,
+            image: 'https://picsum.photos/seed/resistance-meeting/1200/400?grayscale',
+            text: 'Die Gruppe nimmt dich warmherzig auf. Du erfährst, dass sie einen Plan haben: In drei Tagen will OmniCorp einen Vertrag mit der Stadtverwaltung unterzeichnen. Die Gruppe plant eine friedliche Blockade. Aber einige Mitglieder wollen radikalere Maßnahmen.',
+            choices: [
+                {
+                    text: 'Für friedlichen Protest eintreten',
+                    moralEffect: 1,
+                    nextScene: 'peaceful_protest_2',
+                    feedback: 'Gewaltloser Widerstand nach dem Vorbild Gandhi und King zeigt moralische Überlegenheit. (+1)'
+                },
+                {
+                    text: 'Die radikaleren Methoden unterstützen',
+                    moralEffect: -2,
+                    nextScene: 'support_radical_2',
+                    feedback: 'Gewalt als Mittel zu akzeptieren, selbst für gute Zwecke, korrumpiert die Sache und legitimiert Gegengewalt. (-2)'
+                },
+                {
+                    text: 'Einen Mittelweg vorschlagen',
+                    moralEffect: 0,
+                    nextScene: 'middle_ground_2',
+                    feedback: 'Kompromisse können weise sein, aber manchmal verwässern sie auch klare moralische Positionen.'
+                }
+            ]
+        },
+
+        'immediate_publish_2': {
+            chapter: 2,
+            image: 'https://picsum.photos/seed/viral-truth/1200/400?grayscale',
+            text: 'Die Veröffentlichung schlägt ein wie eine Bombe. Innerhalb von Stunden geht die Nachricht viral. OmniCorp dementiert, aber die Beweise sind eindeutig. In der Nacht brennt die Bibliothek - ein klarer Racheakt.',
+            choices: [
+                {
+                    text: 'Bei den Löscharbeiten helfen und Menschen retten',
+                    moralEffect: 1,
+                    nextScene: 'help_fire_2',
+                    feedback: 'In Gefahr anderen zu helfen zeigt wahren Heldenmut. Das Leben anderer über die eigene Sicherheit zu stellen ist höchste Moral. (+1)'
+                },
+                {
+                    text: 'Wichtige Dokumente aus dem Feuer retten',
+                    moralEffect: 1,
+                    nextScene: 'save_documents_2',
+                    feedback: 'Das Bewahren von Wissen und Beweisen für die Zukunft ist ein wichtiger Dienst an der Gemeinschaft. (+1)'
+                },
+                {
+                    text: 'Aus Angst vor weiterer Vergeltung untertauchen',
+                    moralEffect: -2,
+                    nextScene: 'hide_fear_2',
+                    feedback: 'In der Stunde der Not seine Verbündeten im Stich zu lassen ist Verrat. Angst darf nicht über Loyalität siegen. (-2)'
+                }
+            ]
+        },
+
+        'peaceful_protest_2': {
+            chapter: 2,
+            image: 'https://picsum.photos/seed/peaceful-march/1200/400?grayscale',
+            text: 'Der Tag der Blockade kommt. Hunderte Bürger versammeln sich friedlich vor dem Rathaus. Du stehst in der ersten Reihe. Die Polizei rückt an, auch OmniCorp-Sicherheitskräfte sind dabei. Die Spannung ist greifbar.',
+            choices: [
+                {
+                    text: 'Die Menge zu Ruhe und Gewaltlosigkeit aufrufen',
+                    moralEffect: 1,
+                    nextScene: 'call_for_peace_2',
+                    feedback: 'In angespannten Situationen Besonnenheit zu zeigen und andere zur Ruhe zu mahnen zeigt Führungsqualität und Moral. (+1)'
+                },
+                {
+                    text: 'Dich schützend vor die Älteren und Kinder stellen',
+                    moralEffect: 1,
+                    nextScene: 'protect_vulnerable_2',
+                    feedback: 'Die Schwächsten zu schützen ist eine der höchsten moralischen Pflichten. Selbstlosigkeit definiert Heldentum. (+1)'
+                },
+                {
+                    text: 'Bei ersten Anzeichen von Gewalt fliehen',
+                    moralEffect: -2,
+                    nextScene: 'flee_early_2',
+                    feedback: 'Seine Mitstreiter bei der ersten Gefahr im Stich zu lassen ist Feigheit. Solidarität erfordert Standhaftigkeit. (-2)'
+                }
+            ]
+        },
+
+        // Übergang zu Kapitel 3
+        'help_fire_2': {
+            chapter: 2,
+            image: 'https://picsum.photos/seed/fire-rescue/1200/400?grayscale',
+            text: 'Du rettest drei Menschen aus den Flammen, darunter ein Kind. Die Gemeinschaft sieht in dir nun einen Helden. Am nächsten Morgen kommt eine unerwartete Nachricht: Der CEO von OmniCorp will sich mit dir treffen. "Allein", steht in der Nachricht.',
+            choices: [
+                {
+                    text: 'Das Treffen ablehnen - es ist eine Falle',
+                    moralEffect: 0,
+                    nextScene: 'refuse_meeting_3',
+                    feedback: 'Vorsicht ist berechtigt, aber manchmal muss man Risiken eingehen, um voranzukommen.'
+                },
+                {
+                    text: 'Zusagen, aber Backup organisieren',
+                    moralEffect: 1,
+                    nextScene: 'meeting_with_backup_3',
+                    feedback: 'Klug vorbereitet in Gefahr zu gehen zeigt Mut und Weisheit. Du riskierst etwas für möglichen Fortschritt. (+1)'
+                },
+                {
+                    text: 'Heimlich zusagen, ohne es der Gruppe zu sagen',
+                    moralEffect: -2,
+                    nextScene: 'secret_meeting_3',
+                    feedback: 'Deine Verbündeten zu hintergehen und Alleingänge zu machen zerstört Vertrauen und gefährdet alle. (-2)'
+                }
+            ]
+        },
+
+        // KAPITEL 3: DIE ENTSCHEIDUNG (Entscheidungen 25-36)
+        'meeting_with_backup_3': {
+            chapter: 3,
+            image: 'https://picsum.photos/seed/corporate-meeting/1200/400?grayscale',
+            text: 'Du triffst Victor Steinberg, den CEO von OmniCorp, in einem Luxushotel. Er ist überraschend charismatisch. "Ich bewundere Ihren Mut", sagt er. "Aber Sie kämpfen gegen Windmühlen. Ich biete Ihnen einen Deal: Arbeiten Sie für uns. Reformieren Sie OmniCorp von innen. Mit Ihrer Integrität könnten wir Großes bewirken."',
+            choices: [
+                {
+                    text: 'Das Angebot entschieden ablehnen',
+                    moralEffect: 1,
+                    nextScene: 'reject_offer_3',
+                    feedback: 'Bestechung, auch in Form von Macht, abzulehnen zeigt unbestechlichen Charakter. Integrität ist unbezahlbar. (+1)'
+                },
+                {
+                    text: 'Scheinbar interessiert nachfragen, um Informationen zu sammeln',
+                    moralEffect: 0,
+                    nextScene: 'pretend_interest_3',
+                    feedback: 'List kann ein Werkzeug des Guten sein, aber Täuschung birgt immer moralische Risiken.'
+                },
+                {
+                    text: 'Das Angebot ernsthaft in Erwägung ziehen',
+                    moralEffect: -2,
+                    nextScene: 'consider_joining_3',
+                    feedback: 'Sich vom Feind kaufen zu lassen, egal mit welcher Rechtfertigung, ist Verrat an allem, wofür du gekämpft hast. (-2)'
+                }
+            ]
+        },
+
+        'refuse_meeting_3': {
+            chapter: 3,
+            image: 'https://picsum.photos/seed/planning-room/1200/400?grayscale',
+            text: 'Du lehnst ab und die Gruppe respektiert deine Vorsicht. Stattdessen plant ihr die nächste Aktion: Die Wasserproben aus verschiedenen Quellen sollen analysiert werden. Jemand muss sich nachts in die OmniCorp-Anlage schleichen.',
+            choices: [
+                {
+                    text: 'Sich freiwillig für die gefährliche Mission melden',
+                    moralEffect: 1,
+                    nextScene: 'volunteer_mission_3',
+                    feedback: 'Persönliches Risiko für das Gemeinwohl auf sich zu nehmen zeigt wahren Mut und Selbstlosigkeit. (+1)'
+                },
+                {
+                    text: 'Einen sichereren Weg vorschlagen',
+                    moralEffect: 0,
+                    nextScene: 'suggest_safer_3',
+                    feedback: 'Vorsicht kann Weisheit sein, aber manchmal erfordern außergewöhnliche Umstände außergewöhnlichen Mut.'
+                },
+                {
+                    text: 'Andere vorschicken und selbst im Hintergrund bleiben',
+                    moralEffect: -2,
+                    nextScene: 'stay_background_3',
+                    feedback: 'Andere in Gefahr zu schicken, während man selbst in Sicherheit bleibt, ist Feigheit und Manipulation. (-2)'
+                }
+            ]
+        },
+
+        'secret_meeting_3': {
+            chapter: 3,
+            image: 'https://picsum.photos/seed/dark-alley/1200/400?grayscale',
+            text: 'Das Treffen ist eine Falle. OmniCorps Sicherheitskräfte überwältigen dich. Du wachst in einem kahlen Raum auf. Steinberg persönlich verhört dich: "Wo sind die restlichen Dokumente? Wer sind Ihre Mitstreiter?" Er droht, deine Freunde zu verletzen.',
+            choices: [
+                {
+                    text: 'Standhaft schweigen, egal was passiert',
+                    moralEffect: 1,
+                    nextScene: 'stay_silent_3',
+                    feedback: 'Unter Folter zu schweigen und seine Freunde zu schützen zeigt höchste moralische Stärke und Loyalität. (+1)'
+                },
+                {
+                    text: 'Falsche Informationen geben',
+                    moralEffect: 0,
+                    nextScene: 'give_false_info_3',
+                    feedback: 'List gegen Unterdrücker ist vertretbar, aber Lügen bleibt moralisch zwiespältig.'
+                },
+                {
+                    text: 'Alles verraten aus Angst',
+                    moralEffect: -2,
+                    nextScene: 'betray_all_3',
+                    feedback: 'Seine Verbündeten zu verraten ist der ultimative moralische Bankrott. Angst rechtfertigt keinen Verrat. (-2)'
+                }
+            ]
+        },
+
+        'reject_offer_3': {
+            chapter: 3,
+            image: 'https://picsum.photos/seed/standing-ground/1200/400?grayscale',
+            text: 'Steinberg lächelt kalt. "Schade. Dann müssen wir wohl härtere Methoden anwenden." In den folgenden Tagen eskaliert OmniCorp: Aktivisten verschwinden, Familien werden bedroht. Die Gruppe steht vor der Wahl: Aufgeben oder zum Äußersten greifen.',
+            choices: [
+                {
+                    text: 'Für Durchhalten und gewaltlosen Widerstand plädieren',
+                    moralEffect: 1,
+                    nextScene: 'advocate_nonviolence_3',
+                    feedback: 'An Prinzipien festzuhalten, wenn es am schwersten ist, zeigt wahre moralische Größe. (+1)'
+                },
+                {
+                    text: 'Einen Kompromiss mit OmniCorp suchen',
+                    moralEffect: 0,
+                    nextScene: 'seek_compromise_3',
+                    feedback: 'Kompromisse können Leben retten, aber auch Prinzipien verraten. Eine schwierige Gratwanderung.'
+                },
+                {
+                    text: 'Zur Gewalt aufrufen',
+                    moralEffect: -2,
+                    nextScene: 'call_violence_3',
+                    feedback: 'Gewalt zu propagieren macht dich nicht besser als deine Gegner. Du verrätst alles, wofür ihr steht. (-2)'
+                }
+            ]
+        },
+
+        'volunteer_mission_3': {
+            chapter: 3,
+            image: 'https://picsum.photos/seed/night-infiltration/1200/400?grayscale',
+            text: 'In der Dunkelheit schleichst du dich zur Anlage. Die Wasserproben, die du nimmst, sind der endgültige Beweis: OmniCorp vergiftet systematisch das Grundwasser. Auf dem Rückweg wirst du entdeckt. Ein Wachmann zielt auf dich.',
+            choices: [
+                {
+                    text: 'Versuchen, den Wachmann zu überzeugen',
+                    moralEffect: 1,
+                    nextScene: 'convince_guard_3',
+                    feedback: 'Auch in Feinden das Menschliche zu suchen und an ihr Gewissen zu appellieren zeigt moralische Größe. (+1)'
+                },
+                {
+                    text: 'Fliehen und die Beweise retten',
+                    moralEffect: 0,
+                    nextScene: 'flee_with_evidence_3',
+                    feedback: 'Pragmatismus hat seinen Platz. Die Beweise zu retten kann vielen helfen.'
+                },
+                {
+                    text: 'Den Wachmann angreifen',
+                    moralEffect: -2,
+                    nextScene: 'attack_guard_3',
+                    feedback: 'Zur Gewalt zu greifen macht dich zum Aggressor. Es gibt fast immer gewaltfreie Alternativen. (-2)'
+                }
+            ]
+        },
+
+        'advocate_nonviolence_3': {
+            chapter: 3,
+            image: 'https://picsum.photos/seed/peaceful-resistance/1200/400?grayscale',
+            text: 'Deine Worte inspirieren die Gruppe. Ihr organisiert einen Hungerstreik vor dem Rathaus. Die Bilder von friedlichen, aber entschlossenen Bürgern gehen um die Welt. Internationale Medien werden aufmerksam. Der Druck auf OmniCorp wächst.',
+            choices: [
+                {
+                    text: 'Den Hungerstreik anführen',
+                    moralEffect: 1,
+                    nextScene: 'lead_hunger_strike_3',
+                    feedback: 'Mit gutem Beispiel voranzugehen und persönliche Opfer zu bringen inspiriert andere und zeigt Führungsstärke. (+1)'
+                },
+                {
+                    text: 'Die Medienarbeit koordinieren',
+                    moralEffect: 1,
+                    nextScene: 'coordinate_media_3',
+                    feedback: 'Die Wahrheit in die Welt zu tragen ist ein wichtiger Dienst. Jeder trägt nach seinen Fähigkeiten bei. (+1)'
+                },
+                {
+                    text: 'Heimlich Gespräche mit OmniCorp führen',
+                    moralEffect: -2,
+                    nextScene: 'secret_talks_3',
+                    feedback: 'Hinter dem Rücken deiner hungernden Mitstreiter zu verhandeln ist Verrat an ihrem Opfer. (-2)'
+                }
+            ]
+        },
+
+        'convince_guard_3': {
+            chapter: 3,
+            image: 'https://picsum.photos/seed/moral-appeal/1200/400?grayscale',
+            text: '"Ich habe auch eine Familie", sagst du. "Schauen Sie, was in diesen Proben ist. Ihre Kinder trinken dasselbe Wasser." Der Wachmann zögert, senkt die Waffe. "Verschwinden Sie. Ich habe nichts gesehen." Ein Sieg der Menschlichkeit.',
+            choices: [
+                {
+                    text: 'Ihm danken und deine Kontaktdaten geben',
+                    moralEffect: 1,
+                    nextScene: 'thank_guard_3',
+                    feedback: 'Dankbarkeit zu zeigen und Brücken zu bauen, selbst zu Gegnern, kann Verbündete schaffen. (+1)'
+                },
+                {
+                    text: 'Schnell verschwinden',
+                    moralEffect: 0,
+                    nextScene: 'quick_escape_3',
+                    feedback: 'Vorsicht ist verständlich, aber eine verpasste Chance für menschliche Verbindung.'
+                }
+            ]
+        },
+
+        'lead_hunger_strike_3': {
+            chapter: 3,
+            image: 'https://picsum.photos/seed/hunger-strike/1200/400?grayscale',
+            text: 'Nach sieben Tagen ohne Nahrung bist du schwach, aber dein Geist ist stark. Immer mehr Bürger schließen sich an. Am achten Tag kommt überraschend der Bürgermeister. Er ist sichtlich bewegt: "Ich kann nicht mehr zusehen. Ich werde den Vertrag mit OmniCorp nicht unterzeichnen."',
+            choices: [
+                {
+                    text: 'Ihm vertrauen und den Streik beenden',
+                    moralEffect: 0,
+                    nextScene: 'trust_mayor_3',
+                    feedback: 'Vertrauen zu schenken kann enttäuscht werden, aber ohne Vertrauen gibt es keine Gesellschaft.'
+                },
+                {
+                    text: 'Schriftliche Garantien verlangen',
+                    moralEffect: 1,
+                    nextScene: 'demand_guarantees_3',
+                    feedback: 'Vertrauen ist gut, Kontrolle ist besser. Verbindlichkeit zu fordern schützt die Errungenschaften. (+1)'
+                },
+                {
+                    text: 'Den Streik fortsetzen bis OmniCorp die Stadt verlässt',
+                    moralEffect: 1,
+                    nextScene: 'continue_strike_3',
+                    feedback: 'Konsequenz bis zum Ende zeigt unerschütterliche Prinzipientreue. Halbe Siege sind oft keine Siege. (+1)'
+                }
+            ]
+        },
+
+        // Übergang zu Kapitel 4
+        'demand_guarantees_3': {
+            chapter: 3,
+            image: 'https://picsum.photos/seed/victory-near/1200/400?grayscale',
+            text: 'Der Bürgermeister unterzeichnet öffentlich eine Erklärung. OmniCorp kündigt den "vorläufigen Rückzug" an. Die Stadt feiert, aber du weißt: Der Kampf ist nicht vorbei. In der Nacht findest du einen Brief unter deiner Tür: "Deine Großmutter lebt. Komm allein zum alten Steinbruch. - M."',
+            choices: [
+                {
+                    text: 'Sofort zum Steinbruch gehen',
+                    moralEffect: 0,
+                    nextScene: 'go_quarry_4',
+                    feedback: 'Hoffnung kann blind machen. Vorsicht wäre angebracht, aber die Sehnsucht ist verständlich.'
+                },
+                {
+                    text: 'Die Gruppe informieren und Unterstützung holen',
+                    moralEffect: 1,
+                    nextScene: 'inform_group_4',
+                    feedback: 'Transparenz und Vertrauen in die Gemeinschaft zeigen Weisheit. Gemeinsam ist man stärker. (+1)'
+                },
+                {
+                    text: 'Den Brief ignorieren - es ist eine Falle',
+                    moralEffect: -2,
+                    nextScene: 'ignore_letter_4',
+                    feedback: 'Aus Angst die Chance zu verpassen, einen geliebten Menschen zu retten, ist Feigheit, die man ewig bereut. (-2)'
+                }
+            ]
+        },
+
+        // KAPITEL 4: DIE WAHRHEIT (Entscheidungen 37-45)
+        'inform_group_4': {
+            chapter: 4,
+            image: 'https://picsum.photos/seed/group-decision/1200/400?grayscale',
+            text: 'Die Gruppe ist gespalten. Einige halten es für eine Falle, andere sehen eine Chance. Elara schlägt vor: "Wir begleiten dich, aber bleiben versteckt. Wenn es deine Großmutter ist, wunderbar. Wenn nicht, sind wir da." Thomas hat Bedenken: "Was, wenn sie sie als Geisel haben?"',
+            choices: [
+                {
+                    text: 'Elaras Plan folgen',
+                    moralEffect: 1,
+                    nextScene: 'follow_elara_plan_4',
+                    feedback: 'Einen ausgewogenen Plan zu akzeptieren zeigt Teamfähigkeit und Weisheit. (+1)'
+                },
+                {
+                    text: 'Darauf bestehen, allein zu gehen',
+                    moralEffect: 0,
+                    nextScene: 'insist_alone_4',
+                    feedback: 'Sturheit kann gefährlich sein, aber manchmal muss man seinem Instinkt folgen.'
+                },
+                {
+                    text: 'Die Polizei einschalten',
+                    moralEffect: -2,
+                    nextScene: 'call_police_4',
+                    feedback: 'Die korrupte Polizei einzuschalten gefährdet alle. Naivität gegenüber Machtstrukturen ist gefährlich. (-2)'
+                }
+            ]
+        },
+
+        'go_quarry_4': {
+            chapter: 4,
+            image: 'https://picsum.photos/seed/abandoned-quarry/1200/400?grayscale',
+            text: 'Der verlassene Steinbruch liegt im Mondlicht. Eine gebeugte Gestalt wartet - es ist tatsächlich deine Großmutter! Sie ist gealtert, aber ihre Augen leuchten. "Kind, ich musste untertauchen. OmniCorp... sie sind nur die Spitze des Eisbergs. Es gibt ein Netzwerk, das viel größer ist."',
+            choices: [
+                {
+                    text: 'Sie umarmen und nach ihrer Geschichte fragen',
+                    moralEffect: 1,
+                    nextScene: 'embrace_grandma_4',
+                    feedback: 'Liebe und Mitgefühl zu zeigen, bevor man nach Informationen fragt, zeigt wahre Menschlichkeit. (+1)'
+                },
+                {
+                    text: 'Sofort nach Beweisen fragen',
+                    moralEffect: 0,
+                    nextScene: 'ask_evidence_4',
+                    feedback: 'Pragmatismus ist verständlich, aber manchmal sind menschliche Momente wichtiger als Effizienz.'
+                },
+                {
+                    text: 'Misstrauisch bleiben - es könnte eine Täuschung sein',
+                    moralEffect: -2,
+                    nextScene: 'stay_suspicious_4',
+                    feedback: 'Paranoia und Misstrauen gegenüber Liebenden zerstört die Seele. Ohne Vertrauen wird man zum Einzelgänger. (-2)'
+                }
+            ]
+        },
+
+        'follow_elara_plan_4': {
+            chapter: 4,
+            image: 'https://picsum.photos/seed/hidden-support/1200/400?grayscale',
+            text: 'Mit versteckter Unterstützung gehst du zum Steinbruch. Die Gestalt ist deine Großmutter, aber sie ist nicht allein. OmniCorp-Söldner umzingeln euch. "Es tut mir leid", flüstert sie. "Sie haben mich gezwungen." Deine Freunde greifen ein - ein Kampf entbrennt.',
+            choices: [
+                {
+                    text: 'Deine Großmutter beschützen',
+                    moralEffect: 1,
+                    nextScene: 'protect_grandma_4',
+                    feedback: 'Familie zu schützen, selbst wenn sie einen verraten hat, zeigt bedingungslose Liebe und Vergebung. (+1)'
+                },
+                {
+                    text: 'Versuchen, die Situation zu deeskalieren',
+                    moralEffect: 1,
+                    nextScene: 'deescalate_4',
+                    feedback: 'In Gewaltsituationen Frieden zu suchen zeigt außergewöhnliche moralische Stärke. (+1)'
+                },
+                {
+                    text: 'Fliehen und alle anderen zurücklassen',
+                    moralEffect: -2,
+                    nextScene: 'abandon_all_4',
+                    feedback: 'In der größten Gefahr alle im Stich zu lassen ist ultimative Feigheit und Selbstsucht. (-2)'
+                }
+            ]
+        },
+
+        'embrace_grandma_4': {
+            chapter: 4,
+            image: 'https://picsum.photos/seed/family-reunion/1200/400?grayscale',
+            text: 'In deinen Armen bricht deine Großmutter in Tränen aus. "Ich habe so viel aufgedeckt. Es geht um mehr als Wasser - sie wollen die komplette Kontrolle. Aber ich habe alle Beweise. Regierungsdokumente, Verbindungen zu anderen Städten... Wir können sie stoppen, aber es wird gefährlich."',
+            choices: [
+                {
+                    text: 'Versprechen, gemeinsam zu kämpfen',
+                    moralEffect: 1,
+                    nextScene: 'promise_fight_together_4',
+                    feedback: 'Familienbande für das Gute zu nutzen multipliziert die Kraft. Gemeinsam stark zu sein ist ein hohes Gut. (+1)'
+                },
+                {
+                    text: 'Sie bitten, sich weiter zu verstecken',
+                    moralEffect: 0,
+                    nextScene: 'ask_hide_4',
+                    feedback: 'Fürsorglichkeit ist gut, kann aber auch entmündigen. Jeder muss selbst entscheiden dürfen.'
+                },
+                {
+                    text: 'Die Beweise nehmen und sie in Sicherheit bringen',
+                    moralEffect: -2,
+                    nextScene: 'take_evidence_leave_4',
+                    feedback: 'Die eigene Familie für Informationen auszunutzen und dann zu verlassen ist gefühlskalt und egoistisch. (-2)'
+                }
+            ]
+        },
+
+        'protect_grandma_4': {
+            chapter: 4,
+            image: 'https://picsum.photos/seed/protection-fight/1200/400?grayscale',
+            text: 'Du stellst dich schützend vor deine Großmutter. Ein Söldner zielt auf euch. Elara wirft sich dazwischen und wird getroffen. Das Chaos gibt euch die Chance zu fliehen. Im Versteck ringt Elara mit dem Tod. "Es war... die richtige Entscheidung", flüstert sie.',
+            choices: [
+                {
+                    text: 'Bei Elara bleiben und sie versorgen',
+                    moralEffect: 1,
+                    nextScene: 'stay_with_elara_4',
+                    feedback: 'Für Verletzte zu sorgen, auch wenn es die Mission gefährdet, zeigt wahre Menschlichkeit. (+1)'
+                },
+                {
+                    text: 'Einen Arzt holen, trotz der Gefahr',
+                    moralEffect: 1,
+                    nextScene: 'get_doctor_4',
+                    feedback: 'Risiken für das Leben anderer einzugehen beweist selbstlose Courage. (+1)'
+                },
+                {
+                    text: 'Elara zurücklassen, um die Mission fortzusetzen',
+                    moralEffect: -2,
+                    nextScene: 'leave_elara_4',
+                    feedback: 'Verwundete Kameraden zurückzulassen ist unverzeihlich. Die Mission rechtfertigt niemals solche Grausamkeit. (-2)'
+                }
+            ]
+        },
+
+        'promise_fight_together_4': {
+            chapter: 4,
+            image: 'https://picsum.photos/seed/united-front/1200/400?grayscale',
+            text: 'Mit den Beweisen deiner Großmutter habt ihr genug, um das gesamte Korruptionsnetzwerk zu enthüllen. Aber OmniCorp hat Wind bekommen. Sie bieten einen letzten Deal an: Alle Anklagen fallen lassen, die Stadt in Ruhe lassen, dafür die Beweise vernichten. Oder alles riskieren für vollständige Gerechtigkeit.',
+            choices: [
+                {
+                    text: 'Auf vollständige Gerechtigkeit bestehen',
+                    moralEffect: 1,
+                    nextScene: 'demand_full_justice_4',
+                    feedback: 'Kompromisslos für Gerechtigkeit einzustehen, auch wenn es gefährlich ist, zeigt höchste moralische Integrität. (+1)'
+                },
+                {
+                    text: 'Den Deal annehmen, um die Stadt zu schützen',
+                    moralEffect: 0,
+                    nextScene: 'accept_deal_4',
+                    feedback: 'Pragmatische Entscheidungen können Leben retten, lassen aber Unrecht ungesühnt.'
+                },
+                {
+                    text: 'Vorgeben anzunehmen, aber die Beweise trotzdem veröffentlichen',
+                    moralEffect: -2,
+                    nextScene: 'fake_accept_4',
+                    feedback: 'Wortbruch, selbst gegenüber Verbrechern, untergräbt die eigene moralische Autorität. Der Zweck heiligt nicht die Mittel. (-2)'
+                }
+            ]
+        },
+
+        'stay_with_elara_4': {
+            chapter: 4,
+            image: 'https://picsum.photos/seed/bedside-vigil/1200/400?grayscale',
+            text: 'Du bleibst bei Elara, presst deine Hände auf ihre Wunde. Deine Großmutter organisiert heimlich einen vertrauenswürdigen Arzt. Elara überlebt knapp. Während ihrer Genesung plant ihr den finalen Schlag gegen OmniCorp. Die Zeit drängt - sie mobilisieren ihre Kräfte.',
+            choices: [
+                {
+                    text: 'Eine öffentliche Enthüllung vor der UN planen',
+                    moralEffect: 1,
+                    nextScene: 'plan_un_reveal_4',
+                    feedback: 'Die internationale Gemeinschaft einzubeziehen zeigt Weitsicht. Gerechtigkeit kennt keine Grenzen. (+1)'
+                },
+                {
+                    text: 'Die Beweise an mehrere Medien gleichzeitig senden',
+                    moralEffect: 1,
+                    nextScene: 'media_blast_4',
+                    feedback: 'Die Macht der freien Presse zu nutzen stärkt die Demokratie. Transparenz ist der Feind der Korruption. (+1)'
+                },
+                {
+                    text: 'Einen Deal mit OmniCorps Konkurrenten machen',
+                    moralEffect: -2,
+                    nextScene: 'competitor_deal_4',
+                    feedback: 'Ein Übel durch ein anderes zu ersetzen löst nichts. Solche Deals perpetuieren nur das korrupte System. (-2)'
+                }
+            ]
+        },
+
+        'demand_full_justice_4': {
+            chapter: 4,
+            image: 'https://picsum.photos/seed/justice-scales/1200/400?grayscale',
+            text: 'Du lehnst jeden Kompromiss ab. Die Veröffentlichung der Beweise löst ein Erdbeben aus. Verhaftungen folgen, das Korruptionsnetzwerk bricht zusammen. Aber OmniCorp schlägt zurück - Morddrohungen, Anschläge. Die finale Konfrontation steht bevor.',
+            choices: [
+                {
+                    text: 'Öffentlich als Zeuge aussagen, trotz der Gefahr',
+                    moralEffect: 1,
+                    nextScene: 'public_testimony_4',
+                    feedback: 'Die Wahrheit öffentlich zu bezeugen, trotz Todesgefahr, ist höchster moralischer Mut. (+1)'
+                },
+                {
+                    text: 'Im Untergrund weiter kämpfen',
+                    moralEffect: 0,
+                    nextScene: 'underground_fight_4',
+                    feedback: 'Manchmal erfordert der Kampf für Gerechtigkeit Schatten, aber es fehlt die inspirierende Kraft des offenen Widerstands.'
+                },
+                {
+                    text: 'Ins Exil gehen und von dort aus kämpfen',
+                    moralEffect: -2,
+                    nextScene: 'flee_exile_4',
+                    feedback: 'Seine Gemeinschaft in der Stunde der Not zu verlassen ist Verrat. Fernkampf ist Feigheit. (-2)'
+                }
+            ]
+        },
+
+        // Die finalen Szenen (Entscheidungen 43-45)
+        'plan_un_reveal_4': {
+            chapter: 4,
+            image: 'https://picsum.photos/seed/un-assembly/1200/400?grayscale',
+            text: 'Dank Elaras internationaler Kontakte bekommt ihr eine Anhörung vor der UN-Menschenrechtskommission. Die Weltöffentlichkeit schaut zu. OmniCorp mobilisiert alle Kräfte, um euch zu stoppen. Am Tag vor der Anhörung kommt ein letztes Angebot: Unermesslicher Reichtum für euer Schweigen.',
+            choices: [
+                {
+                    text: 'Das Angebot empört ablehnen',
+                    moralEffect: 1,
+                    nextScene: 'reject_final_offer',
+                    feedback: 'In der entscheidenden Stunde unbestechlich zu bleiben krönt einen moralischen Lebensweg. (+1)'
+                },
+                {
+                    text: 'Das Geld nehmen und trotzdem aussagen',
+                    moralEffect: -2,
+                    nextScene: 'take_money_betray',
+                    feedback: 'Geld zu nehmen korrumpiert, egal was man danach tut. Die Reinheit der Sache ist für immer befleckt. (-2)'
+                }
+            ]
+        },
+
+        'public_testimony_4': {
+            chapter: 4,
+            image: 'https://picsum.photos/seed/courtroom-testimony/1200/400?grayscale',
+            text: 'Im überfüllten Gerichtssaal stehst du auf. Deine Stimme zittert erst, wird dann fest. Du erzählst alles - von deiner Großmutter, vom Widerstand, von den Opfern. Die Beweise sind überwältigend. Als du fertig bist, herrscht Stille. Dann brandender Applaus. Der Richter verkündet: "Schuldig in allen Anklagepunkten."',
+            choices: [
+                {
+                    text: 'Die Opfer ehren und Versöhnung predigen',
+                    moralEffect: 1,
+                    nextScene: 'honor_victims_reconcile',
+                    feedback: 'Nach dem Sieg Versöhnung zu suchen statt Rache zeigt wahre moralische Größe. (+1)'
+                },
+                {
+                    text: 'Volle Bestrafung für alle Täter fordern',
+                    moralEffect: 0,
+                    nextScene: 'demand_punishment',
+                    feedback: 'Gerechtigkeit zu fordern ist legitim, aber Gnade könnte heilsamer sein.'
+                }
+            ]
+        },
+
+        'reject_final_offer': {
+            chapter: 4,
+            image: 'https://picsum.photos/seed/moral-victory/1200/400?grayscale',
+            text: 'Deine Aussage vor der UN wird zur Sensation. Länder verabschieden neue Gesetze gegen Konzernmacht. OmniCorp wird zerschlagen, die Verantwortlichen verhaftet. Grautal wird zum Symbol des Widerstands. Du kehrst zurück, nicht als Held, sondern als Bürgerin einer freien Stadt.',
+            choices: [
+                {
+                    text: 'Ein normales Leben in Grautal beginnen',
+                    moralEffect: 1,
+                    nextScene: 'check_ending',
+                    feedback: 'Nach großen Taten zur Normalität zurückzukehren zeigt Demut. Wahre Helden suchen keinen ewigen Ruhm. (+1)'
+                }
+            ]
+        },
+
+        'honor_victims_reconcile': {
+            chapter: 4,
+            image: 'https://picsum.photos/seed/reconciliation/1200/400?grayscale',
+            text: 'In deiner Schlussrede ehrst du alle Opfer, auch die getäuschten Mitarbeiter von OmniCorp. Du predigst Versöhnung und Neuanfang. Selbst einige ehemalige Gegner sind bewegt. Grautal beginnt zu heilen. Die Wasserquellen werden Gemeingut, die Stadt blüht auf.',
+            choices: [
+                {
+                    text: 'Die Geschichte für die Nachwelt aufschreiben',
+                    moralEffect: 1,
+                    nextScene: 'check_ending',
+                    feedback: 'Die Lehren der Vergangenheit zu bewahren sichert die Zukunft. Wissen ist das Erbe der Menschheit. (+1)'
+                }
+            ]
+        },
+
+        // Platzhalter für weitere Szenen
+        'silent_wait_2': { chapter: 2, image: '', text: 'PLACEHOLDER - Diese Szene muss noch ausgearbeitet werden', choices: [{ text: 'Weiter', moralEffect: 0, nextScene: 'check_ending', feedback: 'Placeholder' }] },
+        'feign_ignorance_2': { chapter: 2, image: '', text: 'PLACEHOLDER', choices: [{ text: 'Weiter', moralEffect: 0, nextScene: 'check_ending', feedback: 'Placeholder' }] },
+        'go_alone_2': { chapter: 2, image: '', text: 'PLACEHOLDER', choices: [{ text: 'Weiter', moralEffect: 0, nextScene: 'check_ending', feedback: 'Placeholder' }] },
+        'save_some_docs_2': { chapter: 2, image: '', text: 'PLACEHOLDER', choices: [{ text: 'Weiter', moralEffect: 0, nextScene: 'check_ending', feedback: 'Placeholder' }] },
+        'give_up_2': { chapter: 2, image: '', text: 'PLACEHOLDER', choices: [{ text: 'Weiter', moralEffect: 0, nextScene: 'check_ending', feedback: 'Placeholder' }] },
+        'analyze_data_2': { chapter: 2, image: '', text: 'PLACEHOLDER', choices: [{ text: 'Weiter', moralEffect: 0, nextScene: 'check_ending', feedback: 'Placeholder' }] },
+        'consider_selling_2': { chapter: 2, image: '', text: 'PLACEHOLDER', choices: [{ text: 'Weiter', moralEffect: 0, nextScene: 'check_ending', feedback: 'Placeholder' }] },
+        'learn_about_group_2': { chapter: 2, image: '', text: 'PLACEHOLDER', choices: [{ text: 'Weiter', moralEffect: 0, nextScene: 'check_ending', feedback: 'Placeholder' }] },
+        'seek_power_2': { chapter: 2, image: '', text: 'PLACEHOLDER', choices: [{ text: 'Weiter', moralEffect: 0, nextScene: 'check_ending', feedback: 'Placeholder' }] },
+        'find_journalist_2': { chapter: 2, image: '', text: 'PLACEHOLDER', choices: [{ text: 'Weiter', moralEffect: 0, nextScene: 'check_ending', feedback: 'Placeholder' }] },
+        'suggest_blackmail_2': { chapter: 2, image: '', text: 'PLACEHOLDER', choices: [{ text: 'Weiter', moralEffect: 0, nextScene: 'check_ending', feedback: 'Placeholder' }] },
+        'support_radical_2': { chapter: 2, image: '', text: 'PLACEHOLDER', choices: [{ text: 'Weiter', moralEffect: 0, nextScene: 'check_ending', feedback: 'Placeholder' }] },
+        'middle_ground_2': { chapter: 2, image: '', text: 'PLACEHOLDER', choices: [{ text: 'Weiter', moralEffect: 0, nextScene: 'check_ending', feedback: 'Placeholder' }] },
+        'save_documents_2': { chapter: 2, image: '', text: 'PLACEHOLDER', choices: [{ text: 'Weiter', moralEffect: 0, nextScene: 'check_ending', feedback: 'Placeholder' }] },
+        'hide_fear_2': { chapter: 2, image: '', text: 'PLACEHOLDER', choices: [{ text: 'Weiter', moralEffect: 0, nextScene: 'check_ending', feedback: 'Placeholder' }] },
+        'call_for_peace_2': { chapter: 2, image: '', text: 'PLACEHOLDER', choices: [{ text: 'Weiter', moralEffect: 0, nextScene: 'check_ending', feedback: 'Placeholder' }] },
+        'protect_vulnerable_2': { chapter: 2, image: '', text: 'PLACEHOLDER', choices: [{ text: 'Weiter', moralEffect: 0, nextScene: 'check_ending', feedback: 'Placeholder' }] },
+        'flee_early_2': { chapter: 2, image: '', text: 'PLACEHOLDER', choices: [{ text: 'Weiter', moralEffect: 0, nextScene: 'check_ending', feedback: 'Placeholder' }] },
+        'pretend_interest_3': { chapter: 3, image: '', text: 'PLACEHOLDER', choices: [{ text: 'Weiter', moralEffect: 0, nextScene: 'check_ending', feedback: 'Placeholder' }] },
+        'consider_joining_3': { chapter: 3, image: '', text: 'PLACEHOLDER', choices: [{ text: 'Weiter', moralEffect: 0, nextScene: 'check_ending', feedback: 'Placeholder' }] },
+        'suggest_safer_3': { chapter: 3, image: '', text: 'PLACEHOLDER', choices: [{ text: 'Weiter', moralEffect: 0, nextScene: 'check_ending', feedback: 'Placeholder' }] },
+        'stay_background_3': { chapter: 3, image: '', text: 'PLACEHOLDER', choices: [{ text: 'Weiter', moralEffect: 0, nextScene: 'check_ending', feedback: 'Placeholder' }] },
+        'stay_silent_3': { chapter: 3, image: '', text: 'PLACEHOLDER', choices: [{ text: 'Weiter', moralEffect: 0, nextScene: 'check_ending', feedback: 'Placeholder' }] },
+        'give_false_info_3': { chapter: 3, image: '', text: 'PLACEHOLDER', choices: [{ text: 'Weiter', moralEffect: 0, nextScene: 'check_ending', feedback: 'Placeholder' }] },
+        'betray_all_3': { chapter: 3, image: '', text: 'PLACEHOLDER', choices: [{ text: 'Weiter', moralEffect: 0, nextScene: 'check_ending', feedback: 'Placeholder' }] },
+        'seek_compromise_3': { chapter: 3, image: '', text: 'PLACEHOLDER', choices: [{ text: 'Weiter', moralEffect: 0, nextScene: 'check_ending', feedback: 'Placeholder' }] },
+        'call_violence_3': { chapter: 3, image: '', text: 'PLACEHOLDER', choices: [{ text: 'Weiter', moralEffect: 0, nextScene: 'check_ending', feedback: 'Placeholder' }] },
+        'flee_with_evidence_3': { chapter: 3, image: '', text: 'PLACEHOLDER', choices: [{ text: 'Weiter', moralEffect: 0, nextScene: 'check_ending', feedback: 'Placeholder' }] },
+        'attack_guard_3': { chapter: 3, image: '', text: 'PLACEHOLDER', choices: [{ text: 'Weiter', moralEffect: 0, nextScene: 'check_ending', feedback: 'Placeholder' }] },
+        'coordinate_media_3': { chapter: 3, image: '', text: 'PLACEHOLDER', choices: [{ text: 'Weiter', moralEffect: 0, nextScene: 'check_ending', feedback: 'Placeholder' }] },
+        'secret_talks_3': { chapter: 3, image: '', text: 'PLACEHOLDER', choices: [{ text: 'Weiter', moralEffect: 0, nextScene: 'check_ending', feedback: 'Placeholder' }] },
+        'thank_guard_3': { chapter: 3, image: '', text: 'PLACEHOLDER', choices: [{ text: 'Weiter', moralEffect: 0, nextScene: 'check_ending', feedback: 'Placeholder' }] },
+        'quick_escape_3': { chapter: 3, image: '', text: 'PLACEHOLDER', choices: [{ text: 'Weiter', moralEffect: 0, nextScene: 'check_ending', feedback: 'Placeholder' }] },
+        'trust_mayor_3': { chapter: 3, image: '', text: 'PLACEHOLDER', choices: [{ text: 'Weiter', moralEffect: 0, nextScene: 'check_ending', feedback: 'Placeholder' }] },
+        'continue_strike_3': { chapter: 3, image: '', text: 'PLACEHOLDER', choices: [{ text: 'Weiter', moralEffect: 0, nextScene: 'check_ending', feedback: 'Placeholder' }] },
+        'go_quarry_4': { chapter: 4, image: '', text: 'PLACEHOLDER', choices: [{ text: 'Weiter', moralEffect: 0, nextScene: 'check_ending', feedback: 'Placeholder' }] },
+        'ignore_letter_4': { chapter: 4, image: '', text: 'PLACEHOLDER', choices: [{ text: 'Weiter', moralEffect: 0, nextScene: 'check_ending', feedback: 'Placeholder' }] },
+        'insist_alone_4': { chapter: 4, image: '', text: 'PLACEHOLDER', choices: [{ text: 'Weiter', moralEffect: 0, nextScene: 'check_ending', feedback: 'Placeholder' }] },
+        'call_police_4': { chapter: 4, image: '', text: 'PLACEHOLDER', choices: [{ text: 'Weiter', moralEffect: 0, nextScene: 'check_ending', feedback: 'Placeholder' }] },
+        'ask_evidence_4': { chapter: 4, image: '', text: 'PLACEHOLDER', choices: [{ text: 'Weiter', moralEffect: 0, nextScene: 'check_ending', feedback: 'Placeholder' }] },
+        'stay_suspicious_4': { chapter: 4, image: '', text: 'PLACEHOLDER', choices: [{ text: 'Weiter', moralEffect: 0, nextScene: 'check_ending', feedback: 'Placeholder' }] },
+        'deescalate_4': { chapter: 4, image: '', text: 'PLACEHOLDER', choices: [{ text: 'Weiter', moralEffect: 0, nextScene: 'check_ending', feedback: 'Placeholder' }] },
+        'abandon_all_4': { chapter: 4, image: '', text: 'PLACEHOLDER', choices: [{ text: 'Weiter', moralEffect: 0, nextScene: 'check_ending', feedback: 'Placeholder' }] },
+        'ask_hide_4': { chapter: 4, image: '', text: 'PLACEHOLDER', choices: [{ text: 'Weiter', moralEffect: 0, nextScene: 'check_ending', feedback: 'Placeholder' }] },
+        'take_evidence_leave_4': { chapter: 4, image: '', text: 'PLACEHOLDER', choices: [{ text: 'Weiter', moralEffect: 0, nextScene: 'check_ending', feedback: 'Placeholder' }] },
+        'get_doctor_4': { chapter: 4, image: '', text: 'PLACEHOLDER', choices: [{ text: 'Weiter', moralEffect: 0, nextScene: 'check_ending', feedback: 'Placeholder' }] },
+        'leave_elara_4': { chapter: 4, image: '', text: 'PLACEHOLDER', choices: [{ text: 'Weiter', moralEffect: 0, nextScene: 'check_ending', feedback: 'Placeholder' }] },
+        'accept_deal_4': { chapter: 4, image: '', text: 'PLACEHOLDER', choices: [{ text: 'Weiter', moralEffect: 0, nextScene: 'check_ending', feedback: 'Placeholder' }] },
+        'fake_accept_4': { chapter: 4, image: '', text: 'PLACEHOLDER', choices: [{ text: 'Weiter', moralEffect: 0, nextScene: 'check_ending', feedback: 'Placeholder' }] },
+        'media_blast_4': { chapter: 4, image: '', text: 'PLACEHOLDER', choices: [{ text: 'Weiter', moralEffect: 0, nextScene: 'check_ending', feedback: 'Placeholder' }] },
+        'competitor_deal_4': { chapter: 4, image: '', text: 'PLACEHOLDER', choices: [{ text: 'Weiter', moralEffect: 0, nextScene: 'check_ending', feedback: 'Placeholder' }] },
+        'underground_fight_4': { chapter: 4, image: '', text: 'PLACEHOLDER', choices: [{ text: 'Weiter', moralEffect: 0, nextScene: 'check_ending', feedback: 'Placeholder' }] },
+        'flee_exile_4': { chapter: 4, image: '', text: 'PLACEHOLDER', choices: [{ text: 'Weiter', moralEffect: 0, nextScene: 'check_ending', feedback: 'Placeholder' }] },
+        'take_money_betray': { chapter: 4, image: '', text: 'PLACEHOLDER', choices: [{ text: 'Weiter', moralEffect: 0, nextScene: 'check_ending', feedback: 'Placeholder' }] },
+        'demand_punishment': { chapter: 4, image: '', text: 'PLACEHOLDER', choices: [{ text: 'Weiter', moralEffect: 0, nextScene: 'check_ending', feedback: 'Placeholder' }] },
+
+        // Noch fehlende Szenen aus Kapitel 1
+        'return_help_1': { chapter: 1, image: '', text: 'PLACEHOLDER', choices: [{ text: 'Weiter', moralEffect: 0, nextScene: 'check_ending', feedback: 'Placeholder' }] },
+        'ignore_guilt_1': { chapter: 1, image: '', text: 'PLACEHOLDER', choices: [{ text: 'Weiter', moralEffect: 0, nextScene: 'check_ending', feedback: 'Placeholder' }] },
+        'pack_documents_1': { chapter: 1, image: '', text: 'PLACEHOLDER', choices: [{ text: 'Weiter', moralEffect: 0, nextScene: 'check_ending', feedback: 'Placeholder' }] },
+        'social_media_1': { chapter: 1, image: '', text: 'PLACEHOLDER', choices: [{ text: 'Weiter', moralEffect: 0, nextScene: 'check_ending', feedback: 'Placeholder' }] },
+        'read_letter_1': { chapter: 1, image: '', text: 'PLACEHOLDER', choices: [{ text: 'Weiter', moralEffect: 0, nextScene: 'check_ending', feedback: 'Placeholder' }] },
+        'take_album_1': { chapter: 1, image: '', text: 'PLACEHOLDER', choices: [{ text: 'Weiter', moralEffect: 0, nextScene: 'check_ending', feedback: 'Placeholder' }] },
+        'grandma_fate_1': { chapter: 1, image: '', text: 'PLACEHOLDER', choices: [{ text: 'Weiter', moralEffect: 0, nextScene: 'check_ending', feedback: 'Placeholder' }] },
+        'ask_evidence_1': { chapter: 1, image: '', text: 'PLACEHOLDER', choices: [{ text: 'Weiter', moralEffect: 0, nextScene: 'check_ending', feedback: 'Placeholder' }] },
+        'change_topic_1': { chapter: 1, image: '', text: 'PLACEHOLDER', choices: [{ text: 'Weiter', moralEffect: 0, nextScene: 'check_ending', feedback: 'Placeholder' }] },
+        'commit_meeting_1': { chapter: 1, image: '', text: 'PLACEHOLDER', choices: [{ text: 'Weiter', moralEffect: 0, nextScene: 'check_ending', feedback: 'Placeholder' }] },
+        'cautious_commit_1': { chapter: 1, image: '', text: 'PLACEHOLDER', choices: [{ text: 'Weiter', moralEffect: 0, nextScene: 'check_ending', feedback: 'Placeholder' }] },
+        'immediate_help_1': { chapter: 1, image: '', text: 'PLACEHOLDER', choices: [{ text: 'Weiter', moralEffect: 0, nextScene: 'check_ending', feedback: 'Placeholder' }] },
+        'need_info_1': { chapter: 1, image: '', text: 'PLACEHOLDER', choices: [{ text: 'Weiter', moralEffect: 0, nextScene: 'check_ending', feedback: 'Placeholder' }] },
+        'evade_responsibility_1': { chapter: 1, image: '', text: 'PLACEHOLDER', choices: [{ text: 'Weiter', moralEffect: 0, nextScene: 'check_ending', feedback: 'Placeholder' }] },
+        'ask_situation_1': { chapter: 1, image: '', text: 'PLACEHOLDER', choices: [{ text: 'Weiter', moralEffect: 0, nextScene: 'check_ending', feedback: 'Placeholder' }] }
+    };
+
+    // Ende-Definitionen
+    const endings = {
+        // Happy Endings (Moral Score >= 15)
+        'happy_1': {
+            title: 'Der Triumph der Gerechtigkeit',
+            description: 'Deine unerschütterliche Moral hat Grautal gerettet. OmniCorp ist zerschlagen, die Verantwortlichen verurteilt. Die Stadt blüht auf, das Wasser fließt frei. Du wirst zur Bürgermeisterin gewählt und führst Grautal in eine goldene Zukunft. Deine Großmutter, wieder vereint mit dir, sieht stolz zu, wie ihr Lebenswerk Früchte trägt. Die Geschichte von Grautal wird weltweit zum Symbol für erfolgreichen Widerstand gegen Konzernmacht.'
+        },
+        'happy_2': {
+            title: 'Die Geburt einer neuen Welt',
+            description: 'Dein moralischer Kompass hat nicht nur Grautal, sondern die ganze Region transformiert. Ein Netzwerk von Gemeinden folgt eurem Beispiel. Ihr gründet eine Allianz freier Städte, die auf Solidarität und Nachhaltigkeit basiert. Die UN erklärt Grautal zum Weltkulturerbe des Widerstands. Du lebst bescheiden, aber erfüllt, umgeben von einer blühenden Gemeinschaft, die du mitgeschaffen hast.'
+        },
+        'happy_3': {
+            title: 'Das Vermächtnis der Hoffnung',
+            description: 'Durch deine selbstlosen Taten wurde eine Bewegung geboren, die weit über Grautal hinausreicht. Gesetze werden weltweit geändert, um Gemeinden vor Konzernen zu schützen. Du gründest eine Stiftung im Namen deiner Großmutter, die bedrohten Gemeinden hilft. Grautal wird zur Pilgerstätte für Aktivisten. In deinem Haus, nun ein Museum, inspiriert deine Geschichte Generationen.'
+        },
+
+        // Bad Endings (Moral Score <= -15)
+        'bad_1': {
+            title: 'Der Preis des Verrats',
+            description: 'Deine Gier hat dich alles gekostet. OmniCorp hat Grautal verschlungen, die Stadt existiert nur noch als Industriegebiet. Du lebst in einem teuren Apartment, reich aber einsam. Nachts plagen dich Albträume von den Menschen, die du verraten hast. Deine Großmutter hat dich enterbt und verstoßen. Im Spiegel erkennst du dich nicht wieder - aus dem Hoffnungsträger wurde ein Parasit.'
+        },
+        'bad_2': {
+            title: 'Die Einsamkeit der Feigheit',
+            description: 'Deine ständige Flucht vor Verantwortung hat katastrophale Folgen. Grautal ist gefallen, die Widerstandskämpfer tot oder geflohen. Du versteckst dich in einer fremden Stadt, ständig über die Schulter blickend. Die Nachricht vom Tod deiner Großmutter - allein und verlassen - zerbricht dich endgültig. Du bist frei, aber diese Freiheit ist ein Gefängnis aus Schuld und Selbsthass.'
+        },
+        'bad_3': {
+            title: 'Das Echo der Gleichgültigkeit',
+            description: 'Deine moralische Apathie hat Grautal dem Untergang geweiht. Die Stadt ist ein Geisterort, vergiftet und verlassen. Du wanderst ziellos umher, weder Täter noch Opfer, nur ein Schatten. Die wenigen Überlebenden meiden dich - du warst nie grausam genug zum Hassen, aber auch nie mutig genug zum Lieben. In der Stille hörst du manchmal das Echo dessen, was hätte sein können.'
+        },
+
+        // Neutral Endings (basierend auf Mehrheit)
+        'neutral_positive': {
+            title: 'Der steinige Weg zum Licht',
+            description: 'Dein Weg war nicht perfekt, aber deine guten Taten überwiegen. Grautal hat überlebt, wenn auch gezeichnet. OmniCorp zog sich zurück, aber der Preis war hoch. Du hilfst beim Wiederaufbau, geplagt von dem Wissen, dass du mehr hättest tun können. Die Gemeinschaft akzeptiert dich, auch wenn manche deine Fehler nicht vergessen. Es ist kein Triumph, aber auch keine Niederlage - es ist menschlich.'
+        },
+        'neutral_negative': {
+            title: 'Die Last der verpassten Chancen',
+            description: 'Deine Fehler wiegen schwerer als deine guten Taten. Grautal existiert noch, aber als Schatten seiner selbst. Viele sind geflohen, die Verbliebenen misstrauen einander. Du lebst am Rand der Gemeinschaft, weder vollständig ausgestoßen noch wirklich akzeptiert. Jeden Tag siehst du die Konsequenzen deiner Feigheit und fragst dich, ob Vergebung möglich ist - vor allem die eigene.'
+        }
+    };
+
+    // Spielfunktionen
+    function startGame() {
+        gameState = {
+            moralScore: 0,
+            currentScene: 'intro_1',
+            decisionsCount: 0,
+            positiveActions: 0,
+            negativeActions: 0,
+            currentChapter: 1,
+            storyPath: 'main',
+            visitedScenes: new Set(),
+            specialFlags: new Set()
+        };
+
+        document.getElementById('start-screen').classList.add('hidden');
+        document.getElementById('end-screen').classList.add('hidden');
+        document.getElementById('game-play').classList.remove('hidden');
+
+        updateUI();
+        loadScene(gameState.currentScene);
+    }
+
+    function loadScene(sceneId) {
+        const scene = storyData[sceneId];
+        if (!scene) {
+            console.error('Szene nicht gefunden:', sceneId);
+            checkEnding();
+            return;
+        }
+
+        // Update game state
+        gameState.currentScene = sceneId;
+        gameState.visitedScenes.add(sceneId);
+        gameState.currentChapter = scene.chapter || gameState.currentChapter;
+
+        // Update UI elements
+        document.getElementById('chapter-indicator').textContent = `Kapitel ${gameState.currentChapter}`;
+        document.getElementById('scene-text').textContent = scene.text;
+
+        // Update image
+        const sceneImage = document.getElementById('scene-image');
+        sceneImage.style.opacity = '0';
+        if (scene.image) {
+            sceneImage.src = scene.image;
+            sceneImage.onload = () => {
+                sceneImage.style.opacity = '1';
+            };
+        }
+
+        // Clear and populate choices
+        const choicesContainer = document.getElementById('choices-container');
+        choicesContainer.innerHTML = '';
+
+        scene.choices.forEach((choice, index) => {
+            const button = document.createElement('button');
+            button.className = 'choice-button';
+            button.textContent = choice.text;
+            button.onclick = () => makeChoice(choice);
+            choicesContainer.appendChild(button);
+        });
+
+        // Hide feedback
+        document.getElementById('feedback-container').classList.add('hidden');
+
+        // Update progress
+        updateUI();
+    }
+
+    function makeChoice(choice) {
+        // Update statistics
+        gameState.decisionsCount++;
+
+        if (choice.moralEffect !== undefined) {
+            gameState.moralScore += choice.moralEffect;
+
+            if (choice.moralEffect > 0) {
+                gameState.positiveActions++;
+            } else if (choice.moralEffect < 0) {
+                gameState.negativeActions++;
+            }
+        }
+
+        // Show feedback
+        showFeedback(choice);
+
+        // Update UI
+        updateUI();
+
+        // Check for immediate ending conditions
+        if (gameState.moralScore >= 15 || gameState.moralScore <= -15 || gameState.decisionsCount >= 45) {
+            setTimeout(() => checkEnding(), 3000);
+        }
+    }
+
+    function showFeedback(choice) {
+        const feedbackContainer = document.getElementById('feedback-container');
+        const feedbackHeader = document.getElementById('feedback-header');
+        const feedbackText = document.getElementById('feedback-text');
+        const timerDisplay = document.getElementById('timer-display');
+
+        // Set feedback class based on moral effect
+        feedbackContainer.className = '';
+        if (choice.moralEffect > 0) {
+            feedbackContainer.classList.add('feedback-positive');
+            feedbackHeader.textContent = 'Moralisch Gut (+1)';
+        } else if (choice.moralEffect < 0) {
+            feedbackContainer.classList.add('feedback-negative');
+            feedbackHeader.textContent = 'Moralisch Fragwürdig (-2)';
+        } else {
+            feedbackHeader.textContent = 'Neutrale Handlung';
+        }
+
+        feedbackText.textContent = choice.feedback;
+        feedbackContainer.classList.remove('hidden');
+
+        // Disable choice buttons
+        const buttons = document.querySelectorAll('.choice-button');
+        buttons.forEach(btn => btn.disabled = true);
+
+        // Start 30-second timer
+        let timeLeft = 30;
+        timerDisplay.textContent = `Automatisch weiter in ${timeLeft}s`;
+
+        clearInterval(timerInterval);
+        timerInterval = setInterval(() => {
+            timeLeft--;
+            timerDisplay.textContent = `Automatisch weiter in ${timeLeft}s`;
+
+            if (timeLeft <= 0) {
+                clearInterval(timerInterval);
+                continueFeedback();
+            }
+        }, 1000);
+    }
+
+    function continueFeedback() {
+        clearInterval(timerInterval);
+
+        const choice = storyData[gameState.currentScene].choices.find(c =>
+            c.feedback === document.getElementById('feedback-text').textContent
+        );
+
+        if (choice && choice.nextScene) {
+            if (choice.nextScene === 'check_ending') {
+                checkEnding();
+            } else {
+                loadScene(choice.nextScene);
+            }
+        } else {
+            checkEnding();
+        }
+    }
+
+    function updateUI() {
+        // Update moral score display
+        const scoreDisplay = document.getElementById('moral-score');
+        scoreDisplay.textContent = gameState.moralScore >= 0 ? `+${gameState.moralScore}` : gameState.moralScore;
+
+        // Update score color
+        scoreDisplay.className = '';
+        if (gameState.moralScore > 0) {
+            scoreDisplay.classList.add('score-positive');
+        } else if (gameState.moralScore < 0) {
+            scoreDisplay.classList.add('score-negative');
+        } else {
+            scoreDisplay.classList.add('score-neutral');
+        }
+
+        // Update progress bar
+        const progress = (gameState.decisionsCount / 45) * 100;
+        document.getElementById('progress-bar').style.width = `${progress}%`;
+    }
+
+    function checkEnding() {
+        let endingKey;
+
+        // Determine ending based on moral score
+        if (gameState.moralScore >= 15) {
+            // Select one of three happy endings
+            const happyIndex = Math.floor(Math.random() * 3) + 1;
+            endingKey = `happy_${happyIndex}`;
+        } else if (gameState.moralScore <= -15) {
+            // Select one of three bad endings
+            const badIndex = Math.floor(Math.random() * 3) + 1;
+            endingKey = `bad_${badIndex}`;
+        } else {
+            // Neutral ending based on majority
+            if (gameState.positiveActions > gameState.negativeActions) {
+                endingKey = 'neutral_positive';
+            } else {
+                endingKey = 'neutral_negative';
+            }
+        }
+
+        showEnding(endingKey);
+    }
+
+    function showEnding(endingKey) {
+        const ending = endings[endingKey];
+
+        document.getElementById('game-play').classList.add('hidden');
+        document.getElementById('end-screen').classList.remove('hidden');
+
+        document.getElementById('end-title').textContent = ending.title;
+        document.getElementById('end-description').textContent = ending.description;
+
+        // Update statistics
+        document.getElementById('final-score').textContent =
+            gameState.moralScore >= 0 ? `+${gameState.moralScore}` : gameState.moralScore;
+        document.getElementById('decisions-made').textContent = gameState.decisionsCount;
+        document.getElementById('positive-actions').textContent = gameState.positiveActions;
+        document.getElementById('negative-actions').textContent = gameState.negativeActions;
+    }
+
+    // Initialize game when page loads
+    window.addEventListener('DOMContentLoaded', () => {
+        // Game starts at the start screen
+    });
+    </script>
+</body>
+</html>
