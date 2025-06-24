@@ -1,0 +1,2165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Echo of Grautal - A Moral Odyssey</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap');
+
+        :root {
+            --primary-gold: #d4af37;
+            --secondary-crimson: #dc143c;
+            --deep-black: #0a0a0a;
+            --soft-white: #f5f5f0;
+            --shadow-gray: #2a2a2a;
+            --positive-green: #228b22;
+            --negative-red: #b22222;
+            --neutral-blue: #4169e1;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Crimson Text', serif;
+            background: linear-gradient(135deg, var(--deep-black) 0%, var(--shadow-gray) 100%);
+            color: var(--soft-white);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,%3Csvg width="100" height="100" xmlns="http://www.w3.org/2000/svg"%3E%3Cdefs%3E%3Cpattern id="grid" width="100" height="100" patternUnits="userSpaceOnUse"%3E%3Cpath d="M 100 0 L 0 0 0 100" fill="none" stroke="rgba(212, 175, 55, 0.05)" stroke-width="1"/%3E%3C/pattern%3E%3C/defs%3E%3Crect width="100" height="100" fill="url(%23grid)" /%3E%3C/svg%3E');
+            pointer-events: none;
+            opacity: 0.3;
+            animation: drift 20s linear infinite;
+        }
+
+        @keyframes drift {
+            from { transform: translate(0, 0); }
+            to { transform: translate(100px, 100px); }
+        }
+
+        #game-container {
+            width: 100%;
+            max-width: 1200px;
+            background: rgba(10, 10, 10, 0.95);
+            border: 3px solid var(--primary-gold);
+            border-radius: 20px;
+            box-shadow:
+                0 0 50px rgba(212, 175, 55, 0.3),
+                inset 0 0 30px rgba(0, 0, 0, 0.5);
+            padding: 3rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* Titles and headings */
+        h1, h2 {
+            font-family: 'Cinzel', serif;
+            text-align: center;
+            margin-bottom: 2rem;
+            text-shadow: 0 0 20px rgba(212, 175, 55, 0.5);
+        }
+
+        h1 {
+            font-size: 3rem;
+            color: var(--primary-gold);
+            letter-spacing: 3px;
+        }
+
+        h2 {
+            font-size: 2rem;
+            color: var(--soft-white);
+        }
+
+        /* Info bar */
+        .info-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding: 1rem;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 10px;
+            border: 1px solid var(--primary-gold);
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        #chapter-indicator {
+            font-family: 'Cinzel', serif;
+            font-size: 1.2rem;
+            color: var(--primary-gold);
+        }
+
+        #story-path {
+            font-family: 'Crimson Text', serif;
+            font-size: 1.1rem;
+            color: var(--soft-white);
+            text-align: center;
+            font-style: italic;
+        }
+
+        #moral-display {
+            text-align: center;
+        }
+
+        #moral-label {
+            font-family: 'Cinzel', serif;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+            color: var(--primary-gold);
+        }
+
+        #moral-score {
+            font-family: 'Cinzel', serif;
+            font-size: 2.5rem;
+            font-weight: 600;
+            transition: all 0.5s ease;
+        }
+
+        .score-positive {
+            color: var(--positive-green);
+            text-shadow: 0 0 15px var(--positive-green);
+        }
+
+        .score-negative {
+            color: var(--negative-red);
+            text-shadow: 0 0 15px var(--negative-red);
+        }
+
+        .score-neutral {
+            color: var(--neutral-blue);
+            text-shadow: 0 0 15px var(--neutral-blue);
+        }
+
+        /* Sequence overlay */
+        #sequence-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.95);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            text-align: center;
+            padding: 2rem;
+        }
+
+        #sequence-image {
+            width: 600px;
+            height: 300px;
+            background-size: cover;
+            background-position: center;
+            border-radius: 15px;
+            margin-bottom: 2rem;
+            box-shadow: 0 0 30px rgba(212, 175, 55, 0.5);
+            border: 2px solid var(--primary-gold);
+        }
+
+        #sequence-title {
+            font-family: 'Cinzel', serif;
+            font-size: 2.5rem;
+            color: var(--primary-gold);
+            margin-bottom: 1rem;
+        }
+
+        #sequence-description {
+            font-size: 1.3rem;
+            max-width: 600px;
+            margin-bottom: 2rem;
+            line-height: 1.6;
+        }
+
+        #sequence-continue {
+            padding: 1rem 3rem;
+            font-family: 'Cinzel', serif;
+            font-size: 1.2rem;
+            background: var(--primary-gold);
+            color: var(--deep-black);
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        #sequence-continue:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 20px rgba(212, 175, 55, 0.5);
+        }
+
+        /* Scene area */
+        #scene-container {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        #scene-title {
+            font-family: 'Cinzel', serif;
+            font-size: 1.5rem;
+            color: var(--primary-gold);
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        #scene-text {
+            font-size: 1.2rem;
+            line-height: 1.8;
+            margin-bottom: 2rem;
+            text-align: justify;
+            animation: fadeIn 1s ease;
+        }
+
+        .transition-text {
+            color: var(--secondary-crimson);
+            font-weight: 600;
+            font-style: italic;
+            display: block;
+            margin-bottom: 1rem;
+            padding: 1rem;
+            background: rgba(220, 20, 60, 0.1);
+            border-left: 4px solid var(--secondary-crimson);
+            border-radius: 5px;
+        }
+
+        /* Choice area */
+        #choices-container {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .choice-button {
+            font-family: 'Crimson Text', serif;
+            font-size: 1.1rem;
+            padding: 1.5rem;
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.1) 0%, rgba(212, 175, 55, 0.05) 100%);
+            color: var(--soft-white);
+            border: 2px solid var(--primary-gold);
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: left;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .choice-button:hover {
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.3) 0%, rgba(212, 175, 55, 0.15) 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(212, 175, 55, 0.4);
+        }
+
+        .choice-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .choice-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.3), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .choice-button:hover::before {
+            left: 100%;
+        }
+
+        /* Feedback area */
+        #feedback-container {
+            background: rgba(0, 0, 0, 0.8);
+            border: 2px solid var(--primary-gold);
+            border-radius: 15px;
+            padding: 2rem;
+            margin: 2rem 0;
+            position: relative;
+            animation: slideIn 0.5s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        #feedback-header {
+            font-family: 'Cinzel', serif;
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        #feedback-text {
+            font-size: 1.1rem;
+            line-height: 1.7;
+            text-align: justify;
+            margin-bottom: 1.5rem;
+        }
+
+        .feedback-positive {
+            border-color: var(--positive-green);
+            box-shadow: 0 0 20px rgba(34, 139, 34, 0.3);
+        }
+
+        .feedback-positive #feedback-header {
+            color: var(--positive-green);
+        }
+
+        .feedback-negative {
+            border-color: var(--negative-red);
+            box-shadow: 0 0 20px rgba(178, 34, 34, 0.3);
+        }
+
+        .feedback-negative #feedback-header {
+            color: var(--negative-red);
+        }
+
+        .feedback-neutral #feedback-header {
+            color: var(--neutral-blue);
+        }
+
+        #timer-display {
+            text-align: center;
+            font-family: 'Cinzel', serif;
+            color: var(--primary-gold);
+            opacity: 0.7;
+            margin-bottom: 1rem;
+        }
+
+        #continue-button {
+            display: block;
+            margin: 0 auto;
+            padding: 1rem 3rem;
+            font-family: 'Cinzel', serif;
+            font-size: 1.1rem;
+            background: var(--primary-gold);
+            color: var(--deep-black);
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        #continue-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 20px rgba(212, 175, 55, 0.5);
+        }
+
+        /* Progress Bar */
+        #progress-container {
+            width: 100%;
+            height: 10px;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 5px;
+            margin-bottom: 2rem;
+            overflow: hidden;
+        }
+
+        #progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary-gold), var(--secondary-crimson));
+            transition: width 0.5s ease;
+            width: 0%;
+        }
+
+        /* Start and end screens */
+        .screen-content {
+            max-width: 800px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .intro-text {
+            font-size: 1.2rem;
+            line-height: 1.8;
+            margin-bottom: 2rem;
+            text-align: justify;
+        }
+
+        .quote {
+            font-style: italic;
+            color: var(--primary-gold);
+            margin: 1.5rem 0;
+            padding: 1rem;
+            border-left: 3px solid var(--primary-gold);
+            background: rgba(212, 175, 55, 0.05);
+        }
+
+        .start-button, .end-button {
+            padding: 1.5rem 4rem;
+            font-family: 'Cinzel', serif;
+            font-size: 1.3rem;
+            background: var(--primary-gold);
+            color: var(--deep-black);
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 1rem;
+        }
+
+        .start-button:hover, .end-button:hover {
+            transform: scale(1.1);
+            box-shadow: 0 8px 30px rgba(212, 175, 55, 0.6);
+        }
+
+        /* Error Display */
+        #error-display {
+            background: rgba(178, 34, 34, 0.2);
+            border: 2px solid var(--negative-red);
+            border-radius: 10px;
+            padding: 1rem;
+            margin: 1rem 0;
+            text-align: center;
+            color: var(--negative-red);
+        }
+
+        /* End screen statistics */
+        .end-stats {
+            background: rgba(0, 0, 0, 0.5);
+            border: 2px solid var(--primary-gold);
+            border-radius: 15px;
+            padding: 2rem;
+            margin: 2rem 0;
+        }
+
+        .stat-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid rgba(212, 175, 55, 0.3);
+        }
+
+        .stat-label {
+            color: var(--primary-gold);
+        }
+
+        .end-description {
+            font-size: 1.2rem;
+            line-height: 1.8;
+            margin: 2rem 0;
+            text-align: justify;
+        }
+
+        #moral-analysis {
+            background: rgba(212, 175, 55, 0.1);
+            border: 2px solid var(--primary-gold);
+            border-radius: 15px;
+            padding: 2rem;
+            margin: 2rem 0;
+            text-align: left;
+        }
+
+        #moral-analysis h3 {
+            font-family: 'Cinzel', serif;
+            color: var(--primary-gold);
+            margin-bottom: 1rem;
+        }
+
+        #moral-analysis p {
+            margin-bottom: 1rem;
+            line-height: 1.8;
+        }
+
+        #choice-history {
+            max-height: 300px;
+            overflow-y: auto;
+            padding: 1rem;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            margin-top: 1rem;
+        }
+
+        .choice-entry {
+            padding: 0.5rem;
+            margin-bottom: 0.5rem;
+            border-left: 3px solid var(--primary-gold);
+            background: rgba(212, 175, 55, 0.05);
+        }
+
+        .choice-entry.positive {
+            border-left-color: var(--positive-green);
+        }
+
+        .choice-entry.negative {
+            border-left-color: var(--negative-red);
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            h1 { font-size: 2rem; }
+            h2 { font-size: 1.5rem; }
+
+            #game-container {
+                padding: 1.5rem;
+            }
+
+            .info-bar {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            #moral-score {
+                font-size: 2rem;
+            }
+
+            #scene-text {
+                font-size: 1.1rem;
+            }
+
+            #sequence-image {
+                width: 300px;
+                height: 200px;
+            }
+
+            #sequence-title {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="game-container">
+        <!-- Start Screen -->
+        <div id="start-screen" class="screen-content">
+            <h1>The Echo of Grautal</h1>
+            <h2>A Moral Odyssey</h2>
+            <div class="intro-text">
+                <p>The city of Grautal is dying. Once flourishing with crystal-clear springs that gave it its name, it is now a shadow of its former self. OmniCorp, a faceless corporation, has privatized the water supply. Public fountains run dry while only the wealthy can afford the bottled "PureLife".</p>
+
+                <p>You return after ten years away. The letter came unexpectedly: Your grandmother is dead, her house is to be foreclosed. Martha Steinbach was more than just your grandmother – she was the soul of the resistance, a woman who dedicated her life to fighting oppression. Now her legacy lies in your hands.</p>
+
+                <div class="quote">
+                    "Act only according to that maxim whereby you can at the same time will that it should become a universal law." - Immanuel Kant
+                </div>
+
+                <p>What you find will place you before decisions that will tear your soul apart. Six paths are open to you, countless turning points will determine your fate. Every choice shapes not only you, but the destiny of an entire city. Are you ready to face your true self?</p>
+            </div>
+            <button class="start-button" onclick="startGame()">Begin the Journey</button>
+        </div>
+
+        <!-- Sequence Overlay -->
+        <div id="sequence-overlay" class="hidden">
+            <div id="sequence-image"></div>
+            <div id="sequence-title"></div>
+            <div id="sequence-description"></div>
+            <button id="sequence-continue" onclick="continueFromSequence()">Continue</button>
+        </div>
+
+        <!-- Game Play Area -->
+        <div id="game-play" class="hidden">
+            <div class="info-bar">
+                <div id="chapter-indicator"></div>
+                <div id="story-path"></div>
+                <div id="moral-display">
+                    <div id="moral-label">Moral Compass</div>
+                    <div id="moral-score">0</div>
+                </div>
+            </div>
+
+            <div id="progress-container">
+                <div id="progress-bar"></div>
+            </div>
+
+            <div id="scene-container">
+                <div id="scene-title"></div>
+                <div id="scene-text"></div>
+            </div>
+
+            <div id="choices-container"></div>
+
+            <div id="feedback-container" class="hidden">
+                <div id="feedback-header"></div>
+                <div id="feedback-text"></div>
+                <div id="timer-display"></div>
+                <button id="continue-button" onclick="continueFeedback()">Continue</button>
+            </div>
+
+            <div id="error-display" class="hidden">
+                <p id="error-message"></p>
+                <button onclick="handleError()">Continue</button>
+            </div>
+        </div>
+
+        <!-- End Screen -->
+        <div id="end-screen" class="screen-content hidden">
+            <h1 id="end-title"></h1>
+            <div class="end-description" id="end-description"></div>
+
+            <div class="end-stats">
+                <div class="stat-row">
+                    <span class="stat-label">Final Moral Score:</span>
+                    <span id="final-score"></span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">Decisions Made:</span>
+                    <span id="decisions-made"></span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">Positive Actions:</span>
+                    <span id="positive-actions"></span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">Negative Actions:</span>
+                    <span id="negative-actions"></span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">Path Taken:</span>
+                    <span id="final-path"></span>
+                </div>
+            </div>
+
+            <div id="moral-analysis">
+                <h3>Your Moral Journey</h3>
+                <p id="moral-journey-text"></p>
+                <h3>Decision History</h3>
+                <div id="choice-history"></div>
+            </div>
+
+            <button class="end-button" onclick="startGame()">Begin New Journey</button>
+            <button class="end-button" onclick="location.reload()">Reset Game</button>
+        </div>
+    </div>
+
+    <script>
+    // Global game state
+    let gameState = {
+        moralScore: 0,
+        currentScene: 'scene_1',
+        decisionsCount: 0,
+        positiveActions: 0,
+        negativeActions: 0,
+        neutralActions: 0,
+        currentChapter: 1,
+        storyPath: 'Main Path',
+        visitedScenes: new Set(),
+        specialFlags: new Set(),
+        currentChoice: null,
+        choiceHistory: [],
+        relationships: {
+            elara: 0,
+            thomas: 0,
+            marcus: 0,
+            sarah: 0,
+            kael: 0,
+            amy: 0,
+            helena: 0,
+            richard: 0
+        },
+        inventory: new Set(),
+        knowledge: new Set(),
+        currentStrand: 'main',
+        sequenceQueue: []
+    };
+
+    // Timer variables
+    let timerInterval = null;
+
+    // The 6 story paths
+    const storyPaths = {
+        main: 'The Path of Resistance',
+        fugitive: 'The Fugitive\'s Trail',
+        profiteer: 'The Road of Greed',
+        radical: 'The Path of Violence',
+        information: 'The Way of Truth',
+        infiltrator: 'The Traitor\'s Mask'
+    };
+
+    // Sequence definitions for path changes with Picsum images
+    const sequences = {
+        path_resistance: {
+            image: 'https://picsum.photos/seed/resistance/1200/400?grayscale',
+            title: 'The Path of Resistance',
+            description: 'You have chosen to join the organized resistance. Together with Elara and other fighters, you will try to bring down OmniCorp through coordinated actions. This path leads through trust, cooperation and collective courage.'
+        },
+        path_fugitive: {
+            image: 'https://picsum.photos/seed/fugitive/1200/400?grayscale',
+            title: 'The Fugitive\'s Trail',
+            description: 'The flight has begun. You are now a hunted person operating underground. Every day is a struggle for survival while you try to escape pursuit and still do the right thing.'
+        },
+        path_profiteer: {
+            image: 'https://picsum.photos/seed/profiteer/1200/400?grayscale',
+            title: 'The Road of Greed',
+            description: 'You have realized that money can be made in this chaos. Whether through blackmail, black market trade or other dubious business - you use the crisis to your advantage.'
+        },
+        path_radical: {
+            image: 'https://picsum.photos/seed/radical/1200/400?grayscale',
+            title: 'The Path of Violence',
+            description: 'Violence is sometimes the only language tyrants understand. You have decided to go with Kael\'s radical faction. Bombs, sabotage and direct combat are your tools.'
+        },
+        path_information: {
+            image: 'https://picsum.photos/seed/information/1200/400?grayscale',
+            title: 'The Way of Truth',
+            description: 'Information is power. You will become a spy, a hacker, a collector of secrets. With truth as your weapon, you fight against the lies of corporations.'
+        },
+        path_infiltrator: {
+            image: 'https://picsum.photos/seed/infiltrator/1200/400?grayscale',
+            title: 'The Traitor\'s Mask',
+            description: 'You will destroy OmniCorp from within. As a false ally, you infiltrate their ranks, gather evidence and wait for the perfect moment to strike.'
+        },
+        major_turning_point: {
+            image: 'https://picsum.photos/seed/turning-point/1200/400?grayscale',
+            title: 'Turning Point of Destiny',
+            description: 'Your decisions have led to a critical moment. Nothing will ever be the same again. The consequences of your actions will shape Grautal\'s fate forever.'
+        },
+        moral_crisis: {
+            image: 'https://picsum.photos/seed/moral-crisis/1200/400?grayscale',
+            title: 'The Test of Conscience',
+            description: 'You stand before a decision that will shake your moral foundations. The categorical imperative will be put to the hardest test. What will you choose?'
+        },
+        final_confrontation: {
+            image: 'https://picsum.photos/seed/final-battle/1200/400?grayscale',
+            title: 'The Final Confrontation',
+            description: 'All paths lead to this moment. The future of Grautal depends on your next decisions. Will you go down in history as a hero or a villain?'
+        }
+    };
+
+    // Complete story data structure - massively expanded with all 6 strands
+    const storyData = {
+        // =================================================================
+        // CHAPTER 1: THE HERITAGE AWAKENS (Decisions 1-20)
+        // =================================================================
+
+        "scene_1": {
+            "chapter": 1,
+            "title": "The House of Memories",
+            "text": "The key in your hand feels heavier than it should. Ten years. Ten years since you left Grautal, since the great argument with your grandmother about her 'pointless protests'. Now you stand before her house – your house – and the eviction notice in your other hand makes it clear: tomorrow morning everything will be gone.\n\nThe house smells like her. Like lavender and old paper, like rebellion and unshakeable faith. In the living room, protest posters still hang: 'Water is a Human Right!' Your eyes wander to the attic. Up there she always kept her 'important things'. Part of you just wants to pack up and disappear. Another part senses that more awaits you here than just memories.\n\nOutside, a black OmniCorp transport drives by slowly. Too slowly. They're watching the house. Time is running out.",
+            "choices": [
+                {
+                    "id": "choice_1a",
+                    "text": "Go straight to the attic. If she left something important, it would be there.",
+                    "moralEffect": 1,
+                    "nextScene": "scene_2a",
+                    "feedback": "The courage to face the past is the first step to truth. You honor your grandmother's memory by not ignoring her secrets. This shows respect for her life's work and willingness to take responsibility. According to Kant, you act from duty, not inclination. (+1)"
+                },
+                {
+                    "id": "choice_1b",
+                    "text": "Search the office first. She was methodical; important documents would be there.",
+                    "moralEffect": 0,
+                    "nextScene": "scene_2b",
+                    "feedback": "A rational approach that puts logic over emotion. You proceed systematically, which shows wisdom but also a certain emotional distance from your grandmother and her struggle. Sometimes truth lies not in order, but in the chaos of passion."
+                },
+                {
+                    "id": "choice_1c",
+                    "text": "Pack the valuables and leave the house quickly. It's too dangerous here.",
+                    "moralEffect": -2,
+                    "nextScene": "scene_2c",
+                    "feedback": "Flight from responsibility is the first form of moral failure. You reduce your grandmother's life's work to material value and ignore her ideological legacy. This cowardice blinds you to the injustice she fought. According to Kant, this is a maxim of selfishness that could never become universal law. (-2)"
+                }
+            ]
+        },
+
+        "scene_2a": {
+            "chapter": 1,
+            "title": "Shadows of the Past",
+            "text": "The attic stairs creak familiarly under your steps. Once upstairs, you gasp. The entire room is a resistance command center. Maps of Grautal with red markings, photos of industrial facilities, newspaper clippings about mysterious illness cases. On the wall hangs a diagram: 'OmniCorp Connections' written above it, lines connecting names with positions, dates with events.\n\nIn the center of the room stands her old chest. A letter lies on top, your name in her shaky handwriting. Next to it, a sealed diary and something that makes your heart beat faster: An OmniCorp lab ID in the name of 'Dr. Marcus Webb' with the handwritten note: 'Our man on the inside. Trust only Elara.'\n\nSuddenly you hear the front door downstairs. Heavy footsteps. At least three people. A deep voice: 'Search everything. The old man said the Steinbach woman had hidden evidence.'",
+            "choices": [
+                {
+                    "id": "choice_2a",
+                    "text": "Read the letter to understand what she wanted to tell you before acting.",
+                    "moralEffect": 1,
+                    "nextScene": "scene_3a",
+                    "feedback": "In danger, you keep a clear head and honor your grandmother's last will. This combination of courage and respect shows true moral strength. You put understanding before blind action, which the categorical imperative demands: Act so that your action is based on reason, not panic. (+1)",
+                    "inventory": ["Letter"],
+                    "knowledge": ["Grandmother's Testament"]
+                },
+                {
+                    "id": "choice_2b",
+                    "text": "Quickly stuff everything important into a backpack and escape through the attic window.",
+                    "moralEffect": 0,
+                    "nextScene": "scene_3b",
+                    "feedback": "Pragmatism in extreme situations. You save the evidence but might miss important information through hasty action. Flight is sometimes necessary, but it shouldn't be the first option. You act from self-preservation, not duty.",
+                    "inventory": ["Diary", "Lab ID", "Documents"],
+                    "sequence": "path_fugitive"
+                },
+                {
+                    "id": "choice_2c",
+                    "text": "Hide and hope they don't search the attic.",
+                    "moralEffect": -1,
+                    "nextScene": "scene_3c",
+                    "feedback": "Passivity in the face of threat is a form of capitulation. You leave fate to chance instead of acting yourself. This shows lack of courage and initiative – qualities your grandmother fought against all her life. (-1)"
+                }
+            ]
+        },
+
+        "scene_2b": {
+            "chapter": 1,
+            "title": "The Methodical Search",
+            "text": "The office is meticulously organized, as your grandmother always kept it. Every folder labeled, every document in its place. But when you open the desk drawers, you find more than expected: A secret compartment contains USB drives, encrypted notes and photographs of secret meetings.\n\nA stack of letters bears the letterhead 'Citizens' Initiative for Clean Water'. Names you recognize – neighbors, former teachers, people from your childhood. All part of a network larger than you thought.\n\nA photo shows your grandmother with a young woman in front of the old water tower. On the back it says: 'Elara - the future of resistance.' The woman looks determined, her eyes burning with passion.\n\nSuddenly there's a knock at the front door. Polite but insistent. A woman's voice: 'Excuse me, is anyone there? I'm from the Water Authority.'",
+            "choices": [
+                {
+                    "id": "choice_2b1",
+                    "text": "Open the door and see who it really is. Directness is often the best way.",
+                    "moralEffect": 1,
+                    "nextScene": "scene_4a",
+                    "feedback": "Courage is often shown in the willingness to face reality. You choose honesty over hiding, which proves character strength. This directness corresponds to the categorical imperative of truthfulness. (+1)"
+                },
+                {
+                    "id": "choice_2b2",
+                    "text": "Look through the window and assess the situation before deciding.",
+                    "moralEffect": 0,
+                    "nextScene": "scene_4b",
+                    "feedback": "Caution is a virtue that ensures survival. You show tactical thinking but also distrust. In a world full of lies, skepticism is understandable, but it can also be paralyzing."
+                },
+                {
+                    "id": "choice_2b3",
+                    "text": "Stay quiet and wait until they leave. Avoid confrontation.",
+                    "moralEffect": -1,
+                    "nextScene": "scene_4c",
+                    "feedback": "Avoidance as first reaction shows lack of willingness to take responsibility. You choose the safest but not the courageous path. This is the beginning of an attitude that could lead to greater cowardice later. (-1)"
+                }
+            ]
+        },
+
+        "scene_2c": {
+            "chapter": 1,
+            "title": "Flight into Uncertainty",
+            "text": "You hastily pack the most valuable items – jewelry, important papers, some cash. The house echoed with childhood memories, but sentimentality is a luxury you can't afford. The footsteps in the house grow louder.\n\nAs you head for the back door, you see through the kitchen window a second transport in the alley. They've surrounded the house. Panic rises in you. Your grandmother was right – they were dangerous. And you waited too long.\n\nThe only option is the old wine cellar. A forgotten tunnel once led to neighboring houses, a relic from wartime. Whether it's still passable?\n\nThe front door is broken down. Heavy boots trample through the rooms. A cold voice commands: 'Search everything. She's here somewhere. Dead or alive.'",
+            "choices": [
+                {
+                    "id": "choice_2c1",
+                    "text": "Risk the tunnel, even if it might collapse. Better a quick death than slow torture.",
+                    "moralEffect": 0,
+                    "nextScene": "scene_5a",
+                    "feedback": "Survival instinct in extreme situations. You make a drastic decision to escape capture. This shows determination but also willingness to risk everything.",
+                    "sequence": "path_fugitive"
+                },
+                {
+                    "id": "choice_2c2",
+                    "text": "Hide in the wine cellar and hope they don't find it.",
+                    "moralEffect": -1,
+                    "nextScene": "scene_5b",
+                    "feedback": "Defensive passivity shows lack of initiative. You hope for luck instead of your own abilities. This attitude could be problematic in an active world of resistance. (-1)"
+                },
+                {
+                    "id": "choice_2c3",
+                    "text": "Go back to the living room and surrender. Maybe negotiations can help.",
+                    "moralEffect": 1,
+                    "nextScene": "scene_5c",
+                    "feedback": "Courage is also shown in the willingness to surrender when it serves others. You choose confrontation over flight, which proves character strength. Sometimes surrender is an act of courage, not cowardice. (+1)"
+                }
+            ]
+        },
+
+        "scene_3a": {
+            "chapter": 1,
+            "title": "The Last Message",
+            "text": "With trembling hands you open the letter. The footsteps are coming up the stairs.\n\n'My dear child,\n\nIf you read this, I am gone, but my fight must not die with me. OmniCorp doesn't just poison our water – they poison our souls. The substance X-47 in the water makes people compliant, apathetic. I have the evidence, but alone I am too weak.\n\nDr. Marcus Webb worked for them until his conscience awakened. He gave me the formulas, the test results. Everything is in the diary. Elara waits in the old clock tower – every midnight. She now leads the resistance.\n\nI know we parted in anger. You thought I was crazy. Maybe I was. But sometimes you have to be crazy to stay sane in a sick world.\n\nCan I burden you with a load I could barely carry myself? The decision is yours. But remember: When good people do nothing, evil triumphs.\n\nIn eternal love,\nGrandma Martha'\n\nThe attic door splinters open. Three OmniCorp security personnel storm in, weapons drawn.",
+            "choices": [
+                {
+                    "id": "choice_3a1",
+                    "text": "Swallow the letter and try to appear harmless. 'I... I'm just cleaning up!'",
+                    "moralEffect": 0,
+                    "nextScene": "scene_6a",
+                    "feedback": "Cunning and deception to protect greater truths. Morally gray but understandable. You sacrifice part of your integrity to preserve the secret. Kant would ask: Can lying ever be duty?",
+                    "knowledge": ["Poisoning", "Dr. Webb", "Elara", "X-47"],
+                    "specialFlags": ["Letter swallowed"]
+                },
+                {
+                    "id": "choice_3a2",
+                    "text": "Stand up and face them. 'This is my house. You have no right to be here!'",
+                    "moralEffect": 1,
+                    "nextScene": "scene_6b",
+                    "feedback": "Courage and dignity in the face of tyranny. You defend not just property but principles. This steadfastness honors your grandmother's memory and shows you're ready to stand up for justice, even when it's dangerous. (+1)",
+                    "inventory": ["Letter"]
+                },
+                {
+                    "id": "choice_3a3",
+                    "text": "Throw the diary into the fire of the old stove that's still glowing.",
+                    "moralEffect": -2,
+                    "nextScene": "scene_6c",
+                    "feedback": "The destruction of evidence for crimes against humanity is itself a moral crime. Out of fear, you destroy the last hope of countless victims. This cowardice makes you complicit with the oppressors. (-2)",
+                    "relationships": {"elara": -5}
+                }
+            ]
+        },
+
+        "scene_3b": {
+            "chapter": 1,
+            "title": "Leap into the Unknown",
+            "text": "You stuff everything into the backpack – diary, lab ID, the most important documents. The attic window opens creakily. Three stories down. The garden is fortunately paved but soft from the rain.\n\nThe jump is hard. Your left ankle hurts, but nothing is broken. Behind you, you hear angry voices: 'The window! She jumped!'\n\nYou limp through the alleys, the backpack heavy on your shoulders. Grautal at night is a different place – dark corners, flickering streetlights, the constant hum of OmniCorp surveillance drones. You are now a fugitive in your own hometown.\n\nAn old man sits in a corner, clutching a bottle. As you pass by, he whispers: 'Little Steinbach? You look like your grandma. Take care of yourself, child. The city devours the brave.' His eyes are clear despite the smell of alcohol.",
+            "choices": [
+                {
+                    "id": "choice_3b1",
+                    "text": "Stay with the man and ask him what he knows about your grandmother.",
+                    "moralEffect": 1,
+                    "nextScene": "scene_7a",
+                    "feedback": "You show respect for society's forgotten. This man could be a treasure trove of information. Your willingness to listen to him shows empathy and wisdom. (+1)",
+                    "relationships": {"thomas": 2}
+                },
+                {
+                    "id": "choice_3b2",
+                    "text": "Keep walking but give him some money. You can't afford delays.",
+                    "moralEffect": 0,
+                    "nextScene": "scene_7b",
+                    "feedback": "Compassion without engagement. You show kindness but no real connection. Sometimes efficiency is more important than sentimentality, but you might miss important information."
+                },
+                {
+                    "id": "choice_3b3",
+                    "text": "Walk quickly past. Every second counts, and alcoholics are unreliable.",
+                    "moralEffect": -1,
+                    "nextScene": "scene_7c",
+                    "feedback": "Prejudice and callousness. You judge people based on superficial impressions. This attitude could keep you from valuable allies. (-1)"
+                }
+            ]
+        },
+
+        "scene_3c": {
+            "chapter": 1,
+            "title": "The Hiding Game",
+            "text": "You remain motionless behind an old wardrobe. Your heart pounds so loud you're sure they must hear it. The footsteps come closer. Heavy boots on old floorboards.\n\n'Nothing here.' A female voice, cool and professional. 'Just family photos and old junk.'\n\n'The boss was sure she hid something here.' The deep male voice sounds angry. 'Search every corner. Open every box.'\n\nYou hear them moving furniture, opening drawers, rustling papers. Then it becomes quiet. Too quiet.\n\n'Wait a minute...' The female voice, right next to the wardrobe. 'This dust here. Someone was up here recently. See the footprints?'\n\nPanic floods through you. They've found you.",
+            "choices": [
+                {
+                    "id": "choice_3c1",
+                    "text": "Come out and surrender before they discover you. Dignity is shown even in defeat.",
+                    "moralEffect": 1,
+                    "nextScene": "scene_8a",
+                    "feedback": "Showing dignity in defeat requires courage. You choose control over the situation instead of hopeless flight. This shows character and might even earn respect from your pursuers. (+1)"
+                },
+                {
+                    "id": "choice_3c2",
+                    "text": "Wait until the last moment, then fight. If at all, then with everything.",
+                    "moralEffect": 0,
+                    "nextScene": "scene_8b",
+                    "feedback": "Desperate resistance. You don't give up even when the odds are bad. This shows fighting spirit but also lack of strategic planning."
+                },
+                {
+                    "id": "choice_3c3",
+                    "text": "Try to merge even deeper into the shadows and hope for a miracle.",
+                    "moralEffect": -1,
+                    "nextScene": "scene_8c",
+                    "feedback": "Passive hope replaces active action. You leave your fate to chance, which shows irresponsibility. In critical moments, initiative is needed, not wishful thinking. (-1)"
+                }
+            ]
+        },
+
+        // Continuation from scene_4a (from scene_2b1)
+        "scene_4a": {
+            "chapter": 1,
+            "title": "The Unexpected Encounter",
+            "text": "You open the door and face a young woman who is definitely not from the Water Authority. She wears a worn leather coat, her hair tied in a practical braid, and her eyes... you recognize her eyes from the photo. Elara.\n\n'You're Martha's granddaughter,' she says without preamble. It's not a question. 'I'm Elara. Your grandmother spoke of you often.'\n\nShe looks nervously over her shoulder. 'We don't have much time. OmniCorp's henchmen are on their way. Martha told me she would leave you everything if something happened to her.'\n\nIn the distance, you hear engine noises. Multiple vehicles approaching.\n\n'Decide quickly,' Elara urges. 'Come with me, or stay and risk arrest. But know this: If you come, there's no going back. You'll be part of something bigger, but also more dangerous.'",
+            "choices": [
+                {
+                    "id": "choice_4a1",
+                    "text": "'I'm coming with you. My grandmother would have wanted me to continue her fight.'",
+                    "moralEffect": 2,
+                    "nextScene": "scene_9a",
+                    "feedback": "You honor your grandmother's legacy and take responsibility for a greater cause. This decision shows moral courage and willingness to fight for your convictions. According to Kant, this is a maxim that could be universally valid. (+2)",
+                    "sequence": "path_resistance",
+                    "relationships": {"elara": 5}
+                },
+                {
+                    "id": "choice_4a2",
+                    "text": "'I need more information. What exactly are you planning? What are the risks?'",
+                    "moralEffect": 0,
+                    "nextScene": "scene_9b",
+                    "feedback": "Careful consideration in critical situations. You show rationality but also hesitation. Sometimes moral decisions require leaps into the unknown."
+                },
+                {
+                    "id": "choice_4a3",
+                    "text": "'I'm sorry, but I don't want to be drawn into this conflict.'",
+                    "moralEffect": -2,
+                    "nextScene": "scene_9c",
+                    "feedback": "You consciously decide against engagement in an injustice. This neutrality in times of oppression is itself a form of complicity. Edmund Burke said: 'The only thing necessary for evil to triumph is for good people to do nothing.' (-2)"
+                }
+            ]
+        },
+
+        "scene_4b": {
+            "chapter": 1,
+            "title": "Observation and Caution",
+            "text": "You sneak to the window and look out carefully. The woman stands relaxed in front of the door, but something's not right. Her posture is too alert, her glances too searching. Real officials usually look tired and bored. This woman is alarmed.\n\nShe doesn't wear an official badge visibly on her belt, as would be required. Instead, there's a small bulge under her jacket. A weapon?\n\nSuddenly she speaks into a small device: 'No answer. Prepare the house search.'\n\nHouse search? For a routine water check? Your suspicion is confirmed. These are OmniCorp agents.\n\nYou have maybe five minutes before they return. What you do in this time could decide life and death.",
+            "choices": [
+                {
+                    "id": "choice_4b1",
+                    "text": "Quickly hide the most important documents and then wait calmly.",
+                    "moralEffect": 0,
+                    "nextScene": "scene_10a",
+                    "feedback": "Strategic thinking under pressure. You use time wisely to protect evidence. This shows foresight and responsibility for important information."
+                },
+                {
+                    "id": "choice_4b2",
+                    "text": "Escape through the back door and take everything you can carry.",
+                    "moralEffect": 0,
+                    "nextScene": "scene_10b",
+                    "feedback": "Practical flight with the most valuable things. You show survival instinct and pragmatism, but also willingness to give up familiar surroundings.",
+                    "sequence": "path_fugitive"
+                },
+                {
+                    "id": "choice_4b3",
+                    "text": "Make an anonymous call to the police and report fake OmniCorp agents.",
+                    "moralEffect": 1,
+                    "nextScene": "scene_10c",
+                    "feedback": "Clever resistance by using the system against itself. You show initiative and courage while proceeding smartly. This could protect others and buy time. (+1)"
+                }
+            ]
+        },
+
+        "scene_4c": {
+            "chapter": 1,
+            "title": "Silence and Waiting",
+            "text": "You remain motionless and wait. The woman knocks again, louder this time. Then you hear her footsteps moving away. But too fast, too determined. People who give up walk slower.\n\nYou wait another twenty minutes. Then you sneak to the window. The street seems empty, but a parked car that wasn't there before stands a hundred meters away. Someone sits in it.\n\nThey're watching the house. You're trapped in your own home.\n\nHours pass. You don't dare turn on lights or make normal sounds. When it gets dark, you see more movement on the street. Figures moving in the shadows. They're surrounding the house.\n\nAt midnight, it becomes clear to you: They're not waiting for you to leave. They're waiting for the right moment to take you.",
+            "choices": [
+                {
+                    "id": "choice_4c1",
+                    "text": "Escape through the cellar - there must be an old access to the neighbor's house.",
+                    "moralEffect": 0,
+                    "nextScene": "scene_11a",
+                    "feedback": "Remembering old resources in need. You use your knowledge of the house to find an escape route. This shows adaptability and perseverance.",
+                    "sequence": "path_fugitive"
+                },
+                {
+                    "id": "choice_4c2",
+                    "text": "Wait until morning and hope they give up or reinforcements come.",
+                    "moralEffect": -1,
+                    "nextScene": "scene_11b",
+                    "feedback": "Passive hope without initiative. You completely leave control to others and hope for external rescue. This shows lack of personal responsibility. (-1)"
+                },
+                {
+                    "id": "choice_4c3",
+                    "text": "Turn on the light and act like you've been there all along.",
+                    "moralEffect": 1,
+                    "nextScene": "scene_11c",
+                    "feedback": "Surprising directness as strategy. You turn the situation around and show you're ready to face it. This can create respect and defuse the situation. (+1)"
+                }
+            ]
+        },
+
+        // Continuation of flight scenes (scene_5a, 5b, 5c)
+        "scene_5a": {
+            "chapter": 1,
+            "title": "The Forgotten Tunnel",
+            "text": "The tunnel is narrow, damp and smells of decades of decay. But it holds. You crawl through the darkness, hands feeling forward. Spider webs stick to your face, and once you feel something scurry away.\n\nAfter twenty meters, the tunnel gets higher. You can stand up and move faster. A weak draft indicates an exit.\n\nSuddenly you hear explosions behind you. The house! They're blowing it up to ensure all evidence is destroyed. Your grandmother's last refuge turns to dust.\n\nAnger and sadness mix in you. But also determination. They destroyed the house, but not what it meant.\n\nThe tunnel ends in an abandoned cellar three houses down. You climb out and find yourself in another world - the Grautal of the forgotten.",
+            "choices": [
+                {
+                    "id": "choice_5a1",
+                    "text": "Go to the clock tower to find Elara. The letter mentioned midnight.",
+                    "moralEffect": 1,
+                    "nextScene": "scene_12a",
+                    "feedback": "You follow your grandmother's last wish and seek the resistance. This shows loyalty to her legacy and courage to face uncertainty. (+1)",
+                    "sequence": "path_resistance"
+                },
+                {
+                    "id": "choice_5a2",
+                    "text": "Stay in this area first and scout the situation. Who lives here?",
+                    "moralEffect": 0,
+                    "nextScene": "scene_12b",
+                    "feedback": "Careful exploration before important decisions. You show strategic thinking but also hesitation before the next step."
+                },
+                {
+                    "id": "choice_5a3",
+                    "text": "Try to leave the city. This isn't your fight.",
+                    "moralEffect": -2,
+                    "nextScene": "scene_12c",
+                    "feedback": "Flight from responsibility. You leave your hometown's problems behind and think only of yourself. This is the maxim of indifference that should never become universal. (-2)",
+                    "sequence": "path_fugitive"
+                }
+            ]
+        },
+
+        "scene_5b": {
+            "chapter": 1,
+            "title": "Hidden in Darkness",
+            "text": "The wine cellar is small and stuffy. Old shelves full of dusty bottles provide some cover. You crouch behind a large barrel and hope the darkness protects you.\n\nFootsteps above you. Furniture being moved. Glass breaking. They search every room systematically.\n\n'The cellar!' A voice, directly above you. Footsteps on the stairs.\n\nA light beam cuts through the darkness. Then another. They have flashlights and search thoroughly.\n\n'Just old wine here,' someone says dismissively. 'Who drinks this crap anymore?'\n\n'Search everything anyway. The boss wants every possibility checked.'\n\nThe light beam moves in your direction. Your heart pounds. They'll discover you any moment.",
+            "choices": [
+                {
+                    "id": "choice_5b1",
+                    "text": "Break a bottle and storm out of the cellar in the confusion.",
+                    "moralEffect": 0,
+                    "nextScene": "scene_13a",
+                    "feedback": "Improvisation under extreme pressure. You create a distraction and use the chaos. This shows quick thinking and courage, even if it's risky."
+                },
+                {
+                    "id": "choice_5b2",
+                    "text": "Stay calm and hope the shadow hides you.",
+                    "moralEffect": -1,
+                    "nextScene": "scene_13b",
+                    "feedback": "Passivity in critical moments. You leave your fate to chance instead of acting yourself. This shows lack of initiative in a situation requiring action. (-1)"
+                },
+                {
+                    "id": "choice_5b3",
+                    "text": "Come out of hiding and surrender before they find you.",
+                    "moralEffect": 1,
+                    "nextScene": "scene_13c",
+                    "feedback": "Dignity even in defeat. You take control yourself and show you won't be treated like an animal. This can paradoxically create respect. (+1)"
+                }
+            ]
+        },
+
+        "scene_5c": {
+            "chapter": 1,
+            "title": "The Confrontation",
+            "text": "You go back to the living room, sit in your grandmother's old armchair and wait. When they break down the door, you're there, hands visibly folded.\n\nThree figures in black uniforms storm in, weapons ready. When they see you, they slow down.\n\n'I'm Martha Steinbach's granddaughter,' you say calmly. 'I assume you're looking for me.'\n\nThe leader, a man with gray temples and cold eyes, lowers his weapon. 'Finally. Someone with manners.' He studies you appraisingly. 'You know why we're here?'\n\n'My grandmother is dead. I'm settling her estate. What you want from me, I don't know.'\n\nHe smiles coldly. 'Don't play dumb. Martha Steinbach was a terrorist. She had evidence against OmniCorp. We want it.'\n\nYou look into his eyes and recognize: He won't let you go, no matter what you say.",
+            "choices": [
+                {
+                    "id": "choice_5c1",
+                    "text": "'I know nothing about evidence. Search the house if you want.'",
+                    "moralEffect": 0,
+                    "nextScene": "scene_14a",
+                    "feedback": "Cooperation as tactics. You give them what they want to buy time or distract their attention. A pragmatic decision in a hopeless situation."
+                },
+                {
+                    "id": "choice_5c2",
+                    "text": "'My grandmother was a hero. She fought for justice while you work for tyrants.'",
+                    "moralEffect": 2,
+                    "nextScene": "scene_14b",
+                    "feedback": "Brave resistance despite inferiority. You defend your grandmother's memory and speak truths even when it's dangerous. This shows true moral courage. (+2)"
+                },
+                {
+                    "id": "choice_5c3",
+                    "text": "'What do you offer me if I cooperate? Everyone has their price.'",
+                    "moralEffect": -2,
+                    "nextScene": "scene_14c",
+                    "feedback": "You put your personal advantage above all other considerations. This immediate willingness to collaborate shows moral weakness and readiness to betray principles for gain. (-2)",
+                    "sequence": "path_profiteer"
+                }
+            ]
+        },
+
+        // More important scenes for all strands follow...
+
+        "scene_6a": {
+            "chapter": 1,
+            "title": "The Feigned Innocence",
+            "text": "The letter burns in your stomach like acid, but your face remains innocent. The three agents systematically search the attic. You sit in the corner and watch them tear apart your grandmother's life.\n\n'Just old stuff,' one mutters. 'Photos, newspaper clippings about water shortage, some books about civil rights.'\n\nThe leader, a man named Krieger according to his name tag, looks at you sharply. 'You were away for ten years. Why come back now?'\n\n'Funeral and estate settlement,' you answer truthfully. 'I didn't know Grandma... that she was involved in any illegal activities.'\n\nKrieger nods slowly. 'We'll check that. You're coming with us. For questioning.'\n\nAs they lead you away, your gaze falls on a photo on the wall. Your grandmother in front of the old clock tower. Elara stands next to her. Midnight, remember.",
+            "choices": [
+                {
+                    "id": "choice_6a1",
+                    "text": "Go along calmly and be cooperative during questioning. Innocence is the best cover.",
+                    "moralEffect": 0,
+                    "nextScene": "scene_15a",
+                    "feedback": "Strategic patience. You play the long game and hope to gain trust through cooperation or gather information."
+                },
+                {
+                    "id": "choice_6a2",
+                    "text": "Look for an opportunity to escape. You have important information that must be protected.",
+                    "moralEffect": 1,
+                    "nextScene": "scene_15b",
+                    "feedback": "You recognize the value of the information you have and are willing to take risks to protect it. This shows responsibility for the greater cause. (+1)"
+                },
+                {
+                    "id": "choice_6a3",
+                    "text": "Try to bring up the letter again, no matter how disgusting it is.",
+                    "moralEffect": 1,
+                    "nextScene": "scene_15c",
+                    "feedback": "Extreme determination to save important information. You're willing to endure physical discomfort for the cause. This shows true dedication. (+1)"
+                }
+            ]
+        },
+
+        "scene_6b": {
+            "chapter": 1,
+            "title": "The Brave Resistance",
+            "text": "Krieger laughs humorlessly at your words. 'Your house? Under the Emergency Law, we have the right to search any property suspected of harboring subversive materials.'\n\nHe steps closer. 'Your grandmother was a terrorist. A danger to public order. She incited people, damaged property, protested against vital infrastructure.'\n\n'She fought for clean water!' you protest. 'That's a human right!'\n\n'Human rights?' Krieger spits. 'OmniCorp provides clean water. Those who can't afford it are to blame themselves. That's how the free market works.'\n\nSuddenly you notice something. One of the other agents, younger, hesitates. His eyes show discomfort at Krieger's words. You recognize him - Thomas Brenner, from your school class!",
+            "choices": [
+                {
+                    "id": "choice_6b1",
+                    "text": "Address Thomas directly: 'Thomas? You used to be different. What happened to you?'",
+                    "moralEffect": 1,
+                    "nextScene": "scene_16a",
+                    "feedback": "You try to appeal to the humanity in an old acquaintance. This shows faith in people's ability to change and courage to use personal connections. (+1)",
+                    "relationships": {"thomas": 3}
+                },
+                {
+                    "id": "choice_6b2",
+                    "text": "Continue confronting Krieger: 'You're the one who's a terrorist. You terrorize an entire city!'",
+                    "moralEffect": 2,
+                    "nextScene": "scene_16b",
+                    "feedback": "Fearless resistance against authority. You speak the truth even when it's dangerous. This kind of moral courage is exactly what the categorical imperative demands. (+2)"
+                },
+                {
+                    "id": "choice_6b3",
+                    "text": "End the conversation: 'I'll speak with my lawyer. I'm saying nothing more.'",
+                    "moralEffect": 0,
+                    "nextScene": "scene_16c",
+                    "feedback": "Defensive legality. You try to use the system against itself, but also show you're leaving confrontation mode."
+                }
+            ]
+        },
+
+        "scene_6c": {
+            "chapter": 1,
+            "title": "The Burned Hope",
+            "text": "The diary crackles in the fire. The flames lick at the sides, devouring months of research, evidence, hope. You watch as the letters turn to ash.\n\n'NO!' Krieger rushes to the stove, but it's too late. The diary is a burning remnant. He looks at you, anger and a strange kind of respect in his eyes.\n\n'You're as crazy as your grandmother,' he says slowly. 'Rather destroy everything than give it to us.'\n\nYou don't answer. Inside, you're dying. You may have destroyed the only chance to stop OmniCorp. How many people will suffer because you were cowardly?\n\nKrieger sighs. 'Take her anyway. Without the evidence she's worthless, but the boss still wants to talk to her.'\n\nAs they lead you away, you notice one of the agents looks different. Sad. As if he understood what you did.",
+            "choices": [
+                {
+                    "id": "choice_6c1",
+                    "text": "Address the sad agent: 'I'm sorry. I was afraid.'",
+                    "moralEffect": 0,
+                    "nextScene": "scene_17a",
+                    "feedback": "You show remorse for your actions and seek human connection. This could be a first step toward making amends."
+                },
+                {
+                    "id": "choice_6c2",
+                    "text": "Remain defiant: 'Better burned than in your dirty hands.'",
+                    "moralEffect": -1,
+                    "nextScene": "scene_17b",
+                    "feedback": "You justify your destructive action instead of regretting it. This reinforces the damage you've caused. (-1)"
+                },
+                {
+                    "id": "choice_6c3",
+                    "text": "Stay silent and think about the consequences.",
+                    "moralEffect": 1,
+                    "nextScene": "scene_17c",
+                    "feedback": "Self-reflection after a serious mistake. You begin to understand the scope of your actions. This could be the beginning of genuine remorse and change. (+1)"
+                }
+            ]
+        },
+
+        // Major sequence turning point - here the strands begin to separate clearly
+        "scene_9a": {
+            "chapter": 2,
+            "title": "The Path of Resistance Begins",
+            "text": "Elara nods seriously. 'Then come. But quickly.' You run through the alleys, away from the engine sounds. Elara moves with a cat's certainty through the labyrinth of the old town.\n\n'Your grandmother was more than just an activist,' she explains while running. 'She was the documentarian of our resistance. Everything we know about OmniCorp's crimes comes from her work.'\n\nYou reach an abandoned building - the old town hall. Elara leads you through a hidden entrance into the catacombs below. Here waits a network of people: doctors, engineers, teachers, workers. All united in their determination.\n\n'Welcome to the real Grautal,' says Elara. 'Here live the people who haven't forgotten what justice means.'\n\nAn old man steps forward - Dr. Marcus Webb, you recognize from the ID. 'You have your grandmother's eyes,' he says. 'And hopefully also her courage. We need both.'",
+            "choices": [
+                {
+                    "id": "choice_9a1",
+                    "text": "'Tell me what needs to be done. I'm ready to take up my grandmother's legacy.'",
+                    "moralEffect": 2,
+                    "nextScene": "scene_18a",
+                    "feedback": "Complete dedication to a just cause. You take responsibility without hesitation and thus show true moral leadership. This is the beginning of a hero's path. (+2)",
+                    "relationships": {"elara": 5, "marcus": 3}
+                },
+                {
+                    "id": "choice_9a2",
+                    "text": "'I want to help, but I need to understand what it's really about. What is OmniCorp's greatest crime?'",
+                    "moralEffect": 1,
+                    "nextScene": "scene_18b",
+                    "feedback": "Prudence before engagement. You want to make informed decisions, which shows wisdom. Sometimes it's important to understand before acting. (+1)"
+                },
+                {
+                    "id": "choice_9a3",
+                    "text": "'I'm not ready for big decisions yet. Can I just... watch for now?'",
+                    "moralEffect": 0,
+                    "nextScene": "scene_18c",
+                    "feedback": "Hesitation before major commitments. You show caution but also lack of determination. In times of crisis, indecision is a form of decision against good."
+                }
+            ]
+        },
+
+        // Continuation of all important strands...
+        "scene_12a": {
+            "chapter": 2,
+            "title": "The Clock Tower at Midnight",
+            "text": "The old clock tower stands abandoned at the edge of the old town. The clock has stopped - at 11:47. How long ago? You climb the rusty stairs.\n\nIn the top floor, she waits. Elara sits by the window looking over the city. She turns as you enter.\n\n'You came,' she says simply. 'Martha said you might, when the time came.'\n\nShe's younger than expected, maybe late twenties. But her eyes are old, worn by too much knowledge of human suffering.\n\n'Your house is gone,' you report. 'They blew it up.'\n\nElara nods sadly. 'That was to be expected. They eliminate all traces. But you're here. That means you brought something?'",
+            "choices": [
+                {
+                    "id": "choice_12a1",
+                    "text": "Tell everything - about the letter, the diary, Dr. Webb. Complete honesty.",
+                    "moralEffect": 2,
+                    "nextScene": "scene_19a",
+                    "feedback": "Complete trust and transparency. You share all information and thus show true willingness to cooperate. This is the foundation for genuine partnership in resistance. (+2)",
+                    "relationships": {"elara": 8}
+                },
+                {
+                    "id": "choice_12a2",
+                    "text": "Start cautiously: 'I have information. But first I want to know who you really are.'",
+                    "moralEffect": 0,
+                    "nextScene": "scene_19b",
+                    "feedback": "Healthy skepticism in dangerous times. You show you're not naive but also don't trust unconditionally. In espionage, caution is vital for survival."
+                },
+                {
+                    "id": "choice_12a3",
+                    "text": "Lie: 'They destroyed everything. I couldn't save anything.'",
+                    "moralEffect": -2,
+                    "nextScene": "scene_19c",
+                    "feedback": "Lying to a potential ally. You sabotage cooperation and show lack of trust. This lie could weaken the resistance and cost lives. (-2)"
+                }
+            ]
+        },
+
+        // Important scenes for the profiteer path
+        "scene_14c": {
+            "chapter": 2,
+            "title": "Dealing with Power",
+            "text": "Krieger's eyes light up with interest. 'Ah, a businesswoman. I appreciate that.' He sits across from you. 'What do you have to offer?'\n\n'I know my grandmother's hiding places. Her contacts. The structure of her network.' You speak calmly, though your heart races. 'But I want guarantees.'\n\n'Speak.'\n\n'Complete immunity. A new life in another city. And...' You hesitate. 'Financial compensation for the loss of my inheritance.'\n\nKrieger laughs. 'You're really pragmatic. I like that. OmniCorp rewards cooperation generously.' He leans forward. 'But first a trust test. Tell me about this Dr. Marcus Webb.'\n\nYou recognize: You stand at the abyss. One word, and you become a traitor. But it could also be your path to survival.",
+            "choices": [
+                {
+                    "id": "choice_14c1",
+                    "text": "Tell everything about Dr. Webb. You've decided - survival comes first.",
+                    "moralEffect": -3,
+                    "nextScene": "scene_20a",
+                    "feedback": "Complete betrayal of your grandmother's cause. You sacrifice other people for your own advantage and become an active collaborator. This is one of the deepest moral falls. (-3)",
+                    "sequence": "path_profiteer",
+                    "relationships": {"elara": -10, "marcus": -10}
+                },
+                {
+                    "id": "choice_14c2",
+                    "text": "Tell half-truths. You want to survive but not betray everyone.",
+                    "moralEffect": -1,
+                    "nextScene": "scene_20b",
+                    "feedback": "Partial betrayal - not completely evil, but not good either. You try to play both sides, which is dangerous and morally questionable. (-1)"
+                },
+                {
+                    "id": "choice_14c3",
+                    "text": "Suddenly regret and withdraw: 'I... I can't do this. I'm sorry.'",
+                    "moralEffect": 2,
+                    "nextScene": "scene_20c",
+                    "feedback": "Last-minute reversal shows your conscience still functions. You recognize the moral abyss and pull back. This is an important moment of self-recognition and character strength. (+2)"
+                }
+            ]
+        },
+
+        // Continuation of profiteer scenes
+        "scene_20a": {
+            "chapter": 2,
+            "title": "The Road of No Return",
+            "text": "You tell Krieger everything. About Dr. Webb's lab ID, about his crisis of conscience, about the formulas in the diary. Krieger's smile grows wider with each piece of information.\n\n'Excellent. You're more valuable than we thought.' He takes notes. 'Dr. Webb will be delighted to see you again. Though under somewhat different circumstances.'\n\nHe stands up. 'Welcome to OmniCorp, Miss Steinbach. You start immediately as a consultant for insurgency suppression. Salary: 150,000 a year, plus bonuses for each successful piece of information.'\n\nAs he leaves, another agent remains. Thomas, you recognize now. His eyes are full of contempt.\n\n'I knew you,' he says quietly. 'You used to be different. What happened to you?'\n\nYou see your reflection in the window and don't recognize yourself.",
+            "choices": [
+                {
+                    "id": "choice_20a1",
+                    "text": "Ignore Thomas. You've made your decision. 'People change.'",
+                    "moralEffect": -2,
+                    "nextScene": "scene_profiteer_2",
+                    "feedback": "Complete acceptance of your new role as collaborator. You reinforce your decision and close the door to your past. (-2)",
+                    "relationships": {"thomas": -10}
+                },
+                {
+                    "id": "choice_20a2",
+                    "text": "Plead with Thomas: 'You understand, I had no choice! They would have killed me!'",
+                    "moralEffect": 0,
+                    "nextScene": "scene_profiteer_3",
+                    "feedback": "You seek justification for your actions. This shows your conscience isn't completely dead, but also that you refuse responsibility."
+                },
+                {
+                    "id": "choice_20a3",
+                    "text": "Be honest: 'You're right. I've become a coward. But it's too late.'",
+                    "moralEffect": 1,
+                    "nextScene": "scene_profiteer_4",
+                    "feedback": "Honest self-recognition is the first step to possible redemption. You don't deny what you've become. (+1)"
+                }
+            ]
+        },
+
+        "scene_20c": {
+            "chapter": 2,
+            "title": "The Awakening of Conscience",
+            "text": "Krieger's face darkens. 'Too late for scruples, Miss Steinbach. You've already heard too much.' He signals to his men.\n\n'But perhaps,' he adds, 'we can make another deal. You work for us, but not as a traitor. As a spy. Infiltrate the resistance for us.'\n\nThomas steps forward. 'Sir, that's too risky. She could –'\n\n'Could what, Brenner? Help them?' Krieger laughs coldly. 'She's Steinbach's granddaughter. They'll trust her. Perfect cover.'\n\nYou recognize the cruel irony: They want to use you to destroy the resistance. But this could also be your chance to warn them.\n\n'What's your decision?' Krieger asks. 'Spy or prisoner?'",
+            "choices": [
+                {
+                    "id": "choice_20c1",
+                    "text": "Agree, but with the intention of becoming a double agent.",
+                    "moralEffect": 1,
+                    "nextScene": "scene_infiltrator_1",
+                    "feedback": "Dangerous game on multiple levels. You plan to use the system against itself. This requires enormous courage and could be the path to redemption. (+1)",
+                    "sequence": "path_infiltrator"
+                },
+                {
+                    "id": "choice_20c2",
+                    "text": "Refuse: 'I won't fight against my own people.'",
+                    "moralEffect": 2,
+                    "nextScene": "scene_prisoner_1",
+                    "feedback": "Courage in a hopeless situation. You choose imprisonment over compromising your values. This is true moral strength. (+2)"
+                },
+                {
+                    "id": "choice_20c3",
+                    "text": "Buy time: 'I need time to think. This is a big decision.'",
+                    "moralEffect": 0,
+                    "nextScene": "scene_negotiation_1",
+                    "feedback": "Strategic delay. You look for options and refuse to decide under pressure. Smart but also risky."
+                }
+            ]
+        },
+
+        // Infiltrator strand
+        "scene_infiltrator_1": {
+            "chapter": 3,
+            "title": "The Beginning of Deception",
+            "text": "You nod slowly. 'Alright. I'll do it. But I want guarantees for my safety.'\n\nKrieger smiles satisfied. 'Of course. You get an emergency transmitter and an ID as OmniCorp consultant. If the resistance gets suspicious, say you're undercover for us.'\n\nThomas looks at you doubtfully. You hope he doesn't understand your true intentions.\n\n'Your first mission: Infiltrate Elara's group. Find out where they're planning their next action. We give you 48 hours.'\n\nAs they let you go, Thomas secretly presses a note into your hand: 'Careful. Krieger trusts no one. He'll have you watched.'\n\nNow you're truly alone between all fronts.",
+            "choices": [
+                {
+                    "id": "choice_inf_1",
+                    "text": "Go immediately to the clock tower and tell Elara everything.",
+                    "moralEffect": 2,
+                    "nextScene": "scene_infiltrator_2a",
+                    "feedback": "Complete honesty from the start. You trust that truth is the best way. This shows true courage and could be the basis for genuine cooperation. (+2)"
+                },
+                {
+                    "id": "choice_inf_2",
+                    "text": "First shake off surveillance, then contact the resistance.",
+                    "moralEffect": 1,
+                    "nextScene": "scene_infiltrator_2b",
+                    "feedback": "Careful planning before important actions. You show strategic thinking and protection for others. (+1)"
+                },
+                {
+                    "id": "choice_inf_3",
+                    "text": "Wait several days and gather real information before acting.",
+                    "moralEffect": 0,
+                    "nextScene": "scene_infiltrator_2c",
+                    "feedback": "Long-term strategy with risks. You could lose valuable time but also gain better information."
+                }
+            ]
+        },
+
+        // Radical path
+        "scene_radical_1": {
+            "chapter": 3,
+            "title": "The Path of Violence",
+            "text": "The explosion shakes the building. You run to the window and see flames rising from the OmniCorp administration building. A figure in black clothing runs through the alleys.\n\nMinutes later there's a knock at your door. A young man with scars on his face stands there. His eyes burn with fanaticism.\n\n'Kael,' he introduces himself. 'You're Steinbach's granddaughter. Your grandma told me about you. Did you see the fireworks?' He grins wildly.\n\n'That was you?' you ask horrified.\n\n'Sometimes you have to speak the language they understand. Violence.' His grin disappears. 'Elara and her peace troops will never achieve anything. While they talk, people die.'\n\nHe steps closer. 'Your grandmother understood. In the end, she gave me her explosive plans. She knew only fire could cleanse this city.'",
+            "choices": [
+                {
+                    "id": "choice_rad_1",
+                    "text": "'Show me. If violence is the only way, then I'm ready.'",
+                    "moralEffect": -2,
+                    "nextScene": "scene_radical_2a",
+                    "feedback": "You embrace violence as a solution. This is a dangerous path that leads you away from the moral way. Violence only breeds more violence. (-2)",
+                    "sequence": "path_radical"
+                },
+                {
+                    "id": "choice_rad_2",
+                    "text": "'I understand your anger, but must we endanger innocents?'",
+                    "moralEffect": 0,
+                    "nextScene": "scene_radical_2b",
+                    "feedback": "You ask important moral questions about the means of struggle. This shows you understand the situation's complexity."
+                },
+                {
+                    "id": "choice_rad_3",
+                    "text": "'This is wrong. My grandmother would never have supported such things.'",
+                    "moralEffect": 2,
+                    "nextScene": "scene_radical_2c",
+                    "feedback": "You resist the temptation of simple, violent solutions. This shows moral strength and loyalty to higher principles. (+2)"
+                }
+            ]
+        },
+
+        // Information path
+        "scene_information_1": {
+            "chapter": 3,
+            "title": "The Way of Truth",
+            "text": "Dr. Marcus Webb leads you to a hidden computer terminal in the basement. 'Your grandmother wasn't just an activist,' he explains. 'She was also a hacker. See this?'\n\nThe screen shows a complex network of servers. 'OmniCorp's internal communications. Martha spent years hacking into it. But she succeeded.'\n\nHe types in a password: MarthaLivesMatterH2O. 'She gave me this before her death. For you.'\n\nThe files that open are overwhelming. Thousands of emails, reports, financial documents. Evidence of corruption, blackmail, murder.\n\n'The problem is,' says Marcus, 'we need more than just data. We need someone who can use it properly. Someone who understands the system from within.'",
+            "choices": [
+                {
+                    "id": "choice_info_1",
+                    "text": "'Teach me how to hack. I want to learn everything.'",
+                    "moralEffect": 1,
+                    "nextScene": "scene_information_2a",
+                    "feedback": "You choose knowledge as a weapon. Information is power, and you're willing to invest the time to master it. (+1)",
+                    "sequence": "path_information"
+                },
+                {
+                    "id": "choice_info_2",
+                    "text": "'We should immediately pass this information to the media.'",
+                    "moralEffect": 0,
+                    "nextScene": "scene_information_2b",
+                    "feedback": "Direct approach with risks. You prefer quick action over careful planning."
+                },
+                {
+                    "id": "choice_info_3",
+                    "text": "'Can't we find someone else? I'm not a computer expert.'",
+                    "moralEffect": -1,
+                    "nextScene": "scene_information_2c",
+                    "feedback": "You shrink from responsibility and look for easier ways. This shows lack of willingness to learn new skills. (-1)"
+                }
+            ]
+        },
+
+        // Major turning points and convergences
+        "scene_convergence_1": {
+            "chapter": 4,
+            "title": "All Paths Lead Together",
+            "text": "Three months have passed. The city burns. Not from Kael's bombs, but from the people's uprising. The information that leaked out - through whatever path - has ignited a revolution.\n\nYou stand on the roof of the OmniCorp main building. Around you rages the battle for Grautal. Depending on your path, you arrived here as leader, traitor, spy or fugitive.\n\nBelow you see familiar faces. Elara leads a group of resistance fighters. Kael and his radicals fight with improvised weapons. Thomas and other defectors have joined the citizens. Dr. Webb coordinates medical aid.\n\nBut in the penthouse waits the real enemy: Richard Blackwater, CEO of OmniCorp. He has invited everyone to a final conversation. 'Before my empire falls,' he announced over loudspeakers, 'I want to know who destroyed it.'",
+            "choices": [
+                {
+                    "id": "choice_conv_1",
+                    "text": "Go to Blackwater alone. This is your fight.",
+                    "moralEffect": 1,
+                    "nextScene": "scene_final_confrontation",
+                    "feedback": "You take personal responsibility for the final confrontation. This shows courage and leadership. (+1)",
+                    "sequence": "final_confrontation"
+                },
+                {
+                    "id": "choice_conv_2",
+                    "text": "Get the others. Together we are stronger.",
+                    "moralEffect": 2,
+                    "nextScene": "scene_final_unity",
+                    "feedback": "You recognize that true strength lies in unity. This shows wisdom and the ability to grow beyond personal vanity. (+2)"
+                },
+                {
+                    "id": "choice_conv_3",
+                    "text": "Flee. The building could be a trap.",
+                    "moralEffect": -1,
+                    "nextScene": "scene_final_escape",
+                    "feedback": "You retreat from the final confrontation. This could endanger others and shows lack of courage in decisive moments. (-1)"
+                }
+            ]
+        },
+
+        // Final confrontation scene
+        "scene_final_confrontation": {
+            "chapter": 5,
+            "title": "The Heart of Darkness",
+            "text": "The penthouse is luxurious and cold. Crystal glass and marble floors while the city burns below. Richard Blackwater stands at the panoramic window, an old man in an expensive suit.\n\n'The famous granddaughter,' he says without turning around. 'Martha spoke of you often. In our... conversations.'\n\nHe turns around. His eyes are tired but unrepentant. 'Do you think you've won? This city will sink into chaos without OmniCorp. We brought order. Structure. Progress.'\n\n'And suffering,' you answer.\n\n'Suffering is the price of progress. Every great civilization was built on the bones of the weak.'\n\nHe opens a drawer. Inside lies a weapon. 'I offer you a choice. Kill me and become a martyr. Or hear my offer.'",
+            "choices": [
+                {
+                    "id": "choice_final_1",
+                    "text": "'Speak. But your words will change nothing.'",
+                    "moralEffect": 1,
+                    "nextScene": "scene_final_choice_1",
+                    "feedback": "You show willingness to listen while maintaining your moral clarity. This shows wisdom and strength. (+1)"
+                },
+                {
+                    "id": "choice_final_2",
+                    "text": "Take the weapon. 'For everyone you murdered.'",
+                    "moralEffect": -2,
+                    "nextScene": "scene_final_choice_2",
+                    "feedback": "You choose revenge over justice. This could make you what you fight against. (-2)"
+                },
+                {
+                    "id": "choice_final_3",
+                    "text": "'Your time is over. Surrender to justice.'",
+                    "moralEffect": 2,
+                    "nextScene": "scene_final_choice_3",
+                    "feedback": "You choose justice over revenge. This shows true moral greatness and trust in rule-of-law principles. (+2)"
+                }
+            ]
+        },
+
+        // Different ending scenarios based on path and decisions
+        "ending_hero": {
+            "chapter": 5,
+            "title": "The Hero of Grautal",
+            "isEnding": true,
+            "text": "Five years later, a statue stands before Grautal's new town hall. It shows a young woman with determined eyes, holding a water jug high. The inscription reads: 'For Martha and all who never gave up.'\n\nYou contemplate it from a café that used to house OmniCorp headquarters. The city flourishes. Clean water flows freely, people have work, children play in the streets.\n\nElara became mayor. Dr. Webb heads the new public health system. Kael works in a program for former extremists. Thomas is police chief and ensures no corporation ever controls the city again.\n\nAnd you? You declined all offices. Instead, you travel from city to city telling Grautal's story. How people can rise up. How justice is possible.\n\n'Revolution,' you write in your diary, 'is not a moment of destruction, but a life of building.'\n\n**MORAL ASSESSMENT: True Hero (+20 or higher)**\nYour path was marked by consistent altruism, courage and the wisdom to choose right over easy. You proved the categorical imperative is not just theory but can be lived practice. Your decisions can serve as universal laws."
+        },
+
+        "ending_survivor": {
+            "chapter": 5,
+            "title": "The Survivor",
+            "isEnding": true,
+            "text": "You sit in a small apartment on the city's outskirts. The revolution is over, Grautal has won, but you weren't there. You survived while others fought.\n\nOn TV runs a documentary about the uprising. You see Elara speaking of 'the unknown heroes' who enabled the first resistance. You know she means you - partially.\n\nYour decisions were a mixture of courage and cowardice, altruism and egoism. You helped where you could, but also looked away when it got too dangerous.\n\nNow you live a quiet life. Not unhappy, but not fulfilled either. Sometimes you wonder: What if?\n\nA letter lies on your table. From Amy, Thomas's sister: 'Thank you for saving me back then. I'm becoming a doctor and want to help build a better world. If you ever want to fight again - we need people like you.'\n\nMaybe it's never too late for a second chance.\n\n**MORAL ASSESSMENT: The Ambivalent (0 to +10)**\nYour path shows the complexity of human nature. You were neither hero nor villain, but something in between - human. Your story proves perfection isn't necessary to do good."
+        },
+
+        "ending_fallen": {
+            "chapter": 5,
+            "title": "The Fallen",
+            "isEnding": true,
+            "text": "The prison is cold and gray. Through your cell window you see the new Grautal - free, alive, hopeful. A world that emerged without you. A world you betrayed.\n\nThe other prisoners avoid you. Collaborators have no respect, even among criminals. You sit alone and think about the decisions that brought you here.\n\nOnce a week Thomas visits you. He's now police chief, a respected man. He never speaks about the past, only small things - the weather, the city, his family.\n\n'Why do you come?' you ask him once.\n\n'Because everyone deserves a chance at redemption,' he answers. 'Even you.'\n\nIn ten years you'll be released. Then you can decide who you really want to be. The past is unchangeable, but the future... that lies in your hands.\n\n**MORAL ASSESSMENT: The Lost (-15 or lower)**\nYou chose the path of selfishness and sacrificed others for your advantage. But even in the deepest fall, redemption is possible. Your story is a warning, but also hope - it's never too late to turn around."
+        },
+
+        "ending_martyr": {
+            "chapter": 5,
+            "title": "The Ultimate Sacrifice",
+            "isEnding": true,
+            "text": "The explosion was quick. You had no time for fear, only for one last thought: 'It will be worth it.'\n\nYour death becomes legend. The video of your last fight spreads worldwide. People see how you gave your life to save others. It becomes a symbol for selfless resistance.\n\nUprisings break out in twenty cities. Corporations are regulated. Water becomes a human right. Your name is spoken in the same breath as Gandhi and Martin Luther King.\n\nAt your funeral, Elara speaks to ten thousand people: 'She showed us that a life lived for others is immortal.'\n\nOn your gravestone stands a quote from Kant: 'Act only according to that maxim whereby you can at the same time will that it should become a universal law.'\n\nYou did it. You acted so your maxim could become universal. And it did.\n\n**MORAL ASSESSMENT: The Martyr (+25 or higher)**\nYour sacrifice was perfect. You achieved the highest moral ideal - a life completely devoted to others. Your death accomplished more than most lives. You became the embodiment of the categorical imperative."
+        },
+
+        "ending_tyrant": {
+            "chapter": 5,
+            "title": "The New Tyrant",
+            "isEnding": true,
+            "text": "From your office in the former OmniCorp building, you overlook your realm. Grautal is safe, orderly, efficient. Crime has dropped to zero. There are no protests. All citizens have work and clean water.\n\nAnd no one dares to dissent.\n\nYou didn't destroy OmniCorp - you took it over. 'For the common good,' you tell yourself. But the surveillance cameras, the internment camps for 'troublemakers,' the propaganda - they all tell a different story.\n\nElara is dead. An 'accident' during a 'cleansing operation.' Kael has disappeared. Dr. Webb works for you - under duress. Thomas left the city and organizes resistance from outside.\n\nIn your mirror you see the face you once had. But the eyes... the eyes have grown cold. You became what you fought against.\n\nPower corrupts. Absolute power corrupts absolutely. You are living proof.\n\n**MORAL ASSESSMENT: The Fallen Savior (-20 or lower)**\nYou killed the dragon and became the dragon yourself. Your story is a tragedy - not because you were evil, but because you wanted to be good. But good intentions without moral vigilance lead to tyranny."
+        },
+
+        "ending_exile": {
+            "chapter": 5,
+            "title": "The Exile",
+            "isEnding": true,
+            "text": "The train leaves Grautal. You look back at the city you can never enter again. The amnesty applied to all political prisoners - except traitors.\n\nIn your suitcase are the diamonds Krieger gave you. Blood money. You could start a new life somewhere, rich and comfortable.\n\nBut every night you see the faces of people who died because of your information. Dr. Webb, tortured to death. Sarah, shot while trying to escape. Elara, who trusted you until the end.\n\nIn the new city you call yourself something else. You work in a soup kitchen for the homeless. Small good deeds to pay for a huge debt. But you know: It will never be enough.\n\nOne day you get a letter without return address: 'People can change. Even traitors. Prove it.' - T.\n\nThomas. He gives you a chance. Somewhere he's still fighting. And maybe... maybe you can help him.\n\n**MORAL ASSESSMENT: The Penitent (-10 to -5)**\nYou made great mistakes, but you regret them. Your exile is both punishment and opportunity. The question is: Will you spend the rest of your life atoning for your sins or will you fight to make amends?"
+        }
+    };
+
+    // Error handling and fallback system
+    function safeGetScene(sceneId) {
+        if (!sceneId) {
+            console.error('No scene ID provided');
+            return getFallbackScene();
+        }
+
+        if (storyData[sceneId]) {
+            return storyData[sceneId];
+        }
+
+        console.error('Scene not found:', sceneId);
+        return getFallbackScene();
+    }
+
+    function getFallbackScene() {
+        return {
+            title: "Unexpected Turn",
+            text: "Events have taken an unforeseen turn. You must find a new way forward...",
+            chapter: gameState.currentChapter,
+            choices: [
+                {
+                    id: "fallback_1",
+                    text: "Look for a safer place and reconsider the situation.",
+                    moralEffect: 0,
+                    nextScene: "scene_1",
+                    feedback: "Sometimes a fresh start is the best option."
+                },
+                {
+                    id: "fallback_2",
+                    text: "Move forward bravely, no matter what comes.",
+                    moralEffect: 1,
+                    nextScene: determineNextSceneByMoral(),
+                    feedback: "Courage in uncertainty shows true character."
+                }
+            ]
+        };
+    }
+
+    function determineNextSceneByMoral() {
+        if (gameState.moralScore >= 15) return "scene_convergence_1";
+        if (gameState.moralScore <= -15) return "scene_final_confrontation";
+        if (gameState.decisionsCount >= 20) return "scene_convergence_1";
+        return "scene_1";
+    }
+
+    // Game functions with robust error handling
+    function startGame() {
+        try {
+            gameState = {
+                moralScore: 0,
+                currentScene: 'scene_1',
+                decisionsCount: 0,
+                positiveActions: 0,
+                negativeActions: 0,
+                neutralActions: 0,
+                currentChapter: 1,
+                storyPath: 'Main Path',
+                visitedScenes: new Set(),
+                specialFlags: new Set(),
+                currentChoice: null,
+                choiceHistory: [],
+                relationships: {
+                    elara: 0,
+                    thomas: 0,
+                    marcus: 0,
+                    sarah: 0,
+                    kael: 0,
+                    amy: 0,
+                    helena: 0,
+                    richard: 0
+                },
+                inventory: new Set(),
+                knowledge: new Set(),
+                currentStrand: 'main',
+                sequenceQueue: []
+            };
+
+            hideAllScreens();
+            document.getElementById('game-play').classList.remove('hidden');
+
+            updateUI();
+            loadScene(gameState.currentScene);
+        } catch (error) {
+            console.error('Error starting game:', error);
+            showError('Error starting the game. Page will reload.');
+            setTimeout(() => location.reload(), 2000);
+        }
+    }
+
+    function hideAllScreens() {
+        document.getElementById('start-screen').classList.add('hidden');
+        document.getElementById('end-screen').classList.add('hidden');
+        document.getElementById('sequence-overlay').classList.add('hidden');
+        document.getElementById('error-display').classList.add('hidden');
+    }
+
+    function loadScene(sceneId) {
+        try {
+            const scene = safeGetScene(sceneId);
+
+            if (scene.isEnding) {
+                showEnding(scene);
+                return;
+            }
+
+            // Update game state safely
+            gameState.currentScene = sceneId;
+            gameState.visitedScenes.add(sceneId);
+            gameState.currentChapter = scene.chapter || gameState.currentChapter;
+
+            // Update UI elements safely
+            updateUIElement('chapter-indicator', `Chapter ${gameState.currentChapter}`);
+            updateUIElement('story-path', gameState.storyPath);
+
+            // Set scene content
+            updateUIElement('scene-title', scene.title || '');
+
+            let fullText = '';
+            if (scene.transition) {
+                fullText = `<span class="transition-text">${scene.transition}</span>`;
+            }
+            fullText += scene.text || '';
+
+            document.getElementById('scene-text').innerHTML = fullText;
+
+            // Clear and populate choices safely
+            const choicesContainer = document.getElementById('choices-container');
+            choicesContainer.innerHTML = '';
+
+            if (scene.choices && scene.choices.length > 0) {
+                scene.choices.forEach((choice, index) => {
+                    const button = document.createElement('button');
+                    button.className = 'choice-button';
+                    button.textContent = choice.text || `Option ${index + 1}`;
+                    button.onclick = () => makeChoice(choice);
+                    choicesContainer.appendChild(button);
+                });
+            } else {
+                // Fallback if no choices
+                const button = document.createElement('button');
+                button.className = 'choice-button';
+                button.textContent = 'Continue';
+                button.onclick = () => proceedToNextScene();
+                choicesContainer.appendChild(button);
+            }
+
+            // Hide feedback
+            document.getElementById('feedback-container').classList.add('hidden');
+            document.getElementById('error-display').classList.add('hidden');
+
+            // Update progress
+            updateUI();
+
+        } catch (error) {
+            console.error('Error loading scene:', error);
+            showError('Error loading scene. Trying to continue automatically...');
+            setTimeout(() => proceedToNextScene(), 3000);
+        }
+    }
+
+    function proceedToNextScene() {
+        // Fallback continuation
+        const nextScene = determineNextSceneByMoral();
+        loadScene(nextScene);
+    }
+
+    function updateUIElement(id, content) {
+        try {
+            const element = document.getElementById(id);
+            if (element) {
+                element.textContent = content;
+            }
+        } catch (error) {
+            console.error(`Error updating element ${id}:`, error);
+        }
+    }
+
+    function makeChoice(choice) {
+        try {
+            if (!choice) {
+                console.error('Invalid choice');
+                return;
+            }
+
+            // Store current choice
+            gameState.currentChoice = choice;
+
+            // Add to choice history
+            gameState.choiceHistory.push({
+                scene: gameState.currentScene,
+                choice: choice.text,
+                moralEffect: choice.moralEffect || 0
+            });
+
+            // Update statistics
+            gameState.decisionsCount++;
+
+            if (choice.moralEffect !== undefined) {
+                gameState.moralScore += choice.moralEffect;
+
+                if (choice.moralEffect > 0) {
+                    gameState.positiveActions++;
+                } else if (choice.moralEffect < 0) {
+                    gameState.negativeActions++;
+                } else {
+                    gameState.neutralActions++;
+                }
+            }
+
+            // Update story path if specified
+            if (choice.storyPath && storyPaths[choice.storyPath]) {
+                gameState.storyPath = storyPaths[choice.storyPath];
+                gameState.currentStrand = choice.storyPath;
+            }
+
+            // Update relationships if specified
+            if (choice.relationships) {
+                Object.keys(choice.relationships).forEach(person => {
+                    if (gameState.relationships.hasOwnProperty(person)) {
+                        gameState.relationships[person] += choice.relationships[person];
+                    }
+                });
+            }
+
+            // Add to inventory if specified
+            if (choice.inventory) {
+                choice.inventory.forEach(item => gameState.inventory.add(item));
+            }
+
+            // Add to knowledge if specified
+            if (choice.knowledge) {
+                choice.knowledge.forEach(info => gameState.knowledge.add(info));
+            }
+
+            // Add special flags if specified
+            if (choice.specialFlags) {
+                choice.specialFlags.forEach(flag => gameState.specialFlags.add(flag));
+            }
+
+            // Check for sequence transition
+            if (choice.sequence) {
+                showSequence(choice.sequence, choice.nextScene);
+                return;
+            }
+
+            // Show feedback
+            showFeedback(choice);
+
+            // Update UI
+            updateUI();
+
+        } catch (error) {
+            console.error('Error making choice:', error);
+            showError('Error processing choice. Trying to continue...');
+            setTimeout(() => continueFeedback(), 2000);
+        }
+    }
+
+    function showSequence(sequenceKey, nextScene) {
+        try {
+            const sequence = sequences[sequenceKey];
+            if (!sequence) {
+                console.error('Sequence not found:', sequenceKey);
+                loadScene(nextScene || determineNextSceneByMoral());
+                return;
+            }
+
+            // Store next scene for after sequence
+            gameState.sequenceNextScene = nextScene;
+
+            // Set sequence content
+            const sequenceImage = document.getElementById('sequence-image');
+            sequenceImage.style.backgroundImage = `url(${sequence.image})`;
+
+            updateUIElement('sequence-title', sequence.title);
+            updateUIElement('sequence-description', sequence.description);
+
+            // Show sequence overlay
+            document.getElementById('sequence-overlay').classList.remove('hidden');
+
+        } catch (error) {
+            console.error('Error showing sequence:', error);
+            loadScene(nextScene || determineNextSceneByMoral());
+        }
+    }
+
+    function continueFromSequence() {
+        try {
+            document.getElementById('sequence-overlay').classList.add('hidden');
+
+            const nextScene = gameState.sequenceNextScene || determineNextSceneByMoral();
+            loadScene(nextScene);
+        } catch (error) {
+            console.error('Error continuing from sequence:', error);
+            loadScene(determineNextSceneByMoral());
+        }
+    }
+
+    function showFeedback(choice) {
+        try {
+            const feedbackContainer = document.getElementById('feedback-container');
+            const feedbackHeader = document.getElementById('feedback-header');
+            const feedbackText = document.getElementById('feedback-text');
+            const timerDisplay = document.getElementById('timer-display');
+
+            // Set feedback class based on moral effect
+            feedbackContainer.className = '';
+            if (choice.moralEffect > 0) {
+                feedbackContainer.classList.add('feedback-positive');
+                feedbackHeader.textContent = `Morally Good (+${choice.moralEffect})`;
+            } else if (choice.moralEffect < 0) {
+                feedbackContainer.classList.add('feedback-negative');
+                feedbackHeader.textContent = `Morally Questionable (${choice.moralEffect})`;
+            } else {
+                feedbackContainer.classList.add('feedback-neutral');
+                feedbackHeader.textContent = 'Neutral Action';
+            }
+
+            feedbackText.textContent = choice.feedback || 'Your decision will have consequences...';
+            feedbackContainer.classList.remove('hidden');
+
+            // Disable choice buttons
+            const buttons = document.querySelectorAll('.choice-button');
+            buttons.forEach(btn => btn.disabled = true);
+
+            // Start 30-second timer
+            let timeLeft = 30;
+            timerDisplay.textContent = `Auto-continue in ${timeLeft}s`;
+
+            clearInterval(timerInterval);
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                timerDisplay.textContent = `Auto-continue in ${timeLeft}s`;
+
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    continueFeedback();
+                }
+            }, 1000);
+
+        } catch (error) {
+            console.error('Error showing feedback:', error);
+            setTimeout(() => continueFeedback(), 2000);
+        }
+    }
+
+    function continueFeedback() {
+        try {
+            clearInterval(timerInterval);
+
+            // Check for ending conditions
+            if (gameState.decisionsCount >= 50 || Math.abs(gameState.moralScore) >= 25) {
+                checkEnding();
+                return;
+            }
+
+            const choice = gameState.currentChoice;
+            if (choice && choice.nextScene) {
+                loadScene(choice.nextScene);
+            } else {
+                // Fallback to appropriate scene
+                checkEnding();
+            }
+        } catch (error) {
+            console.error('Error continuing feedback:', error);
+            checkEnding();
+        }
+    }
+
+    function updateUI() {
+        try {
+            // Update moral score display
+            const scoreDisplay = document.getElementById('moral-score');
+            scoreDisplay.textContent = gameState.moralScore >= 0 ? `+${gameState.moralScore}` : gameState.moralScore;
+
+            // Update score color
+            scoreDisplay.className = '';
+            if (gameState.moralScore > 0) {
+                scoreDisplay.classList.add('score-positive');
+            } else if (gameState.moralScore < 0) {
+                scoreDisplay.classList.add('score-negative');
+            } else {
+                scoreDisplay.classList.add('score-neutral');
+            }
+
+            // Update progress bar (assuming 50 decisions for full story)
+            const progress = Math.min((gameState.decisionsCount / 50) * 100, 100);
+            document.getElementById('progress-bar').style.width = `${progress}%`;
+
+        } catch (error) {
+            console.error('Error updating UI:', error);
+        }
+    }
+
+    function checkEnding() {
+        try {
+            let endingScene;
+
+            // Determine ending based on moral score and path
+            if (gameState.moralScore >= 20) {
+                if (gameState.specialFlags.has('Martyrdom')) {
+                    endingScene = 'ending_martyr';
+                } else {
+                    endingScene = 'ending_hero';
+                }
+            } else if (gameState.moralScore <= -20) {
+                if (gameState.currentStrand === 'profiteer') {
+                    endingScene = 'ending_exile';
+                } else {
+                    endingScene = 'ending_tyrant';
+                }
+            } else if (gameState.moralScore >= 10) {
+                endingScene = 'ending_hero';
+            } else if (gameState.moralScore <= -10) {
+                endingScene = 'ending_fallen';
+            } else {
+                endingScene = 'ending_survivor';
+            }
+
+            // Load the ending scene
+            const ending = storyData[endingScene];
+            if (ending) {
+                showEnding(ending);
+            } else {
+                // Fallback ending
+                showEnding({
+                    title: "End of the Journey",
+                    isEnding: true,
+                    text: "Your story in Grautal ends here. Your decisions have left traces whose effects will resonate for a long time."
+                });
+            }
+        } catch (error) {
+            console.error('Error checking ending:', error);
+            showError('Error loading ending. Showing default ending...');
+            showEnding({
+                title: "End of the Journey",
+                isEnding: true,
+                text: "Your story in Grautal ends here."
+            });
+        }
+    }
+
+    function showEnding(endingScene) {
+        try {
+            hideAllScreens();
+            document.getElementById('end-screen').classList.remove('hidden');
+
+            updateUIElement('end-title', endingScene.title);
+            document.getElementById('end-description').innerHTML = endingScene.text.replace(/\n\n/g, '<br><br>');
+
+            updateEndStats();
+            generateMoralAnalysis();
+        } catch (error) {
+            console.error('Error showing ending:', error);
+        }
+    }
+
+    function updateEndStats() {
+        try {
+            updateUIElement('final-score', gameState.moralScore >= 0 ? `+${gameState.moralScore}` : gameState.moralScore);
+            updateUIElement('decisions-made', gameState.decisionsCount);
+            updateUIElement('positive-actions', gameState.positiveActions);
+            updateUIElement('negative-actions', gameState.negativeActions);
+            updateUIElement('final-path', gameState.storyPath);
+        } catch (error) {
+            console.error('Error updating end stats:', error);
+        }
+    }
+
+    function generateMoralAnalysis() {
+        try {
+            const journeyText = document.getElementById('moral-journey-text');
+            const choiceHistory = document.getElementById('choice-history');
+
+            // Generate moral journey analysis
+            let analysis = '';
+
+            if (gameState.moralScore >= 20) {
+                analysis = 'Your journey was marked by extraordinary altruism and moral clarity. In almost every situation, you put the welfare of others above your own. You proved that the categorical imperative is not just theory but can be lived practice.';
+            } else if (gameState.moralScore >= 10) {
+                analysis = 'You chose a predominantly moral path, with some compromises. Your decisions show someone who strives to do the right thing, even when it wasn\'t always easy.';
+            } else if (gameState.moralScore >= 0) {
+                analysis = 'Your path was marked by ambivalence. Swinging between good and evil, you explored the gray zone of morality. This makes you human, but also unpredictable.';
+            } else if (gameState.moralScore >= -10) {
+                analysis = 'The dark side often tempted you, and you gave in to it. But there were moments of light that show redemption is possible.';
+            } else {
+                analysis = 'Your path was dark. Selfishness, cruelty and betrayal marked your journey. You became proof of how easily humans can lose their humanity.';
+            }
+
+            journeyText.textContent = analysis;
+
+            // Display choice history
+            choiceHistory.innerHTML = '';
+            const recentChoices = gameState.choiceHistory.slice(-15);
+            recentChoices.forEach(choice => {
+                const entry = document.createElement('div');
+                entry.className = 'choice-entry';
+                if (choice.moralEffect > 0) {
+                    entry.classList.add('positive');
+                } else if (choice.moralEffect < 0) {
+                    entry.classList.add('negative');
+                }
+                entry.innerHTML = `<strong>Scene:</strong> ${choice.scene}<br><strong>Choice:</strong> ${choice.choice}<br><strong>Moral Effect:</strong> ${choice.moralEffect > 0 ? '+' : ''}${choice.moralEffect}`;
+                choiceHistory.appendChild(entry);
+            });
+        } catch (error) {
+            console.error('Error generating moral analysis:', error);
+        }
+    }
+
+    function showError(message) {
+        try {
+            const errorDisplay = document.getElementById('error-display');
+            const errorMessage = document.getElementById('error-message');
+
+            errorMessage.textContent = message;
+            errorDisplay.classList.remove('hidden');
+        } catch (error) {
+            console.error('Error showing error message:', error);
+        }
+    }
+
+    function handleError() {
+        try {
+            document.getElementById('error-display').classList.add('hidden');
+            proceedToNextScene();
+        } catch (error) {
+            console.error('Error handling error:', error);
+            location.reload();
+        }
+    }
+
+    // Global error handler
+    window.onerror = function(msg, url, lineNo, columnNo, error) {
+        console.error('Global error:', msg, error);
+        showError('An unexpected error occurred. The game will continue...');
+        setTimeout(() => {
+            document.getElementById('error-display').classList.add('hidden');
+            proceedToNextScene();
+        }, 3000);
+        return false;
+    };
+
+    // Initialize game when page loads
+    window.addEventListener('DOMContentLoaded', () => {
+        console.log('The Echo of Grautal - Complete moral odyssey ready');
+
+        // Add event listeners for sequence continuation
+        document.getElementById('sequence-continue').addEventListener('click', continueFromSequence);
+
+        // Ensure all buttons work
+        document.getElementById('continue-button').addEventListener('click', continueFeedback);
+    });
+    </script>
+</body>
+</html>
