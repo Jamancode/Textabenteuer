@@ -1,0 +1,1853 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Das Echo von Grautal - Eine moralische Odyssee</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap');
+
+        :root {
+            --primary-gold: #d4af37;
+            --secondary-crimson: #dc143c;
+            --deep-black: #0a0a0a;
+            --soft-white: #f5f5f0;
+            --shadow-gray: #2a2a2a;
+            --positive-green: #228b22;
+            --negative-red: #b22222;
+            --neutral-blue: #4169e1;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Crimson Text', serif;
+            background: linear-gradient(135deg, var(--deep-black) 0%, var(--shadow-gray) 100%);
+            color: var(--soft-white);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,%3Csvg width="100" height="100" xmlns="http://www.w3.org/2000/svg"%3E%3Cdefs%3E%3Cpattern id="grid" width="100" height="100" patternUnits="userSpaceOnUse"%3E%3Cpath d="M 100 0 L 0 0 0 100" fill="none" stroke="rgba(212, 175, 55, 0.05)" stroke-width="1"/%3E%3C/pattern%3E%3C/defs%3E%3Crect width="100" height="100" fill="url(%23grid)" /%3E%3C/svg%3E');
+            pointer-events: none;
+            opacity: 0.3;
+            animation: drift 20s linear infinite;
+        }
+
+        @keyframes drift {
+            from { transform: translate(0, 0); }
+            to { transform: translate(100px, 100px); }
+        }
+
+        #game-container {
+            width: 100%;
+            max-width: 1200px;
+            background: rgba(10, 10, 10, 0.95);
+            border: 3px solid var(--primary-gold);
+            border-radius: 20px;
+            box-shadow:
+                0 0 50px rgba(212, 175, 55, 0.3),
+                inset 0 0 30px rgba(0, 0, 0, 0.5);
+            padding: 3rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* Titel und Überschriften */
+        h1, h2 {
+            font-family: 'Cinzel', serif;
+            text-align: center;
+            margin-bottom: 2rem;
+            text-shadow: 0 0 20px rgba(212, 175, 55, 0.5);
+        }
+
+        h1 {
+            font-size: 3rem;
+            color: var(--primary-gold);
+            letter-spacing: 3px;
+        }
+
+        h2 {
+            font-size: 2rem;
+            color: var(--soft-white);
+        }
+
+        /* Info-Leiste oben */
+        .info-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding: 1rem;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 10px;
+            border: 1px solid var(--primary-gold);
+        }
+
+        #chapter-indicator {
+            font-family: 'Cinzel', serif;
+            font-size: 1.2rem;
+            color: var(--primary-gold);
+        }
+
+        #story-path {
+            font-family: 'Crimson Text', serif;
+            font-size: 1.1rem;
+            color: var(--soft-white);
+            text-align: center;
+            font-style: italic;
+        }
+
+        #moral-display {
+            text-align: center;
+        }
+
+        #moral-label {
+            font-family: 'Cinzel', serif;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+            color: var(--primary-gold);
+        }
+
+        #moral-score {
+            font-family: 'Cinzel', serif;
+            font-size: 2.5rem;
+            font-weight: 600;
+            transition: all 0.5s ease;
+        }
+
+        .score-positive {
+            color: var(--positive-green);
+            text-shadow: 0 0 15px var(--positive-green);
+        }
+
+        .score-negative {
+            color: var(--negative-red);
+            text-shadow: 0 0 15px var(--negative-red);
+        }
+
+        .score-neutral {
+            color: var(--neutral-blue);
+            text-shadow: 0 0 15px var(--neutral-blue);
+        }
+
+        /* Szenen-Bereich */
+        #scene-container {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        #scene-title {
+            font-family: 'Cinzel', serif;
+            font-size: 1.5rem;
+            color: var(--primary-gold);
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        #scene-text {
+            font-size: 1.2rem;
+            line-height: 1.8;
+            margin-bottom: 2rem;
+            text-align: justify;
+            animation: fadeIn 1s ease;
+        }
+
+        .transition-text {
+            color: var(--secondary-crimson);
+            font-weight: 600;
+            font-style: italic;
+            display: block;
+            margin-bottom: 1rem;
+            padding: 1rem;
+            background: rgba(220, 20, 60, 0.1);
+            border-left: 4px solid var(--secondary-crimson);
+            border-radius: 5px;
+        }
+
+        /* Entscheidungsbereich */
+        #choices-container {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .choice-button {
+            font-family: 'Crimson Text', serif;
+            font-size: 1.1rem;
+            padding: 1.5rem;
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.1) 0%, rgba(212, 175, 55, 0.05) 100%);
+            color: var(--soft-white);
+            border: 2px solid var(--primary-gold);
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: left;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .choice-button:hover {
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.3) 0%, rgba(212, 175, 55, 0.15) 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(212, 175, 55, 0.4);
+        }
+
+        .choice-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .choice-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.3), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .choice-button:hover::before {
+            left: 100%;
+        }
+
+        /* Feedback-Bereich */
+        #feedback-container {
+            background: rgba(0, 0, 0, 0.8);
+            border: 2px solid var(--primary-gold);
+            border-radius: 15px;
+            padding: 2rem;
+            margin: 2rem 0;
+            position: relative;
+            animation: slideIn 0.5s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        #feedback-header {
+            font-family: 'Cinzel', serif;
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        #feedback-text {
+            font-size: 1.1rem;
+            line-height: 1.7;
+            text-align: justify;
+            margin-bottom: 1.5rem;
+        }
+
+        .feedback-positive {
+            border-color: var(--positive-green);
+            box-shadow: 0 0 20px rgba(34, 139, 34, 0.3);
+        }
+
+        .feedback-positive #feedback-header {
+            color: var(--positive-green);
+        }
+
+        .feedback-negative {
+            border-color: var(--negative-red);
+            box-shadow: 0 0 20px rgba(178, 34, 34, 0.3);
+        }
+
+        .feedback-negative #feedback-header {
+            color: var(--negative-red);
+        }
+
+        .feedback-neutral #feedback-header {
+            color: var(--neutral-blue);
+        }
+
+        #timer-display {
+            text-align: center;
+            font-family: 'Cinzel', serif;
+            color: var(--primary-gold);
+            opacity: 0.7;
+            margin-bottom: 1rem;
+        }
+
+        #continue-button {
+            display: block;
+            margin: 0 auto;
+            padding: 1rem 3rem;
+            font-family: 'Cinzel', serif;
+            font-size: 1.1rem;
+            background: var(--primary-gold);
+            color: var(--deep-black);
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        #continue-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 20px rgba(212, 175, 55, 0.5);
+        }
+
+        /* Progress Bar */
+        #progress-container {
+            width: 100%;
+            height: 10px;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 5px;
+            margin-bottom: 2rem;
+            overflow: hidden;
+        }
+
+        #progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary-gold), var(--secondary-crimson));
+            transition: width 0.5s ease;
+            width: 0%;
+        }
+
+        /* Start- und End-Screens */
+        .screen-content {
+            max-width: 800px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .intro-text {
+            font-size: 1.2rem;
+            line-height: 1.8;
+            margin-bottom: 2rem;
+            text-align: justify;
+        }
+
+        .quote {
+            font-style: italic;
+            color: var(--primary-gold);
+            margin: 1.5rem 0;
+            padding: 1rem;
+            border-left: 3px solid var(--primary-gold);
+            background: rgba(212, 175, 55, 0.05);
+        }
+
+        .start-button, .end-button {
+            padding: 1.5rem 4rem;
+            font-family: 'Cinzel', serif;
+            font-size: 1.3rem;
+            background: var(--primary-gold);
+            color: var(--deep-black);
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 1rem;
+        }
+
+        .start-button:hover, .end-button:hover {
+            transform: scale(1.1);
+            box-shadow: 0 8px 30px rgba(212, 175, 55, 0.6);
+        }
+
+        /* Endbildschirm Statistiken */
+        .end-stats {
+            background: rgba(0, 0, 0, 0.5);
+            border: 2px solid var(--primary-gold);
+            border-radius: 15px;
+            padding: 2rem;
+            margin: 2rem 0;
+        }
+
+        .stat-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid rgba(212, 175, 55, 0.3);
+        }
+
+        .stat-label {
+            color: var(--primary-gold);
+        }
+
+        .end-description {
+            font-size: 1.2rem;
+            line-height: 1.8;
+            margin: 2rem 0;
+            text-align: justify;
+        }
+
+        #moral-analysis {
+            background: rgba(212, 175, 55, 0.1);
+            border: 2px solid var(--primary-gold);
+            border-radius: 15px;
+            padding: 2rem;
+            margin: 2rem 0;
+            text-align: left;
+        }
+
+        #moral-analysis h3 {
+            font-family: 'Cinzel', serif;
+            color: var(--primary-gold);
+            margin-bottom: 1rem;
+        }
+
+        #moral-analysis p {
+            margin-bottom: 1rem;
+            line-height: 1.8;
+        }
+
+        #choice-history {
+            max-height: 300px;
+            overflow-y: auto;
+            padding: 1rem;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            margin-top: 1rem;
+        }
+
+        .choice-entry {
+            padding: 0.5rem;
+            margin-bottom: 0.5rem;
+            border-left: 3px solid var(--primary-gold);
+            background: rgba(212, 175, 55, 0.05);
+        }
+
+        .choice-entry.positive {
+            border-left-color: var(--positive-green);
+        }
+
+        .choice-entry.negative {
+            border-left-color: var(--negative-red);
+        }
+
+        /* Animationen */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            h1 { font-size: 2rem; }
+            h2 { font-size: 1.5rem; }
+
+            #game-container {
+                padding: 1.5rem;
+            }
+
+            .info-bar {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            #moral-score {
+                font-size: 2rem;
+            }
+
+            #scene-text {
+                font-size: 1.1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="game-container">
+        <!-- Start Screen -->
+        <div id="start-screen" class="screen-content">
+            <h1>Das Echo von Grautal</h1>
+            <h2>Eine moralische Odyssee</h2>
+            <div class="intro-text">
+                <p>Die Stadt Grautal liegt im Sterben. Einst blühend, mit kristallklaren Quellen, die ihr den Namen gaben, ist sie nun ein Schatten ihrer selbst. OmniCorp, ein gesichtsloser Konzern, hat die Wasserversorgung privatisiert. Die öffentlichen Brunnen versiegen, während sich nur die Reichen das abgefüllte "PureLife" leisten können.</p>
+
+                <p>Du kehrst nach zehn Jahren zurück. Der Brief kam unerwartet: Deine Großmutter ist tot, ihr Haus soll zwangsgeräumt werden. Martha Steinbach war mehr als nur deine Großmutter – sie war die Seele des Widerstands, eine Frau, die ihr Leben dem Kampf gegen die Unterdrückung widmete. Nun liegt ihr Vermächtnis in deinen Händen.</p>
+
+                <div class="quote">
+                    "Handle nur nach derjenigen Maxime, durch die du zugleich wollen kannst, dass sie ein allgemeines Gesetz werde." - Immanuel Kant
+                </div>
+
+                <p>Was du findest, wird dich vor Entscheidungen stellen, die deine Seele zerreißen. Sechs Wege stehen dir offen, 48 Wendepunkte werden dein Schicksal bestimmen. Jede Wahl formt nicht nur dich, sondern das Schicksal einer ganzen Stadt. Bist du bereit, dich deinem wahren Ich zu stellen?</p>
+            </div>
+            <button class="start-button" onclick="startGame()">Die Reise beginnen</button>
+        </div>
+
+        <!-- Game Play Area -->
+        <div id="game-play" class="hidden">
+            <div class="info-bar">
+                <div id="chapter-indicator"></div>
+                <div id="story-path"></div>
+                <div id="moral-display">
+                    <div id="moral-label">Moralischer Kompass</div>
+                    <div id="moral-score">0</div>
+                </div>
+            </div>
+
+            <div id="progress-container">
+                <div id="progress-bar"></div>
+            </div>
+
+            <div id="scene-container">
+                <div id="scene-title"></div>
+                <div id="scene-text"></div>
+            </div>
+
+            <div id="choices-container"></div>
+
+            <div id="feedback-container" class="hidden">
+                <div id="feedback-header"></div>
+                <div id="feedback-text"></div>
+                <div id="timer-display"></div>
+                <button id="continue-button" onclick="continueFeedback()">Weiter</button>
+            </div>
+        </div>
+
+        <!-- End Screen -->
+        <div id="end-screen" class="screen-content hidden">
+            <h1 id="end-title"></h1>
+            <div class="end-description" id="end-description"></div>
+
+            <div class="end-stats">
+                <div class="stat-row">
+                    <span class="stat-label">Finaler Moralwert:</span>
+                    <span id="final-score"></span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">Getroffene Entscheidungen:</span>
+                    <span id="decisions-made"></span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">Positive Handlungen:</span>
+                    <span id="positive-actions"></span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">Negative Handlungen:</span>
+                    <span id="negative-actions"></span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">Durchlaufener Pfad:</span>
+                    <span id="final-path"></span>
+                </div>
+            </div>
+
+            <div id="moral-analysis">
+                <h3>Deine moralische Reise</h3>
+                <p id="moral-journey-text"></p>
+                <h3>Entscheidungshistorie</h3>
+                <div id="choice-history"></div>
+            </div>
+
+            <button class="end-button" onclick="startGame()">Neue Reise beginnen</button>
+            <button class="end-button" onclick="location.reload()">Spiel zurücksetzen</button>
+        </div>
+    </div>
+
+    <script>
+    // Globaler Spielzustand
+    let gameState = {
+        moralScore: 0,
+        currentScene: 'scene_1',
+        decisionsCount: 0,
+        positiveActions: 0,
+        negativeActions: 0,
+        neutralActions: 0,
+        currentChapter: 1,
+        storyPath: 'Hauptstrang',
+        visitedScenes: new Set(),
+        specialFlags: new Set(),
+        currentChoice: null,
+        choiceHistory: [],
+        relationships: {
+            elara: 0,
+            thomas: 0,
+            marcus: 0,
+            sarah: 0,
+            kael: 0,
+            amy: 0
+        },
+        inventory: new Set(),
+        knowledge: new Set()
+    };
+
+    // Timer-Variablen
+    let timerInterval = null;
+
+    // Die 6 Handlungsstränge
+    const storyPaths = {
+        main: 'Der Weg des Widerstands',
+        fugitive: 'Der Pfad des Flüchtlings',
+        profiteer: 'Die Straße der Gier',
+        radical: 'Der Pfad der Gewalt',
+        information: 'Der Weg der Wahrheit',
+        infiltrator: 'Die Maske des Verräters'
+    };
+
+    // Vollständige Story-Datenstruktur mit allen 48 Entscheidungen
+    const storyData = {
+        // =================================================================
+        // KAPITEL 1: DAS ERBE ERWACHT (Entscheidungen 1-12)
+        // =================================================================
+
+        "scene_1": {
+            "chapter": 1,
+            "title": "Das Haus der Erinnerungen",
+            "text": "Der Schlüssel in deiner Hand fühlt sich schwerer an als er sollte. Zehn Jahre. Zehn Jahre seit du Grautal verlassen hast, seit dem großen Streit mit deiner Großmutter über ihre 'sinnlosen Proteste'. Nun stehst du vor ihrem Haus – deinem Haus – und die Räumungsaufforderung in deiner anderen Hand macht deutlich: Morgen früh wird alles verschwunden sein.\n\nDas Haus riecht nach ihr. Nach Lavendel und altem Papier, nach Rebellion und unerschütterlichem Glauben. Im Wohnzimmer hängen noch die Protestplakate: 'Wasser ist ein Menschenrecht!' Deine Augen wandern zum Dachboden. Dort oben hat sie immer ihre 'wichtigen Dinge' aufbewahrt. Ein Teil von dir will einfach nur packen und verschwinden. Ein anderer Teil spürt, dass hier mehr auf dich wartet als nur Erinnerungen.\n\nDraußen fährt ein schwarzer OmniCorp-Transporter langsam vorbei. Zu langsam. Sie beobachten das Haus. Die Zeit läuft.",
+            "choices": [
+                {
+                    "id": "choice_1a",
+                    "text": "Sofort zum Dachboden gehen. Wenn sie etwas Wichtiges hinterlassen hat, dann dort.",
+                    "moralEffect": 1,
+                    "nextScene": "scene_2a",
+                    "feedback": "Der Mut, sich der Vergangenheit zu stellen, ist der erste Schritt zur Wahrheit. Du ehrst das Andenken deiner Großmutter, indem du ihre Geheimnisse nicht ignorierst. Dies zeigt Respekt vor ihrem Lebenswerk und die Bereitschaft, Verantwortung zu übernehmen. Nach Kant handelst du aus Pflicht, nicht aus Neigung. (+1)"
+                },
+                {
+                    "id": "choice_1b",
+                    "text": "Zuerst das Arbeitszimmer durchsuchen. Sie war methodisch, wichtige Dokumente wären dort.",
+                    "moralEffect": 0,
+                    "nextScene": "scene_2b",
+                    "feedback": "Ein rationaler Ansatz, der Logik über Emotion stellt. Du gehst systematisch vor, was Klugheit zeigt, aber auch eine gewisse emotionale Distanz zu deiner Großmutter und ihrem Kampf. Manchmal liegt die Wahrheit nicht in der Ordnung, sondern im Chaos der Leidenschaft."
+                },
+                {
+                    "id": "choice_1c",
+                    "text": "Die wertvollen Gegenstände einpacken und das Haus schnell verlassen. Es ist zu gefährlich hier.",
+                    "moralEffect": -2,
+                    "nextScene": "scene_2c",
+                    "feedback": "Die Flucht vor der Verantwortung ist die erste Form des moralischen Versagens. Du reduzierst das Lebenswerk deiner Großmutter auf materiellen Wert und ignorierst ihr ideelles Vermächtnis. Diese Feigheit macht dich blind für die Ungerechtigkeit, die sie bekämpfte. Nach Kant ist dies eine Maxime der Selbstsucht, die niemals universelles Gesetz werden könnte. (-2)"
+                }
+            ]
+        },
+
+        "scene_2a": {
+            "chapter": 1,
+            "title": "Schatten der Vergangenheit",
+            "text": "Die Dachbodentreppe knarrt vertraut unter deinen Schritten. Oben angekommen, stockt dir der Atem. Der gesamte Raum ist eine Kommandozentrale des Widerstands. Karten von Grautal mit roten Markierungen, Fotos von Industrieanlagen, Zeitungsausschnitte über mysteriöse Krankheitsfälle. An der Wand prangt ein Diagramm: 'OmniCorp Verbindungen' steht darüber, Linien verbinden Namen mit Positionen, Daten mit Ereignissen.\n\nIn der Mitte des Raums steht ihre alte Truhe. Ein Brief liegt darauf, dein Name in ihrer zittrigen Handschrift. Daneben ein versiegeltes Tagebuch und etwas, das dein Herz schneller schlagen lässt: Ein Laborausweis von OmniCorp auf den Namen 'Dr. Marcus Webb' mit dem handschriftlichen Vermerk: 'Unser Mann im Inneren. Vertraue nur Elara.'\n\nPlötzlich hörst du unten die Haustür. Schwere Schritte. Mindestens drei Personen. Eine tiefe Stimme: 'Durchsucht alles. Der Alte sagte, die Steinbach-Frau hätte Beweise versteckt.'",
+            "choices": [
+                {
+                    "id": "choice_2a",
+                    "text": "Den Brief lesen, um zu verstehen, was sie dir sagen wollte, bevor du handelst.",
+                    "moralEffect": 1,
+                    "nextScene": "scene_3a",
+                    "feedback": "In der Gefahr bewahrst du einen klaren Kopf und ehrst den letzten Willen deiner Großmutter. Diese Kombination aus Mut und Respekt zeigt wahre moralische Stärke. Du stellst Verstehen vor blindes Handeln, was der kategorische Imperativ fordert: Handle so, dass deine Handlung auf Vernunft, nicht auf Panik basiert. (+1)",
+                    "inventory": ["Brief"]
+                },
+                {
+                    "id": "choice_2b",
+                    "text": "Alles Wichtige schnell in einen Rucksack stopfen und durch das Dachfenster fliehen.",
+                    "moralEffect": 0,
+                    "nextScene": "scene_3b",
+                    "feedback": "Pragmatismus in Extremsituationen. Du rettest die Beweise, aber verpasst möglicherweise wichtige Informationen durch überstürztes Handeln. Die Flucht ist manchmal notwendig, aber sie sollte nicht die erste Option sein. Du handelst aus Selbsterhaltung, nicht aus Pflicht.",
+                    "inventory": ["Tagebuch", "Laborausweis", "Dokumente"]
+                },
+                {
+                    "id": "choice_2c",
+                    "text": "Sich verstecken und hoffen, dass sie den Dachboden nicht durchsuchen.",
+                    "moralEffect": -1,
+                    "nextScene": "scene_3c",
+                    "feedback": "Passivität angesichts der Bedrohung ist eine Form der Kapitulation. Du überlässt das Schicksal dem Zufall statt selbst zu handeln. Dies zeigt mangelnden Mut und fehlende Initiative – Eigenschaften, die deine Großmutter ihr Leben lang bekämpfte. (-1)"
+                }
+            ]
+        },
+
+        "scene_3a": {
+            "chapter": 1,
+            "title": "Die letzte Botschaft",
+            "text": "Mit zitternden Händen öffnest du den Brief. Die Schritte kommen die Treppe hoch.\n\n'Mein liebes Kind,\n\nWenn du dies liest, bin ich fort, aber mein Kampf darf nicht mit mir sterben. OmniCorp vergiftet nicht nur unser Wasser – sie vergiften unsere Seelen. Die Substanz X-47 im Wasser macht die Menschen gefügig, apathisch. Ich habe die Beweise, aber allein bin ich zu schwach.\n\nDr. Marcus Webb arbeitete für sie, bis sein Gewissen erwachte. Er gab mir die Formeln, die Testresultate. Alles ist im Tagebuch. Elara wartet im alten Uhrenturm – jeden Mitternacht. Sie führt jetzt den Widerstand. \n\nIch weiß, wir haben uns im Streit getrennt. Du hieltest mich für eine Verrückte. Vielleicht war ich das. Aber manchmal muss man verrückt sein, um in einer kranken Welt gesund zu bleiben.\n\nKann ich dir eine Last aufbürden, die ich selbst kaum tragen konnte? Die Entscheidung liegt bei dir. Aber bedenke: Wenn gute Menschen nichts tun, triumphiert das Böse.\n\nIn ewiger Liebe,\nOma Martha'\n\nDie Tür zum Dachboden splittert auf. Drei OmniCorp-Sicherheitsleute stürmen herein, Waffen gezogen.",
+            "choices": [
+                {
+                    "id": "choice_3a",
+                    "text": "Den Brief verschlucken und versuchen, harmlos zu wirken. 'Ich... ich räume nur auf!'",
+                    "moralEffect": 0,
+                    "nextScene": "scene_4a",
+                    "feedback": "List und Täuschung zum Schutz größerer Wahrheiten. Moralisch grau, aber verständlich. Du opferst einen Teil deiner Integrität, um das Geheimnis zu bewahren. Kant würde fragen: Kann Lüge jemals Pflicht sein?",
+                    "knowledge": ["Vergiftung", "Dr. Webb", "Elara"]
+                },
+                {
+                    "id": "choice_3b",
+                    "text": "Aufstehen und ihnen entgegentreten. 'Dies ist mein Haus. Sie haben kein Recht, hier zu sein!'",
+                    "moralEffect": 1,
+                    "nextScene": "scene_4b",
+                    "feedback": "Mut und Würde angesichts der Tyrannei. Du verteidigst nicht nur Eigentum, sondern Prinzipien. Diese Standhaftigkeit ehrt das Andenken deiner Großmutter und zeigt, dass du bereit bist, für Gerechtigkeit einzustehen, selbst wenn es gefährlich ist. (+1)"
+                },
+                {
+                    "id": "choice_3c",
+                    "text": "Das Tagebuch ins Feuer des alten Ofens werfen, der noch glimmt.",
+                    "moralEffect": -2,
+                    "nextScene": "scene_4c",
+                    "feedback": "Die Zerstörung von Beweisen für Verbrechen gegen die Menschlichkeit ist selbst ein moralisches Verbrechen. Aus Angst vernichtest du die letzte Hoffnung unzähliger Opfer. Diese Feigheit macht dich zum Komplizen der Unterdrücker. (-2)",
+                    "relationships": {"elara": -5}
+                }
+            ]
+        },
+
+        "scene_4b": {
+            "chapter": 1,
+            "title": "Konfrontation",
+            "text": "Der Anführer der Sicherheitskräfte, ein Mann mit kalten grauen Augen und Narben im Gesicht, tritt vor. Sein Namensschild liest 'Krieger'. Ein passender Name für einen Söldner.\n\n'Ihr Haus?' Er lacht humorlos. 'Nach dem Notstandsgesetz Paragraph 47 haben wir das Recht, jede Immobilie zu durchsuchen, die im Verdacht steht, staatsfeindliche Materialien zu beherbergen.' Er macht einen Schritt näher. 'Ihre Großmutter war eine Terroristin. Eine Unruhestifterin. Und Sie...'\n\nSein Blick fällt auf die Dokumente an der Wand. 'Bingo.' Er gibt seinen Männern ein Zeichen. 'Alles einpacken. Und sie auch.'\n\nIn diesem Moment siehst du es: Der jüngste der drei Männer zögert. Seine Augen – du kennst diese Augen. Thomas? Thomas Brenner, dein Kindheitsfreund? Er erkennt dich auch, sein Gesicht wird bleich.\n\n'Sir', sagt Thomas mit unsicherer Stimme, 'das ist nur Müll. Alte Zeitungen. Nichts Wichtiges.'\n\nKrieger dreht sich zu ihm. 'Seit wann entscheiden Sie, was wichtig ist, Brenner?'",
+            "choices": [
+                {
+                    "id": "choice_4a",
+                    "text": "Thomas direkt ansprechen: 'Thomas? Bist du das? Wir haben früher zusammen im Brunnen gespielt, erinnerst du dich?'",
+                    "moralEffect": 1,
+                    "nextScene": "scene_5a",
+                    "feedback": "Der Appell an gemeinsame Menschlichkeit in Momenten der Krise zeigt emotionale Intelligenz und Mut. Du erinnerst ihn daran, wer er war, bevor das System ihn korrumpierte. Dies ist ein Akt des Glaubens an das Gute im Menschen. (+1)",
+                    "relationships": {"thomas": 3}
+                },
+                {
+                    "id": "choice_4b",
+                    "text": "Krieger ablenken: 'Ich kann Ihnen sagen, wo meine Großmutter ihre wirklichen Geheimnisse versteckt hat.'",
+                    "moralEffect": -1,
+                    "nextScene": "scene_5b",
+                    "feedback": "Die Bereitschaft, Geheimnisse zu verraten – selbst als Täuschung – zeigt moralische Schwäche. Du spielst ein gefährliches Spiel und riskierst, echte Verbündete zu gefährden. Der Zweck heiligt nicht immer die Mittel. (-1)"
+                },
+                {
+                    "id": "choice_4c",
+                    "text": "Die Spannung zwischen Krieger und Thomas ausnutzen und zur Treppe rennen.",
+                    "moralEffect": 0,
+                    "nextScene": "scene_5c",
+                    "feedback": "Opportunismus in Reinform. Du nutzt die Situation, aber hilfst niemandem außer dir selbst. Überleben ist wichtig, aber es sollte nicht auf Kosten aller anderen Werte gehen."
+                }
+            ]
+        },
+
+        "scene_5a": {
+            "chapter": 1,
+            "title": "Echos der Unschuld",
+            "transition": "Die Erwähnung eurer gemeinsamen Kindheit trifft Thomas wie ein Schlag.",
+            "text": "Thomas' Waffe sinkt ein Stück. In seinen Augen siehst du den Konflikt toben. 'Der alte Brunnen...' flüstert er. 'Bevor sie ihn vergiftet haben.'\n\n'BRENNER!' Kriegers Stimme schneidet wie ein Messer. 'Kennen Sie diese Person?'\n\nThomas schluckt hart. Du siehst, wie er mit sich ringt. Dann, kaum merklich, bewegt sich seine Hand zu seiner Gürteltasche. 'Ja, Sir. Aus Kindertagen. Aber das ist zehn Jahre her. Sie ist niemand Wichtiges.'\n\n'Niemand ist niemand', knurrt Krieger. Er wendet sich wieder dir zu, aber in diesem Moment lässt Thomas 'versehentlich' seine Taschenlampe fallen. Sie rollt zu deinen Füßen. Als du dich automatisch bückst, um sie aufzuheben, spürst du etwas darunter geklebt – einen kleinen Datenstick.\n\n'Tut mir leid', murmelt Thomas, und du verstehst, dass er sich nicht nur für die Taschenlampe entschuldigt. Seine Lippen formen lautlos: 'Uhrenturm. Mitternacht. Vorsicht.'\n\nKrieger wird ungeduldig. 'Genug der Spielchen. Mitnehmen, alle beide!'",
+            "choices": [
+                {
+                    "id": "choice_5a",
+                    "text": "Den Datenstick nehmen und Thomas vertrauen. 'Ich komme freiwillig mit. Ich habe nichts zu verbergen.'",
+                    "moralEffect": 1,
+                    "nextScene": "scene_6a",
+                    "feedback": "Vertrauen in die Menschlichkeit eines alten Freundes trotz seiner Uniform zeigt moralische Reife. Du erkennst, dass Menschen mehr sind als ihre Rollen im System. Diese Bereitschaft zur Kooperation könnte Leben retten. (+1)",
+                    "inventory": ["Datenstick"],
+                    "knowledge": ["Thomas ist Verbündeter"]
+                },
+                {
+                    "id": "choice_5b",
+                    "text": "Den Datenstick ignorieren. Es könnte eine Falle sein. Stattdessen auf Zeit spielen.",
+                    "moralEffect": 0,
+                    "nextScene": "scene_6b",
+                    "feedback": "Misstrauen ist in dieser Welt verständlich, aber es kann auch Chancen zerstören. Du wählst Sicherheit über mögliche Hilfe, was pragmatisch, aber auch isolierend ist."
+                },
+                {
+                    "id": "choice_5c",
+                    "text": "Thomas vor allen bloßstellen: 'Er hilft mir! Er ist ein Verräter an OmniCorp!'",
+                    "moralEffect": -2,
+                    "nextScene": "scene_6c",
+                    "feedback": "Jemanden zu verraten, der versucht dir zu helfen, ist ein Akt extremer moralischer Niedertracht. Du opferst einen potenziellen Verbündeten für einen momentanen Vorteil, der sich als Illusion erweisen wird. (-2)",
+                    "relationships": {"thomas": -10}
+                }
+            ]
+        },
+
+        // Fortführung des ersten Kapitels und Übergang zu den verschiedenen Pfaden...
+
+        "scene_6a": {
+            "chapter": 1,
+            "title": "Der Transport",
+            "text": "Im OmniCorp-Transporter sitzt du Thomas gegenüber. Krieger fährt, der dritte Wachmann behält dich im Auge. Die Stadt zieht an den getönten Scheiben vorbei – verfallene Häuser, geschlossene Geschäfte, und überall die glänzenden OmniCorp-Wasserstände, wo Menschen mit gesenkten Köpfen Schlange stehen.\n\nThomas' Knie berührt deines. Morse-Code. Er klopft: 'F-L-U-C-H-T-P-L-A-N'. Dann spürt du, wie er dir etwas in die Jackentasche schiebt. Eine kleine Ampulle.\n\nDer Transporter biegt ab – nicht Richtung OmniCorp-Zentrale, sondern zu den alten Industrievierteln. Krieger spricht in sein Funkgerät: 'Paket gesichert. Bringen es zur Säuberungsanlage 7.'\n\n'Säuberungsanlage?' fragst du. Niemand antwortet, aber Thomas wird noch blasser. Du verstehst: Sie bringen dich nicht zur Befragung. Sie bringen dich zum Verschwinden.\n\nDer dritte Wachmann gähnt. 'Mann, diese Doppelschichten bringen mich um.' Er reibt sich die Augen. Das ist deine Chance.",
+            "choices": [
+                {
+                    "id": "choice_6a",
+                    "text": "Die Ampulle untersuchen und Thomas' Plan vertrauen, was auch immer er sein mag.",
+                    "moralEffect": 1,
+                    "nextScene": "scene_7a",
+                    "feedback": "Mut bedeutet manchmal, sich verletzlich zu machen und anderen zu vertrauen. Du zeigst Glauben an die Menschlichkeit in einer unmenschlichen Situation. Dies ist wahrer moralischer Mut. (+1)",
+                    "knowledge": ["Säuberungsanlage 7"]
+                },
+                {
+                    "id": "choice_6b",
+                    "text": "Versuchen, die Autotür zu öffnen und bei der nächsten Kreuzung zu springen.",
+                    "moralEffect": 0,
+                    "nextScene": "scene_7b",
+                    "feedback": "Der Fluchtinstinkt ist stark, aber unüberlegt. Du riskierst alles für eine geringe Chance und ignorierst mögliche Hilfe. Panik ist ein schlechter Ratgeber.",
+                    "storyPath": "fugitive"
+                },
+                {
+                    "id": "choice_6c",
+                    "text": "Laut schreien und Aufmerksamkeit erregen: 'Hilfe! Ich werde entführt!'",
+                    "moralEffect": -1,
+                    "nextScene": "scene_7c",
+                    "feedback": "In einer Stadt, die von Angst regiert wird, ist dein Hilferuf sinnlos. Schlimmer noch, du gefährdest Thomas, der sein Leben riskiert, um dir zu helfen. Blinde Panik ohne Rücksicht auf andere. (-1)"
+                }
+            ]
+        },
+
+        "scene_7a": {
+            "chapter": 1,
+            "title": "Die Wahl des Vertrauens",
+            "text": "Die Ampulle enthält eine klare Flüssigkeit. Thomas tippt auf seine Uhr – in genau zwei Minuten. Dann formt er mit den Lippen: 'Ohnmacht. Krankenhaus. Flieh.'\n\nDu verstehst. Es ist ein Mittel, das Ohnmacht vortäuscht. Sie müssen dich ins Krankenhaus bringen statt zur 'Säuberung'. Aber es gibt einen Haken – du weißt nicht, was wirklich in der Ampulle ist. Thomas könnte dich täuschen. Oder selbst getäuscht worden sein.\n\nDer Transporter verlangsamt. Durch die Frontscheibe siehst du die Säuberungsanlage 7 – ein grauer Betonklotz mit hohen Schornsteinen, aus denen schwarzer Rauch aufsteigt. Dein Magen verkrampft sich. Die Zeit läuft.\n\nKrieger parkt. 'Brenner, Sie bleiben beim Fahrzeug. Standardprotokoll.' Thomas' Gesichtsausdruck ist verzweifelt. Wenn du die Ampulle nicht nimmst, kann er dir nicht mehr helfen.",
+            "choices": [
+                {
+                    "id": "choice_7a",
+                    "text": "Die Ampulle trinken und Thomas vertrauen. Manchmal muss man alles riskieren.",
+                    "moralEffect": 2,
+                    "nextScene": "scene_8a",
+                    "feedback": "Dies ist der ultimative Vertrauensbeweis. Du riskierst dein Leben auf das Wort eines Freundes, der im System gefangen ist. Dieser Akt des Glaubens an das Gute im Menschen, selbst angesichts des Todes, ist von höchster moralischer Qualität. Nach Kant handelst du so, wie du wollen würdest, dass alle in dieser Situation handeln – mit Vertrauen und Mut. (+2)",
+                    "specialFlags": ["Vertrauen zu Thomas"]
+                },
+                {
+                    "id": "choice_7b",
+                    "text": "Die Ampulle fallen lassen und zerbrechen. 'Ups!' Dann improvisieren.",
+                    "moralEffect": 0,
+                    "nextScene": "scene_8b",
+                    "feedback": "Du misstraust, willst aber Thomas nicht direkt brüskieren. Eine Entscheidung aus Angst, die weder Mut noch Vertrauen zeigt. Du bleibst in der sicheren Mitte, aber manchmal gibt es keine sichere Mitte."
+                },
+                {
+                    "id": "choice_7c",
+                    "text": "Krieger die Ampulle zeigen: 'Ihr Mann wollte mir Gift geben!'",
+                    "moralEffect": -3,
+                    "nextScene": "scene_8c",
+                    "feedback": "Dies ist der absolute moralische Tiefpunkt. Du verrätst nicht nur jemanden, der sein Leben für dich riskiert, sondern tust es aus purer Selbstsucht. Du wirst zum Instrument der Unterdrücker und zerstörst einen der wenigen guten Menschen im System. Diese Tat definiert dich als jemanden, dem nichts heilig ist außer dem eigenen Überleben. (-3)",
+                    "relationships": {"thomas": -20}
+                }
+            ]
+        },
+
+        // =================================================================
+        // KAPITEL 2: DIE SPALTUNG DER WEGE (Entscheidungen 13-24)
+        // =================================================================
+
+        "scene_8a": {
+            "chapter": 2,
+            "title": "Vertrauen und Fall",
+            "transition": "WENDEPUNKT: Dein Vertrauen zu Thomas öffnet einen neuen Pfad.",
+            "text": "Die Flüssigkeit schmeckt nach nichts. Für einen Moment passiert nichts. Dann trifft es dich wie ein Hammer. Deine Knie geben nach, Schaum tritt auf deine Lippen. Aber seltsamerweise bist du bei vollem Bewusstsein – du kannst nur deinen Körper nicht kontrollieren.\n\n'SCHEISSE!' Krieger stürmt aus dem Wagen. 'Was ist mit ihr?'\n\nThomas ist sofort bei dir, fühlt deinen Puls mit professionellen Handgriffen. 'Anaphylaktischer Schock! Sie reagiert auf etwas... Wenn wir sie nicht sofort ins Krankenhaus bringen, stirbt sie!'\n\n'Dann stirbt sie eben', knurrt Krieger kalt.\n\n'Und dem Boss erklären, dass wir die Enkelin der Steinbach-Frau umgebracht haben, bevor wir sie verhört haben?' Thomas' Stimme ist schneidend. 'Sie wollten doch wissen, wo die anderen Widerständler sind, oder?'\n\nKrieger flucht. 'Krankenhaus. Aber du haftest dafür, Brenner!'\n\nWährend sie dich zum Wagen tragen, flüstert Thomas: 'Zwanzig Minuten. Dann lässt die Wirkung nach. Station 3, Fenster zum Hof. Sarah hilft.' Seine Hand drückt kurz deine: 'Es tut mir leid. Für alles.'",
+            "choices": [
+                {
+                    "id": "choice_8a",
+                    "text": "Seinen Händedruck erwidern, um ihm zu zeigen, dass du verstehst und vergibst.",
+                    "moralEffect": 1,
+                    "nextScene": "scene_9a",
+                    "feedback": "Vergebung in Momenten der Krise zeigt wahre Größe. Du erkennst, dass Thomas selbst ein Opfer des Systems ist und versuchst, das Richtige zu tun. Diese Geste der Menschlichkeit stärkt seine Entschlossenheit. (+1)",
+                    "relationships": {"thomas": 5, "sarah": 3}
+                },
+                {
+                    "id": "choice_8b",
+                    "text": "Dich auf die Flucht konzentrieren. Sentimentalitäten können warten.",
+                    "moralEffect": 0,
+                    "nextScene": "scene_9b",
+                    "feedback": "Pragmatische Fokussierung auf das Überleben. Verständlich, aber du verpasst einen menschlichen Moment, der wichtig sein könnte. Effizienz ist nicht alles im Leben."
+                },
+                {
+                    "id": "choice_8c",
+                    "text": "So tun, als wärst du bewusstlos, aber alles mithören, was sie sagen.",
+                    "moralEffect": 0,
+                    "nextScene": "scene_9c",
+                    "feedback": "Informationssammlung ist wichtig, zeigt aber auch Misstrauen selbst gegenüber Helfern. Du bist noch nicht bereit, dich voll auf andere einzulassen.",
+                    "knowledge": ["Sarah ist Kontakt"]
+                }
+            ]
+        },
+
+        "scene_9a": {
+            "chapter": 2,
+            "title": "Das Krankenhaus",
+            "text": "Die Notaufnahme des Grautal Krankenhauses ist überfüllt. Menschen mit grauer Haut und eingefallenen Augen warten apathisch. Die Wasservergiftung, realisierst du. Das sind die Symptome.\n\nEine Krankenschwester mit müden aber wachsamen Augen übernimmt dich. Ihr Namensschild: 'Sarah Winters'. Sie wirft einen schnellen Blick auf Thomas, nickt kaum merklich.\n\n'Station 3, Zimmer 7', sagt sie laut. Dann, leiser zu Thomas: 'Wie lange?'\n'Fünfzehn Minuten noch', murmelt er.\n\nKrieger folgt misstrauisch. 'Ich bleibe bei der Patientin.'\n\n'In meiner Station nicht', sagt Sarah mit einer Autorität, die keinen Widerspruch duldet. 'Hier gelten Hygienevorschriften. Warten Sie draußen.' Sie schiebt dich in ein Zimmer und schließt die Tür.\n\nSofort ist sie bei dir. 'Hör zu', flüstert sie eindringlich. 'Ich bin Teil von Elaras Gruppe. Thomas hat mir Bescheid gegeben. In zehn Minuten beginnt die Schichtübergabe. Das Fenster –' sie deutet darauf, '– führt zum alten Wäschereibereich. Dort wartet jemand. Aber...'\n\nSie zögert. 'Wir haben ein Problem. Mein Sohn liegt im Sterben. Dieselbe Vergiftung wie alle anderen, aber schlimmer. Ich habe ein Gegenmittel gestohlen, aber es reicht nur für eine Person. Ich... ich weiß, es ist falsch, aber könntest du es Elara bringen? Vielleicht kann sie mehr herstellen lassen. Oder...' Ihre Stimme bricht. 'Oder ich gebe es ihm jetzt und hoffe auf ein Wunder.'",
+            "choices": [
+                {
+                    "id": "choice_9a",
+                    "text": "'Gib es deinem Sohn. Kein Widerstand ist wichtiger als das Leben eines Kindes.'",
+                    "moralEffect": 2,
+                    "nextScene": "scene_10a",
+                    "feedback": "Du stellst das konkrete Leben eines Kindes über abstrakte Ziele. Dies zeigt tiefes Mitgefühl und die Erkenntnis, dass jedes einzelne Leben zählt. Nach Kant ist dies eine Maxime der Menschlichkeit – das Leben als Zweck an sich, nie nur als Mittel. (+2)",
+                    "relationships": {"sarah": 10},
+                    "knowledge": ["Gegenmittel existiert"]
+                },
+                {
+                    "id": "choice_9b",
+                    "text": "'Ich bringe es zu Elara. Sie kann damit hunderte retten, wenn sie es analysiert.'",
+                    "moralEffect": 0,
+                    "nextScene": "scene_10b",
+                    "feedback": "Die kalte Logik des größeren Guten. Utilitaristisch vertretbar, aber es ignoriert das unmittelbare Leiden. Du wählst die Vielen über den Einen, aber kannst du mit dieser Entscheidung leben?",
+                    "inventory": ["Gegenmittel"],
+                    "relationships": {"sarah": -3}
+                },
+                {
+                    "id": "choice_9c",
+                    "text": "'Teile es. Die halbe Dosis für deinen Sohn, den Rest für die Analyse.'",
+                    "moralEffect": 1,
+                    "nextScene": "scene_10c",
+                    "feedback": "Ein Kompromiss, der versucht, beiden Bedürfnissen gerecht zu werden. Du zeigst Weisheit und Mitgefühl, auch wenn keine Lösung perfekt ist. Manchmal ist der Mittelweg der moralischste. (+1)"
+                }
+            ]
+        },
+
+        "scene_10a": {
+            "chapter": 2,
+            "title": "Das Gewicht eines Lebens",
+            "text": "Sarahs Augen füllen sich mit Tränen. 'Danke... ich... ich weiß nicht, wie ich das je wiedergutmachen kann.' Sie drückt deine Hand. 'Elara wird verstehen. Sie hat selbst Kinder verloren.'\n\nDie Wirkung der Droge lässt nach. Du kannst dich wieder bewegen. Sarah hilft dir zum Fenster. 'Der Wäschebereich, dann links, die alte Feuertreppe hoch. Oben wartet Marcus. Er bringt dich zum Uhrenturm.'\n\nBevor du gehst, hält sie dich zurück. 'Warte.' Sie zieht eine kleine Karte aus ihrer Tasche. 'Die Sicherheitscodes für die Pharma-Abteilung von OmniCorp. Falls ihr... falls ihr selbst nach dem Gegenmittel suchen müsst. Der Code ändert sich jeden Mittwoch. Heute ist Montag.'\n\nDraußen hörst du Kriegers wütende Stimme. Die Zeit läuft. Aber als du dich zum Fenster wendest, siehst du durch die Tür einen Blick auf den Flur. Thomas steht dort, hält Krieger auf, aber du siehst Blut an seiner Uniform. Krieger hat ihn geschlagen.\n\nEr sieht dich, schüttelt fast unmerklich den Kopf. 'Geh', formen seine Lippen.",
+            "choices": [
+                {
+                    "id": "choice_10a",
+                    "text": "Durchs Fenster fliehen wie geplant. Thomas' Opfer darf nicht umsonst sein.",
+                    "moralEffect": 0,
+                    "nextScene": "scene_11a",
+                    "feedback": "Du respektierst seinen Wunsch, aber es fühlt sich an wie Verrat. Manchmal ist Gehorsam keine Tugend. Die Frage bleibt: Hättest du mehr tun können?",
+                    "inventory": ["Sicherheitscodes"]
+                },
+                {
+                    "id": "choice_10b",
+                    "text": "Zurückgehen und Thomas helfen. Niemand bleibt zurück.",
+                    "moralEffect": 2,
+                    "nextScene": "scene_11b",
+                    "feedback": "Wahre Loyalität bedeutet, auch dann zu helfen, wenn der andere es nicht will. Du riskierst alles für jemanden, der alles für dich riskiert hat. Dies ist die höchste Form der Solidarität. (+2)",
+                    "storyPath": "resistance"
+                },
+                {
+                    "id": "choice_10c",
+                    "text": "Sarah bitten, eine Ablenkung zu schaffen, damit beide fliehen können.",
+                    "moralEffect": 1,
+                    "nextScene": "scene_11c",
+                    "feedback": "Kreatives Denken, das versucht, alle zu retten. Du nutzt die Ressourcen und hilfst dabei, ein Netzwerk des Widerstands zu bilden. Gemeinsam statt einsam. (+1)",
+                    "relationships": {"sarah": 5, "thomas": 5}
+                }
+            ]
+        },
+
+        // Hier beginnen die verschiedenen Handlungsstränge sich deutlicher zu trennen
+
+        "scene_11a": {
+            "chapter": 2,
+            "title": "Der Wäschereikontakt",
+            "transition": "PFAD DES WIDERSTANDS: Du hast dich entschieden, dem Untergrund zu folgen.",
+            "text": "Der Wäschebereich riecht nach Desinfektionsmitteln und Verzweiflung. Zwischen dampfenden Maschinen wartet eine gebeugte Gestalt – Marcus Webb, erkennst du vom Foto. Der ehemalige OmniCorp-Wissenschaftler sieht gebrochen aus, seine Hände zittern ständig.\n\n'Die Enkelin also', murmelt er. 'Martha hat viel von dir gesprochen. Gehofft, du würdest eines Tages...' Er schüttelt den Kopf. 'Egal. Wir müssen weg. Krieger wird bald merken –'\n\nEine Explosion erschüttert das Gebäude. Alarmsirenen heulen auf. Marcus wird bleich. 'Nein... das ist zu früh. Das sollte erst...' Er packt dich am Arm. 'Hör zu, es gibt zwei Wege zum Uhrenturm. Der sichere führt durch die Kanalisation – eklig, aber Krieger kennt ihn nicht. Der schnelle geht über die Dächer, aber wenn die Stadt im Ausnahmezustand ist...'\n\nWeitere Explosionen. Rauch steigt über der Stadt auf. 'Die Radikalen', stöhnt Marcus. 'Kael hatte versprochen zu warten. Dieser Idiot! Er spielt OmniCorp direkt in die Hände!'\n\nDurch ein Fenster siehst du Militärfahrzeuge durch die Straßen rasen. Die Stadt verwandelt sich in ein Kriegsgebiet. Und du musst eine Entscheidung treffen.",
+            "choices": [
+                {
+                    "id": "choice_11a",
+                    "text": "Den sicheren Weg durch die Kanalisation nehmen. Überleben geht vor.",
+                    "moralEffect": 0,
+                    "nextScene": "scene_12a",
+                    "feedback": "Vorsicht in Krisenzeiten ist verständlich. Du wählst Sicherheit über Geschwindigkeit, aber in einer sich schnell verändernden Situation könnte Zögern fatal sein.",
+                    "knowledge": ["Kael", "Radikale Fraktion"]
+                },
+                {
+                    "id": "choice_11b",
+                    "text": "Über die Dächer. Jede Minute zählt, und Menschen könnten Hilfe brauchen.",
+                    "moralEffect": 1,
+                    "nextScene": "scene_12b",
+                    "feedback": "Mut und Entschlossenheit in der Krise. Du riskierst deine Sicherheit, um schneller helfen zu können. Dies zeigt, dass dir die Mission wichtiger ist als dein Wohlbefinden. (+1)"
+                },
+                {
+                    "id": "choice_11c",
+                    "text": "Marcus nach Details fragen: 'Was weißt du über diese Explosionen? Wer ist Kael?'",
+                    "moralEffect": 0,
+                    "nextScene": "scene_12c",
+                    "feedback": "Information ist Macht, aber manchmal ist Handeln wichtiger als Verstehen. Du zeigst analytisches Denken, riskierst aber wertvolle Zeit."
+                }
+            ]
+        },
+
+        "scene_11b": {
+            "chapter": 2,
+            "title": "Für die Gefallenen",
+            "transition": "PFAD DER LOYALITÄT: Du wählst Menschen über Mission.",
+            "text": "Du stürmst zurück in den Flur. Krieger hat Thomas gegen die Wand gedrückt, seine Dienstwaffe an dessen Schläfe. 'Verräter!' spuckt er. 'Ich wusste, dass mit dir etwas nicht stimmt!'\n\nSarah steht erstarrt daneben, in der Hand eine Spritze mit Beruhigungsmittel, aber sie zögert. Der Moment dehnt sich.\n\n'Hey!' rufst du. 'Lassen Sie ihn los! Ich bin diejenige, die Sie wollen!'\n\nKrieger dreht sich zu dir, die Waffe immer noch an Thomas' Kopf. 'Ah, die kleine Steinbach. Wie rührend. Bereit, für diesen Abschaum zu sterben?'\n\nThomas' Augen flehen dich an zu gehen. Aber du siehst auch etwas anderes – Hoffnung. Er hat lange allein gekämpft, gefangen zwischen Gewissen und Überleben.\n\n'Weißt du', fährt Krieger fort, 'ich könnte einen Deal gebrauchen. Du kommst freiwillig mit, gibst mir alle Namen des Widerstands, und dein Freund hier darf als Held sterben statt als Verräter. Seine Familie bekommt sogar eine Pension. Oder...' Er spannt den Hahn. 'Ihr sterbt beide, und ich finde die anderen trotzdem.'",
+            "choices": [
+                {
+                    "id": "choice_11ba",
+                    "text": "Sarah ein Zeichen geben und gleichzeitig auf Krieger zuspringen.",
+                    "moralEffect": 2,
+                    "nextScene": "scene_12d",
+                    "feedback": "Koordinierter Mut und Vertrauen in andere. Du riskierst alles in einem Akt der Solidarität. Dies ist wahres Heldentum – nicht allein, sondern gemeinsam. (+2)",
+                    "relationships": {"sarah": 5, "thomas": 10}
+                },
+                {
+                    "id": "choice_11bb",
+                    "text": "'Okay. Ich komme mit. Aber Sie lassen beide gehen. Jetzt.'",
+                    "moralEffect": 1,
+                    "nextScene": "scene_12e",
+                    "feedback": "Selbstaufopferung zum Schutz anderer. Du bist bereit, deine Freiheit für das Leben anderer zu opfern. Ein nobler Akt, auch wenn er möglicherweise mehr schadet als nützt. (+1)"
+                },
+                {
+                    "id": "choice_11bc",
+                    "text": "Bluff: 'Die Explosionen waren erst der Anfang. In zehn Minuten fliegt dieses Krankenhaus in die Luft!'",
+                    "moralEffect": -1,
+                    "nextScene": "scene_12f",
+                    "feedback": "Eine Terrordrohung, selbst als Bluff, überschreitet moralische Grenzen. Du erzeugst Panik und gefährdest Unschuldige. Der Zweck heiligt nicht solche Mittel. (-1)"
+                }
+            ]
+        },
+
+        // =================================================================
+        // KAPITEL 3: DAS HERZ DER FINSTERNIS (Entscheidungen 25-36)
+        // =================================================================
+
+        "scene_12d": {
+            "chapter": 3,
+            "title": "Gemeinsam Stark",
+            "transition": "Der Moment der Wahrheit – drei Menschen gegen das System.",
+            "text": "Alles passiert gleichzeitig. Du springst vor, Sarah sticht die Nadel in Kriegers Nacken, Thomas nutzt die Ablenkung und entwaffnet ihn. Krieger taumelt, das Beruhigungsmittel wirkt sofort. Er sackt zusammen, aber seine Augen bleiben bei Bewusstsein, voller Hass.\n\n'Ihr... werdet... brennen...' lallt er, bevor er das Bewusstsein verliert.\n\nThomas hält sich die Seite, Blut sickert durch seine Finger. 'Nur ein Kratzer', lügt er offensichtlich. Sarah ist sofort da, untersucht die Wunde. 'Das muss genäht werden. Sofort.'\n\n'Keine Zeit!' Thomas schüttelt den Kopf. 'Die Explosionen... Krieger hat den Notfallcode aktiviert. In dreißig Minuten wird die Stadt abgeriegelt. Niemand kommt rein oder raus.'\n\nDurch die Fenster seht ihr das Chaos eskalieren. Weitere Explosionen erschüttern die Stadt. Menschen rennen schreiend durch die Straßen. OmniCorp-Truppen marschieren auf.\n\nSarah verbindet Thomas notdürftig. 'Es gibt einen Weg', sagt sie leise. 'Die alten Schmugglertunnel unter dem Krankenhaus. Sie führen in verschiedene Richtungen. Zum Uhrenturm, zu den Außenbezirken, oder...' Sie zögert. 'Zum OmniCorp-Hauptquartier. Mein Mann hat sie damals genutzt, als er noch... als er noch lebte.'\n\nThomas wird blasser. 'Was auch immer wir tun, wir müssen uns trennen. Zusammen sind wir zu auffällig.'",
+            "choices": [
+                {
+                    "id": "choice_12d",
+                    "text": "Darauf bestehen, dass alle zusammenbleiben. 'Wir haben uns gegenseitig gerettet. Wir bleiben zusammen.'",
+                    "moralEffect": 1,
+                    "nextScene": "scene_13a",
+                    "feedback": "Loyalität und Solidarität über strategische Überlegungen. Du weigerst dich, die neu geschmiedete Gemeinschaft aufzugeben. Dies stärkt die Bindungen, erhöht aber das Risiko. (+1)",
+                    "storyPath": "resistance"
+                },
+                {
+                    "id": "choice_12e",
+                    "text": "Trennung akzeptieren. 'Thomas braucht medizinische Hilfe. Sarah, bring ihn in Sicherheit. Ich gehe zu Elara.'",
+                    "moralEffect": 0,
+                    "nextScene": "scene_13b",
+                    "feedback": "Pragmatische Führung. Du triffst schwere Entscheidungen zum Wohl aller, aber es fühlt sich an wie ein Verrat an der gerade gewonnenen Einheit."
+                },
+                {
+                    "id": "choice_12f",
+                    "text": "'Wir nutzen das Chaos. Direkt zu OmniCorp. Sie erwarten uns dort am wenigsten.'",
+                    "moralEffect": -1,
+                    "nextScene": "scene_13c",
+                    "feedback": "Waghalsig bis zur Fahrlässigkeit. Du gefährdest Verletzte für einen riskanten Plan. Mut und Wahnsinn liegen nah beieinander. (-1)",
+                    "storyPath": "infiltrator"
+                }
+            ]
+        },
+
+        "scene_13a": {
+            "chapter": 3,
+            "title": "Die Tunnel der Hoffnung",
+            "text": "Die Schmugglertunnel sind ein Labyrinth aus Feuchtigkeit und Geschichte. Sarah führt, eine alte Öllampe in der Hand. Thomas stützt sich schwer auf dich, sein Atem geht rasselnd. Die Wände sind voller Zeichen – Symbole der Schmuggler, Botschaften der Hoffnung, Namen der Verschwundenen.\n\n'Hier', Sarah hält an einer Kreuzung. Drei Tunnel zweigen ab. 'Links zum Uhrenturm, geradeaus zu den Außenbezirken, rechts zu OmniCorp.' Sie zögert. 'Aber hört...'\n\nIhr lauscht. Schritte. Viele Schritte. Und Stimmen. Sie kommen von links – vom Weg zum Uhrenturm.\n\n'Eine Falle', flüstert Thomas. 'Sie wissen vom Widerstandstreff.'\n\nSarah wird bleich. 'Elara... die anderen...'\n\nDie Stimmen kommen näher. Ihr erkennt Kriegers Stellvertreter: '...jeden Tunnel durchsuchen. Der Boss will sie lebend, besonders die Steinbach-Göre.'\n\nThomas richtet sich auf, trotz seiner Schmerzen. 'Ich kann sie ablenken. Ihr zwei –'\n\n'Nein!' Sarah und du gleichzeitig.\n\nEr lächelt schwach. 'Ich bin sowieso verlangsamt. Aber ich kann ihnen eine falsche Fährte legen. Den rechten Tunnel nehmen, sie von euch weglocken.'\n\nDie Schritte sind jetzt sehr nah. Zeit für eine Entscheidung.",
+            "choices": [
+                {
+                    "id": "choice_13a",
+                    "text": "Thomas' Plan ablehnen. 'Wir finden einen anderen Weg. Alle zusammen.'",
+                    "moralEffect": 1,
+                    "nextScene": "scene_14a",
+                    "feedback": "Du weigerst dich, das Opfer eines Freundes zu akzeptieren. Diese Sturheit mag unlogisch sein, aber sie bewahrt deine Menschlichkeit. (+1)"
+                },
+                {
+                    "id": "choice_13b",
+                    "text": "Einen Gegenangriff vorschlagen. 'Sie erwarten Fliehende, keine Kämpfer.'",
+                    "moralEffect": 0,
+                    "nextScene": "scene_14b",
+                    "feedback": "Mut oder Wahnsinn? Du wählst Konfrontation über Flucht. Eine riskante Strategie, die entweder brillant oder fatal ist."
+                },
+                {
+                    "id": "choice_13c",
+                    "text": "Thomas' Opfer schweren Herzens akzeptieren, aber darauf bestehen, ihm zu helfen.",
+                    "moralEffect": 2,
+                    "nextScene": "scene_14c",
+                    "feedback": "Du erkennst seinen freien Willen an, aber lässt ihn nicht allein. Dies verbindet Respekt vor seiner Entscheidung mit aktiver Unterstützung. Wahre Freundschaft. (+2)"
+                }
+            ]
+        },
+
+        "scene_14c": {
+            "chapter": 3,
+            "title": "Das Ablenkungsmanöver",
+            "text": "Schnell plant ihr. Sarah gibt Thomas Schmerzmittel und einen Verband, der seine Beweglichkeit verbessert. Du gibst ihm den Datenstick, den er dir gegeben hatte – jetzt mit falschen Informationen, die Sarah hastig darauf kopiert.\n\n'Lass dich verfolgen, aber nicht fangen', instruierst du ihn. 'Führ sie zum alten Industrieviertel. Dort kennst du dich aus.'\n\nThomas nickt, seine Augen jetzt klar. 'Und ihr?'\n\n'Wir warnen Elara', sagt Sarah entschlossen. 'Auch wenn wir dafür durch ihre Linien müssen.'\n\nIhr umarmt euch kurz. Dann hinkt Thomas den rechten Tunnel hinunter, absichtlich laut, eine Blutspur hinterlassend. Nach dreißig Sekunden hört ihr: 'Da lang! Ich sehe Blut!'\n\nDie Verfolger nehmen den Köder. Ihre Schritte entfernen sich. Aber ihr wisst, nicht alle werden ihm folgen.\n\nSarah führt euch einen vergessenen Seitentunnel hinauf. 'Mein Mann hat ihn gefunden. Er führt zur alten Katakombe unter dem Uhrenturm. Aber...' Sie stockt. 'Es gibt Fallen. OmniCorp hat sie nach seiner Flucht installiert. Ich kenne nur die ersten drei.'\n\nIhr steigt auf. Der Tunnel wird enger, die Luft dünner. Dann seht ihr es – Laserstrahlen kreuz und quer. Die erste Falle.",
+            "choices": [
+                {
+                    "id": "choice_14ca",
+                    "text": "Sarah vertrauen und ihren Anweisungen exakt folgen.",
+                    "moralEffect": 1,
+                    "nextScene": "scene_15a",
+                    "feedback": "Vertrauen in Expertise anderer zeigt Weisheit und Demut. Du erkennst deine Grenzen und respektierst das Wissen anderer. (+1)"
+                },
+                {
+                    "id": "choice_14cb",
+                    "text": "Vorschlagen, eine Ablenkung zu schaffen und die Fallen zu umgehen.",
+                    "moralEffect": 0,
+                    "nextScene": "scene_15b",
+                    "feedback": "Kreatives Denken, aber auch Misstrauen in bewährte Methoden. Innovation kann gut sein, aber auch gefährlich."
+                },
+                {
+                    "id": "choice_14cc",
+                    "text": "Darauf bestehen, als Erste zu gehen. 'Wenn etwas schiefgeht, könnt ihr umkehren.'",
+                    "moralEffect": 2,
+                    "nextScene": "scene_15c",
+                    "feedback": "Selbstlose Führung. Du bist bereit, die größte Gefahr auf dich zu nehmen, um andere zu schützen. Dies ist wahre Führungsqualität. (+2)"
+                }
+            ]
+        },
+
+        // Der Uhrenturm-Kampf und die Weichenstellung
+
+        "scene_15c": {
+            "chapter": 3,
+            "title": "Die Prüfung des Mutes",
+            "text": "Sarah protestiert, aber du bist bereits in Bewegung. Die ersten Laser sind in einem Muster angeordnet – alle drei Sekunden eine Lücke. Du zählst, atmest, springst. Der zweite Bereich ist trickreicher – Bewegungssensoren. Ein falscher Schritt und...\n\nDu schleichst, Zentimeter für Zentimeter. Schweiß rinnt dir in die Augen. Fast geschafft, da – KLICK. Dein Fuß hat eine Druckplatte berührt.\n\nAber statt einer Explosion hörst du eine Aufnahme. Die Stimme deiner Großmutter: 'Wenn du das hörst, mein Kind, dann hast du den Mut gefunden, den ich in dir sah. Der echte Eingang ist links hinter der dritten Säule. Vertraue Elara. Vergib mir.'\n\nTränen brennen in deinen Augen. Sie wusste, dass du kommen würdest. Sie hat die Fallen... umfunktioniert?\n\nSarah erreicht dich, fassungslos. 'Sie hat die Todesfallen in Prüfungen verwandelt. Nur wer mutig genug ist...'\n\nIhr findet den verborgenen Eingang. Eine Wendeltreppe führt hinauf. Oben hört ihr Kampfgeräusche. Schreie. Schüsse.\n\n'Wir sind zu spät!' Sarah will hinaufstürmen.\n\nAber du hältst sie zurück. Durch einen Spalt könnt ihr sehen: Der Uhrenturm-Raum ist ein Schlachtfeld. Elara und sechs andere Widerständler sind in die Enge getrieben. Zwanzig OmniCorp-Soldaten umzingeln sie. Aber da ist noch jemand – eine vermummte Gestalt, die von den Schatten aus OmniCorp-Soldaten ausschaltet. Ein Verbündeter?\n\nKrieger ist auch da, bandagiert aber auf den Beinen. Er hält eine junge Frau als Geisel – Amy, Thomas' Schwester, erkennst du aus einem Foto in seiner Brieftasche.\n\n'Letzte Chance, Elara!' brüllt Krieger. 'Ergib dich, oder das Mädchen stirbt!'",
+            "choices": [
+                {
+                    "id": "choice_15ca",
+                    "text": "Sofort eingreifen, um Amy zu retten. Thomas' Schwester darf nicht sterben.",
+                    "moralEffect": 2,
+                    "nextScene": "scene_16a",
+                    "feedback": "Du ehrst Thomas' Opfer, indem du seine Schwester rettest. Diese Loyalität über strategische Überlegungen zeigt wahre Menschlichkeit. (+2)",
+                    "relationships": {"thomas": 10, "amy": 10}
+                },
+                {
+                    "id": "choice_15cb",
+                    "text": "Mit der vermummten Gestalt koordinieren und einen Zweifrontenangriff starten.",
+                    "moralEffect": 1,
+                    "nextScene": "scene_16b",
+                    "feedback": "Taktisches Denken und Vertrauen in Unbekannte. Du nutzt alle verfügbaren Ressourcen für das größere Ziel. (+1)"
+                },
+                {
+                    "id": "choice_15cc",
+                    "text": "Warten und beobachten. Mehr Information sammeln, bevor du handelst.",
+                    "moralEffect": -1,
+                    "nextScene": "scene_16c",
+                    "feedback": "Zögern in kritischen Momenten kann Leben kosten. Deine Vorsicht grenzt an Feigheit, während Menschen sterben. (-1)"
+                }
+            ]
+        },
+
+        // =================================================================
+        // KAPITEL 4: DIE ENTSCHEIDUNG (Entscheidungen 37-48)
+        // =================================================================
+
+        "scene_16a": {
+            "chapter": 4,
+            "title": "Für die Familie",
+            "transition": "Der finale Kampf beginnt – alles steht auf dem Spiel.",
+            "text": "Du stürmst aus dem Versteck, Sarah direkt hinter dir. 'KRIEGER!' Deine Stimme hallt durch den Raum. Alle Köpfe drehen sich zu dir.\n\nSein Gesicht verzieht sich zu einem grausamen Lächeln. 'Die kleine Steinbach. Perfektes Timing.' Er drückt Amy die Waffe an die Schläfe. 'Ein Schritt weiter und –'\n\nDie vermummte Gestalt nutzt die Ablenkung. In einer fließenden Bewegung wirft sie ein Messer. Es trifft Kriegers Waffenarm. Amy fällt zu Boden, kriecht weg.\n\nDas Chaos bricht aus. Schüsse. Schreie. Du rennst zu Amy, ziehst sie in Deckung. Sie ist jung, vielleicht sechzehn, Augen weit vor Angst.\n\n'Thomas?' flüstert sie. 'Wo ist mein Bruder?'\n\n'Er ist sicher', lügst du. 'Er hat mich geschickt, dich zu retten.'\n\nDie vermummte Gestalt kämpft sich zu euch durch. Als die Kapuze fällt, stockt dir der Atem – es ist Kael, der Anführer der radikalen Fraktion. Jung, Narben im Gesicht, Augen voller Feuer.\n\n'Wir müssen hier raus!' schreit er. 'Ich habe Sprengsätze im Fundament. Entweder wir gehen JETZT oder wir sterben alle!'\n\nElara, blutend aber aufrecht, schreit zurück: 'Du Wahnsinniger! Es sind Zivilisten im Gebäude!'\n\n'Kollateralschäden!' Kael zückt einen Detonator. 'Manchmal muss man Opfer bringen!'\n\nDie Situation eskaliert. OmniCorp-Verstärkung stürmt herein. Sarah behandelt verzweifelt Verwundete. Amy klammert sich an dich. Und du stehst zwischen Kael mit seinem Detonator und Elara, die die moralische Führung beansprucht.",
+            "choices": [
+                {
+                    "id": "choice_16aa",
+                    "text": "Kael den Detonator entreißen. 'Nicht so! Wir sind keine Mörder!'",
+                    "moralEffect": 2,
+                    "nextScene": "scene_17a",
+                    "feedback": "Du stellst dich physisch zwischen Wahnsinn und Unschuld. Diese direkte Aktion rettet Leben und bewahrt die moralische Integrität des Widerstands. (+2)"
+                },
+                {
+                    "id": "choice_16ab",
+                    "text": "Einen Kompromiss vorschlagen: 'Evakuiert erst die Zivilisten, dann sprengen!'",
+                    "moralEffect": 0,
+                    "nextScene": "scene_17b",
+                    "feedback": "Der Versuch, alle zufriedenzustellen, könnte niemanden retten. Kompromisse mit Extremisten sind gefährlich."
+                },
+                {
+                    "id": "choice_16ac",
+                    "text": "Die Verwirrung nutzen und mit Amy und Sarah fliehen.",
+                    "moralEffect": -2,
+                    "nextScene": "scene_17c",
+                    "feedback": "Feigheit in ihrer reinsten Form. Du lässt andere die schweren Entscheidungen treffen und fliehst. Dies definiert dich als jemanden, der in kritischen Momenten versagt. (-2)",
+                    "storyPath": "fugitive"
+                }
+            ]
+        },
+
+        "scene_17a": {
+            "chapter": 4,
+            "title": "Der Kampf um die Seele",
+            "text": "Du springst auf Kael zu. Er ist stärker, kampferprobt, aber du hast die Verzweiflung auf deiner Seite. Ihr ringt um den Detonator. \n\n'Du verstehst nicht!' keucht er. 'Meine Familie... OmniCorp hat sie alle... Der einzige Weg ist ihre völlige Vernichtung!'\n\n'Nicht durch mehr Unschuldige!' Du schlägst den Detonator aus seiner Hand. Er fliegt durch den Raum.\n\nZeitgleich hat Elara die Situation genutzt. Mit den verbliebenen Widerständlern hat sie eine Verteidigungslinie gebildet. 'RÜCKZUG! ALLE ZUM NORDAUSGANG!'\n\nAber Krieger, verwundet und wahnsinnig, hat den Detonator erreicht. Blut läuft aus seinem Mund, aber er grinst. 'Wenn ich untergehe... dann alle!'\n\nDie Zeit friert ein. Du siehst: Amy, erstarrt vor Angst. Sarah, die einem verwundeten Widerständler hilft. Elara, die Zivilisten zur Tür führt. Kael, der sich aufrappelt. Und Krieger, den Finger am Auslöser.\n\nDu hast vielleicht zwei Sekunden.",
+            "choices": [
+                {
+                    "id": "choice_17aa",
+                    "text": "Dich auf Krieger werfen, koste es was es wolle.",
+                    "moralEffect": 3,
+                    "nextScene": "scene_18a",
+                    "feedback": "Der ultimative Akt der Selbstaufopferung. Du bist bereit, alles zu geben, um Unschuldige zu retten. Dies ist die höchste Form moralischen Handelns – das eigene Leben für andere. (+3)"
+                },
+                {
+                    "id": "choice_17ab",
+                    "text": "Amy packen und aus dem Fenster springen – drei Stockwerke in den Fluss darunter.",
+                    "moralEffect": 0,
+                    "nextScene": "scene_18b",
+                    "feedback": "Du rettest ein Leben, aber nur eines. Eine pragmatische, aber begrenzte Entscheidung."
+                },
+                {
+                    "id": "choice_17ac",
+                    "text": "Versuchen, alle zu warnen und selbst Deckung suchen.",
+                    "moralEffect": -1,
+                    "nextScene": "scene_18c",
+                    "feedback": "Selbsterhaltung über Heldentum. Verständlich, aber in diesem Moment der Wahrheit zeigst du, dass dein eigenes Leben dir wichtiger ist als das anderer. (-1)"
+                }
+            ]
+        },
+
+        "scene_18a": {
+            "chapter": 4,
+            "title": "Das Opfer",
+            "transition": "KLIMAX: Deine Entscheidung wird alles verändern.",
+            "text": "Die Welt verlangsamt sich, als du dich auf Krieger wirfst. Du siehst die Überraschung in seinen Augen, dann den Hass. Sein Finger krümmt sich...\n\nAber dein Aufprall reicht. Der Detonator fliegt aus seiner Hand, schlittert über den Boden. Ihr kämpft, rollt herum. Er ist verwundet, aber immer noch stark. Seine Hände finden deinen Hals.\n\n'Stirb... wie deine... Großmutter...', keucht er.\n\nDunkle Punkte tanzen in deinem Sichtfeld. Aber dann – ein Schuss. Krieger erstarrt, Blut breitet sich auf seiner Brust aus. Er fällt zur Seite.\n\nKael steht da, Kriegers Waffe in der Hand. Einen Moment treffen sich eure Blicke. In seinen Augen siehst du Verständnis. Er nickt.\n\n'ALLE RAUS!' Elaras Stimme. 'Das Gebäude ist instabil!'\n\nTatsächlich – Kaels frühere Explosionen haben die Struktur geschwächt. Der Uhrenturm beginnt zu schwanken. Staub rieselt von der Decke.\n\nKael hilft dir auf. 'Du hattest recht', sagt er leise. 'Es gibt Grenzen. Selbst für die Revolution.' Er drückt dir etwas in die Hand – einen USB-Stick. 'Alles über OmniCorps Operationen. Ich habe es aus ihrer Zentrale. Nutze es weise.'\n\nGemeinsam rennt ihr. Sarah stützt einen Verletzten. Amy hilft einem alten Mann. Elara führt. Nur Sekunden nachdem der Letzte draußen ist, kollabiert der Uhrenturm. Ein Symbol des Widerstands, zu Staub.\n\nAber ihr lebt. Und in deiner Hand hältst du die Waffe, um OmniCorp zu Fall zu bringen.",
+            "choices": [
+                {
+                    "id": "choice_18aa",
+                    "text": "Die Daten sofort an alle Medien weltweit senden. Die Wahrheit muss raus.",
+                    "moralEffect": 1,
+                    "nextScene": "scene_19a",
+                    "feedback": "Direkte Aktion für maximale Wirkung. Du nutzt die Macht der Information als Waffe der Wahrheit. Dies ist der moderne Widerstand. (+1)"
+                },
+                {
+                    "id": "choice_18ab",
+                    "text": "Zuerst ein Treffen mit allen Fraktionen. Gemeinsam entscheiden, wie vorzugehen ist.",
+                    "moralEffect": 2,
+                    "nextScene": "scene_19b",
+                    "feedback": "Demokratische Führung in ihrer reinsten Form. Du erkennst, dass wahre Macht in der Gemeinschaft liegt, nicht in Einzelentscheidungen. (+2)"
+                },
+                {
+                    "id": "choice_18ac",
+                    "text": "Die Daten als Druckmittel behalten. Damit kann man OmniCorp zu Verhandlungen zwingen.",
+                    "moralEffect": -1,
+                    "nextScene": "scene_19c",
+                    "feedback": "Du wählst Erpressung über Gerechtigkeit. Die Versuchung der Macht korrumpiert bereits deine Ideale. (-1)"
+                }
+            ]
+        },
+
+        "scene_19b": {
+            "chapter": 4,
+            "title": "Die Versammlung der Hoffnung",
+            "text": "In einem verlassenen Lagerhaus versammelt sich, was vom Widerstand übrig ist. Dreißig Seelen, verwundet im Körper, aber ungebrochen im Geist. Elara leitet, du an ihrer Seite. Kael sitzt abseits, nachdenklich. Sarah behandelt die Verletzten. Amy hat sich als erstaunlich stark erwiesen, hilft überall.\n\nThomas trifft ein, gestützt von zwei Sympathisanten. Er hat es geschafft, die Verfolger in die Irre zu führen. Das Wiedersehen mit Amy bringt alle zum Weinen.\n\n'Also', beginnt Elara. 'Was haben wir?'\n\nDu präsentierst Kaels Daten. Die Reaktionen reichen von Schock bis Wut. Beweise für systematische Vergiftung, Bestechung bis in höchste Regierungskreise, Menschenexperimente.\n\n'Wir könnten damit zur UN gehen', schlägt jemand vor.\n'Oder es als Waffe nutzen', fügt Kael hinzu, 'ihre Systeme lahmlegen.'\n'Warum nicht beides?' fragt Amy leise. 'Und mehr?'\n\nAlle schauen sie an. Sie erklärt: 'Ich habe im OmniCorp-Gefängnis andere getroffen. Hacker, Journalisten, Wissenschaftler. Wenn wir sie befreien könnten...'\n\nMarcus, der Wissenschaftler, nickt. 'Mit dem richtigen Team könnten wir ein Gegenmittel in Massen produzieren.'\n\nDie Diskussion wogt. Drei Pläne kristallisieren sich:\n1. Operation Wahrheit: Globale Medienoffensive\n2. Operation Heilung: Befreiung der Gefangenen und Gegenmittelproduktion  \n3. Operation Gerechtigkeit: Direkte Aktion gegen OmniCorp-Führung\n\nAlle Augen richten sich auf dich. Deine Stimme hat durch deine Taten Gewicht.",
+            "choices": [
+                {
+                    "id": "choice_19ba",
+                    "text": "'Alle drei. Koordiniert. Verschiedene Teams, ein Ziel: OmniCorps Ende.'",
+                    "moralEffect": 2,
+                    "nextScene": "scene_20a",
+                    "feedback": "Ambitionierte Führung, die alle Talente nutzt. Du denkst groß und inklusiv. Dies maximiert Chancen und gibt jedem eine Rolle. (+2)"
+                },
+                {
+                    "id": "choice_19bb",
+                    "text": "'Operation Heilung hat Priorität. Menschen retten kommt vor Rache.'",
+                    "moralEffect": 3,
+                    "nextScene": "scene_20b",
+                    "feedback": "Du stellst Leben über alles andere. Diese Priorisierung des menschlichen Wohls über Vergeltung zeigt höchste moralische Reife. (+3)"
+                },
+                {
+                    "id": "choice_19bc",
+                    "text": "'Wir sind zu wenige. Konzentrieren wir uns auf die Medienoffensive. Sicher und effektiv.'",
+                    "moralEffect": 0,
+                    "nextScene": "scene_20c",
+                    "feedback": "Vorsichtige Strategie, die Verluste minimiert, aber auch Chancen verpasst. Sicherheit hat ihren Preis."
+                }
+            ]
+        },
+
+        "scene_20b": {
+            "chapter": 4,
+            "title": "Operation Heilung",
+            "transition": "Die wichtigste Mission beginnt - Leben retten.",
+            "text": "Die Planung läuft auf Hochtouren. Das OmniCorp-Gefängnis liegt in einem umgebauten Krankenhaus - bittere Ironie. Sarah kennt das Gebäude, Marcus die Sicherheitssysteme, Thomas die Wachpläne.\n\n'Es gibt ein Zeitfenster', erklärt Thomas. 'Während der Wasserzuteilung morgen früh. Die halbe Wache wird abgezogen, um die Menge zu kontrollieren.'\n\nAmy fügt hinzu: 'Die Gefangenen werden in der alten Psychiatrie gehalten. Dr. Helena Chen ist dort - sie hat das ursprüngliche Gegenmittel entwickelt, bevor OmniCorp sie entführte.'\n\nKael, der sich als unerwarteter Verbündeter erwiesen hat, bietet seine Leute an. 'Wir können Ablenkung schaffen. Aber...' Er sieht dich direkt an. 'Meine Leute wollen Blut sehen. Nach allem, was passiert ist.'\n\nElara runzelt die Stirn. 'Keine Zivilopfer. Das ist nicht verhandelbar.'\n\n'Und die Wachen?' fragt Kael. 'Sie sind auch nur Angestellte. Haben Familien.'\n\nDie Debatte entbrennt. Wie weit darf Widerstand gehen? Wo ist die Grenze zwischen notwendiger Gewalt und Mord?\n\nDu spürst, dass deine Entscheidung hier den Ton für alles Weitere setzen wird.",
+            "choices": [
+                {
+                    "id": "choice_20ba",
+                    "text": "'Nicht-tödliche Gewalt nur. Betäubungsmittel, keine Kugeln. Wir sind besser als sie.'",
+                    "moralEffect": 2,
+                    "nextScene": "scene_21a",
+                    "feedback": "Du setzt einen hohen moralischen Standard selbst in extremen Situationen. Dies erschwert die Mission, bewahrt aber eure Menschlichkeit. (+2)"
+                },
+                {
+                    "id": "choice_20bb",
+                    "text": "'Selbstverteidigung ist erlaubt. Aber wir suchen keinen Kampf. Heimlichkeit vor Konfrontation.'",
+                    "moralEffect": 1,
+                    "nextScene": "scene_21b",
+                    "feedback": "Ein pragmatischer Mittelweg, der Realität anerkennt ohne Blutrünstigkeit zu fördern. (+1)"
+                },
+                {
+                    "id": "choice_20bc",
+                    "text": "'Die Wachen haben ihre Wahl getroffen. Wer sich uns in den Weg stellt, trägt die Konsequenzen.'",
+                    "moralEffect": -2,
+                    "nextScene": "scene_21c",
+                    "feedback": "Du legitimierst Gewalt durch Entmenschlichung der Gegner. Dies ist der Beginn eines dunklen Pfades. (-2)"
+                }
+            ]
+        },
+
+        "scene_21a": {
+            "chapter": 4,
+            "title": "Der gewaltlose Weg",
+            "text": "Die Mission beginnt im Morgengrauen. Drei Teams: Infiltration (du, Thomas, Marcus), Medizinisch (Sarah, zwei Ärzte aus dem Widerstand), Ablenkung (Kael, seine Leute - widerwillig mit Betäubungswaffen ausgestattet).\n\nDer Zugang erfolgt durch die alte Leichenhalle. Marcus deaktiviert die Alarme mit zitternden aber geschickten Händen. Ihr schleicht durch sterile Gänge. Die Betäubungspfeile funktionieren lautlos.\n\nDann erreicht ihr die Psychiatrie. Der Anblick raubt dir den Atem. Zwanzig Zellen, in jeder ein Mensch. Abgemagert, apathisch, aber am Leben. In der letzten Zelle: Dr. Helena Chen, die trotz allem einen scharfen Blick bewahrt hat.\n\n'Ihr seid keine Wachen', stellt sie fest. 'Endlich.'\n\nWährend ihr die Schlösser knackt, erzählt sie hastig: 'Das Gegenmittel existiert. Aber OmniCorp hat eine neue Version des Gifts entwickelt. X-99. Tödlicher, schneller wirkend. Sie planen, es morgen ins Hauptreservoir zu leiten.'\n\nEin Alarm heult auf. Kaels Ablenkung wurde entdeckt. Über Funk hört ihr Kampfgeräusche.\n\n'Rückzug!' schreit Thomas. Aber Dr. Chen packt deinen Arm. 'Das Labor! Einen Stock höher. Alle Forschung ist dort. Ohne die...'",
+            "choices": [
+                {
+                    "id": "choice_21aa",
+                    "text": "'Sarah, bring alle raus. Thomas, Marcus, mit mir zum Labor. Schnell!'",
+                    "moralEffect": 1,
+                    "nextScene": "scene_22a",
+                    "feedback": "Mutige Führung, die Risiken aufteilt und Prioritäten setzt. Du wagst mehr für den vollständigen Sieg. (+1)"
+                },
+                {
+                    "id": "choice_21ab",
+                    "text": "'Keine Zeit! Alle raus, JETZT! Die Daten können warten.'",
+                    "moralEffect": 0,
+                    "nextScene": "scene_22b",
+                    "feedback": "Sicherheit der Geretteten über potenzielle Zukunftsgewinne. Vorsichtig, aber möglicherweise kurzsichtig."
+                },
+                {
+                    "id": "choice_21ac",
+                    "text": "'Dr. Chen und ich holen die Daten. Der Rest evakuiert. Wir treffen uns am Sammelpunkt.'",
+                    "moralEffect": 2,
+                    "nextScene": "scene_22c",
+                    "feedback": "Du riskierst dich selbst statt andere zu gefährden. Wahre Führung durch persönliches Beispiel. (+2)"
+                }
+            ]
+        },
+
+        "scene_22c": {
+            "chapter": 4,
+            "title": "Im Herzen der Finsternis",
+            "text": "Mit Dr. Chen rennst du die Treppe hinauf. Das Labor ist ein Albtraum aus Glas und Stahl. Überall Proben, Formeln, Experimente. Dr. Chen stürzt zu einem Computer.\n\n'Drei Minuten', murmelt sie, Finger fliegend über die Tastatur. 'Ich kopiere alles.'\n\nDu sicherst die Tür. Schritte nähern sich. Dann Stimmen: '...Labor sichern! Der Boss will die Forschung geschützt wissen!'\n\nDr. Chen flucht. 'Noch neunzig Sekunden!'\n\nDie Tür explodiert. Fünf Wachen stürmen herein. Du wirfst eine Rauchgranate, ziehst Dr. Chen in Deckung. Schüsse peitschen.\n\n'Deckung!' schreist du. Aber Dr. Chen lässt den Download nicht los. 'Noch dreißig Sekunden! Das ist unsere einzige Chance!'\n\nEine Kugel streift deine Schulter. Brennender Schmerz. Du feuerst die Betäubungspfeile, aber sie haben richtige Waffen.\n\n'Download abgeschlossen!' Dr. Chen reißt den USB-Stick heraus. In diesem Moment trifft sie eine Kugel in die Brust. Sie taumelt, drückt dir den Stick in die Hand. 'Mach... es... richtig...'\n\nWut explodiert in dir. Die Betäubungswaffe fühlt sich nutzlos an. Eine echte Waffe liegt neben einem gefallenen Wächter...",
+            "choices": [
+                {
+                    "id": "choice_22ca",
+                    "text": "Bei deinen Prinzipien bleiben. Dr. Chen auf die Schultern nehmen und fliehen.",
+                    "moralEffect": 3,
+                    "nextScene": "scene_23a",
+                    "feedback": "In deinem dunkelsten Moment hältst du an deinen Werten fest. Du wählst Rettung über Rache. Dies ist wahre moralische Stärke. (+3)"
+                },
+                {
+                    "id": "choice_22cb",
+                    "text": "Die Waffe nehmen, aber nur zur Verteidigung beim Rückzug.",
+                    "moralEffect": 0,
+                    "nextScene": "scene_23b",
+                    "feedback": "Ein Kompromiss zwischen Prinzipien und Pragmatismus. Die Grauzone des Überlebens."
+                },
+                {
+                    "id": "choice_22cc",
+                    "text": "Die Waffe nehmen und Vergeltung üben. Sie haben es verdient.",
+                    "moralEffect": -3,
+                    "nextScene": "scene_23c",
+                    "feedback": "Rache verzehrt deine Seele. Du wirst zu dem, was du bekämpfst - ein Mörder. Dr. Chens Opfer wird durch dein Blutvergießen beschmutzt. (-3)"
+                }
+            ]
+        },
+
+        "scene_23a": {
+            "chapter": 4,
+            "title": "Das Gewicht der Ehre",
+            "transition": "Deine moralische Standhaftigkeit wird zur Legende.",
+            "text": "Mit übermenschlicher Kraft hebst du Dr. Chen auf deine Schultern. Blut - ihres und deines - durchnässt deine Kleidung. Du rennst, weichst Kugeln aus, springst durch ein Fenster in den Müllcontainer darunter.\n\nDer Aufprall ist brutal, aber die Müllsäcke dämpfen. Dr. Chen stöhnt - sie lebt noch! Du schleppst sie durch Gassen, die Verfolger immer dichter.\n\nDann - Motorengeräusch. Ein Van quietscht um die Ecke. Sarah am Steuer, Thomas reißt die Tür auf. 'Schnell!'\n\nIhr rast davon. Sarah arbeitet verzweifelt an Dr. Chen. 'Kritisch, aber stabil. Du hast sie gerettet!'\n\nZurück im Versteck wirst du wie ein Held empfangen. Aber wichtiger: Dr. Chen überlebt. Schwach noch, leitet sie die Produktion des Gegenmittels an.\n\nKael kommt zu dir, Respekt in seinen Augen. 'Ich habe gesehen, was du getan hast. Die Kameras haben alles aufgezeichnet. Du hättest sie alle töten können. Aber du hast eine Verwundete getragen statt zu kämpfen.' Er legt eine Hand auf deine gesunde Schulter. 'Das ist wahrer Mut. Ich... ich hatte Unrecht. Es gibt einen anderen Weg.'\n\nDie Videos verbreiten sich. Ein vermummter Rebell, der unter Beschuss eine verwundete Ärztin rettet statt zu töten. Es wird zum Symbol. Menschen beginnen zu hoffen.\n\nElara ruft eine Versammlung ein. 'Die Zeit ist reif. Mit dem Gegenmittel und der öffentlichen Unterstützung können wir OmniCorp stürzen. Aber wie?'",
+            "choices": [
+                {
+                    "id": "choice_23aa",
+                    "text": "'Wir heilen zuerst die Menschen. Masse für Masse. Wenn sie klar denken können, werden sie sich erheben.'",
+                    "moralEffect": 2,
+                    "nextScene": "scene_24a",
+                    "feedback": "Du priorisierst Heilung über Konfrontation. Die Befreiung der Geister vor der Befreiung der Stadt. Weise und mitfühlend. (+2)"
+                },
+                {
+                    "id": "choice_23ab",
+                    "text": "'Zweigleisig. Heilung und gleichzeitig politischer Druck. Die Beweise an internationale Gerichte.'",
+                    "moralEffect": 1,
+                    "nextScene": "scene_24b",
+                    "feedback": "Ausgewogene Strategie, die alle Optionen nutzt. Du denkst wie eine Staatsfrau. (+1)"
+                },
+                {
+                    "id": "choice_23ac",
+                    "text": "'Direkter Schlag gegen die Führung. Verhaftung der Verantwortlichen durch Bürgerwehr.'",
+                    "moralEffect": -1,
+                    "nextScene": "scene_24c",
+                    "feedback": "Vigilantismus, auch gut gemeint, untergräbt Rechtsstaatlichkeit. Du riskierst, einen Präzedenzfall für Mob-Justiz zu schaffen. (-1)"
+                }
+            ]
+        },
+
+        // FINALE SEQUENZEN UND DIE 6 VERSCHIEDENEN ENDEN
+
+        "scene_24a": {
+            "chapter": 5,
+            "title": "Die große Heilung",
+            "text": "Operation 'Klares Wasser' beginnt. In einer koordinierten Aktion verteilen Widerstandszellen das Gegenmittel. Sarah leitet medizinische Teams, die es direkt injizieren. Marcus und Dr. Chen (im Rollstuhl aber unermüdlich) produzieren rund um die Uhr.\n\nDu führst die riskanteste Mission: Das Gegenmittel direkt ins Hauptwasserwerk einschleusen. Mit Thomas, Amy und einer Handvoll Freiwilliger.\n\nDas Wasserwerk ist eine Festung. Aber ihr habt einen Vorteil - die Wachen beginnen bereits, klarer zu denken. Einige haben heimlich das Gegenmittel genommen.\n\nAm Hauptventil angekommen, arbeitet Amy an den Kontrollen. 'Fünf Minuten', sagt sie. Dann hört ihr es - Helikopter. OmniCorps Elitetruppen.\n\n'Sie werden das ganze Viertel bombardieren statt das Gegenmittel zuzulassen', erkennt Thomas entsetzt.\n\nÜber Lautsprecher dröhnt eine kalte Stimme: 'Letzte Warnung. Verlassen Sie die Anlage oder wir eröffnen das Feuer. Sie haben sechzig Sekunden.'\n\nAmy braucht noch vier Minuten. Die Freiwilligen sehen dich an, Angst aber auch Entschlossenheit in ihren Augen.",
+            "choices": [
+                {
+                    "id": "choice_24aa",
+                    "text": "'Wir bleiben. Sendet eine Nachricht an alle: Was hier passiert. Die Welt muss es sehen.'",
+                    "moralEffect": 3,
+                    "nextScene": "ending_martyr",
+                    "feedback": "Du wählst das ultimative Opfer. Dein Tod wird zur Initialzündung einer globalen Bewegung. Wahres Heldentum. (+3)"
+                },
+                {
+                    "id": "choice_24ab",
+                    "text": "'Plan B. Wir sprengen die Anlage kontrolliert. Das Gegenmittel wird mit der Flutwelle verteilt.'",
+                    "moralEffect": 1,
+                    "nextScene": "scene_25a",
+                    "feedback": "Kreative Verzweiflung. Du findest einen Weg, die Mission zu erfüllen, auch wenn es Chaos bedeutet. (+1)"
+                },
+                {
+                    "id": "choice_24ac",
+                    "text": "'Evakuierung! Wir kommen wieder. Lebende Kämpfer sind wichtiger als tote Helden.'",
+                    "moralEffect": 0,
+                    "nextScene": "scene_25b",
+                    "feedback": "Pragmatischer Rückzug. Du bewahrst Leben, aber verpasst möglicherweise die einzige Chance."
+                }
+            ]
+        },
+
+        "scene_25a": {
+            "chapter": 5,
+            "title": "Die Flutwelle der Freiheit",
+            "text": "Kael hatte Recht mit einer Sache - manchmal braucht es drastische Maßnahmen. Aber deine sind anders. Du sprengst die Staumauer kontrolliert. Das Gegenmittel, tonnenweise ins Reservoir gekippt, wird mit der Flutwelle über die Stadt gespült.\n\nChaos. Aber heilendes Chaos. Menschen, durchnässt aber plötzlich klar im Kopf. Die Apathie weicht Wut, dann Entschlossenheit.\n\nOmniCorps Truppen werden von einer Menschenmenge überrannt - nicht gewalttätig, aber unaufhaltsam. Die Soldaten, selbst 'geheilt', legen die Waffen nieder.\n\nIn der Konzernzentrale verbarrikadiert sich die Führung. Aber ihre eigenen Angestellten öffnen die Türen. Die Revolution kommt von innen.\n\nDu stehst, durchnässt und erschöpft, auf den Stufen des Rathauses. Elara neben dir, Kael auf der anderen Seite. Sarah behandelt Verletzte. Thomas und Amy helfen beim Aufbau einer Notversorgung.\n\nDie Stadt gehört wieder den Menschen. Aber der Preis war hoch. Und jetzt kommt der schwierige Teil - Wiederaufbau ohne die Fehler der Vergangenheit zu wiederholen.",
+            "choices": [
+                {
+                    "id": "choice_25aa",
+                    "text": "'Wir brauchen eine Übergangsregierung. Alle Fraktionen vertreten. Ich nominiere Elara.'",
+                    "moralEffect": 2,
+                    "nextScene": "ending_democracy",
+                    "feedback": "Du lehnst persönliche Macht ab zugunsten demokratischer Prozesse. Wahre Größe liegt im Dienen, nicht im Herrschen. (+2)"
+                },
+                {
+                    "id": "choice_25ab",
+                    "text": "'Tribunale für die Verantwortlichen. Gerechtigkeit muss sein, aber rechtsstaatlich.'",
+                    "moralEffect": 1,
+                    "nextScene": "ending_justice",
+                    "feedback": "Du balancierst Gerechtigkeit mit Rechtsstaatlichkeit. Ein schwieriger aber notwendiger Weg. (+1)"
+                },
+                {
+                    "id": "choice_25ac",
+                    "text": "'Ich übernehme die Führung. Vorübergehend. Bis alles stabil ist.'",
+                    "moralEffect": -2,
+                    "nextScene": "ending_temptation",
+                    "feedback": "Die Versuchung der Macht ergreift dich. Selbst mit guten Absichten ist dies der Beginn einer neuen Tyrannei. (-2)"
+                }
+            ]
+        },
+
+        // DIE 6 VERSCHIEDENEN ENDEN
+
+        "ending_martyr": {
+            "chapter": 5,
+            "title": "Das Opfer das die Welt veränderte",
+            "isEnding": true,
+            "text": "Die Helikopter eröffnen das Feuer. Aber die Kameras laufen. Die Welt sieht, wie OmniCorp unbewaffnete Zivilisten niedermäht, die nur sauberes Wasser wollten.\n\nDu fällst, aber nicht bevor Amy den letzten Schalter umlegt. Das Gegenmittel flutet ins System. Deine letzten Worte, aufgezeichnet und millionenfach geteilt: 'Wasser... ist ein... Menschenrecht...'\n\nDein Tod wird zum Funken, der ein Feuer entfacht. Überall auf der Welt erheben sich Menschen. Konzerne werden zerschlagen, neue Gesetze erlassen. Der 'Steinbach-Kodex' garantiert Zugang zu sauberem Wasser als unveräußerliches Recht.\n\nJahre später steht eine Statue von dir am wiederaufgebauten Brunnen von Grautal. Kinder spielen im klaren Wasser. Amy, jetzt Bürgermeisterin, legt jeden Jahr Blumen nieder. Thomas leitet eine Stiftung in deinem Namen.\n\nDu hast nicht überlebt, um deine neue Welt zu sehen. Aber dein Opfer hat sie möglich gemacht. Auf deinem Grabstein: 'Sie gab alles, damit alle trinken können.'\n\n**MORALISCHE BEWERTUNG: Ultimatives Heldentum (+15 oder höher)**\nDein Weg war geprägt von konsequentem Altruismus. Du hast in jeder Situation das Wohl anderer über dein eigenes gestellt. Dein Tod war nicht sinnlos - er war die ultimative Bestätigung des kategorischen Imperativs: Du hast so gehandelt, dass deine Maxime zum allgemeinen Gesetz werden könnte. Und sie wurde es."
+        },
+
+        "ending_democracy": {
+            "chapter": 5,
+            "title": "Die Geburt einer neuen Ordnung",
+            "isEnding": true,
+            "text": "Die Übergangsregierung unter Elaras Führung ist ein Balanceakt. Ehemalige Feinde müssen zusammenarbeiten. Du dienst als Mediatorin, schlichten Streit zwischen Kael und gemäßigten Kräften.\n\nDie erste freie Wahl in Grautal seit Jahrzehnten. Die Wahlbeteiligung: 94%. Menschen, deren Geist jahrelang vernebelt war, nehmen ihr Schicksal in die Hand.\n\nDr. Chen wird Gesundheitsministerin, führt kostenlose Versorgung für alle ein. Marcus leitet die Umweltbehörde, die das Wasser schützt. Sarah gründet ein Trauma-Zentrum. Thomas reformiert die Polizei von innen.\n\nDu? Du lehnst alle Ämter ab. Stattdessen gründest du das 'Martha Steinbach Institut für Zivilen Widerstand'. Du lehrst die nächste Generation, wie man Tyrannei erkennt und bekämpft - gewaltfrei.\n\nJahre später besucht dich eine Journalistin. 'Bereuen Sie, nicht selbst Bürgermeisterin geworden zu sein?'\n\nDu lächelst. 'Macht korrumpiert. Ich habe etwas Besseres gewählt - ich habe andere ermächtigt.'\n\nGrautal blüht. Die Brunnen fließen frei. Und in der ganzen Welt studieren Menschen das 'Grautal-Modell' - wie eine Stadt sich selbst befreite und neu erfand.\n\n**MORALISCHE BEWERTUNG: Weiser Anführer (+12 bis +14)**\nDu hast Führungsstärke mit Demut verbunden. Deine größte Tat war, Macht abzugeben, als du sie hättest ergreifen können. Dies zeigt wahre moralische Reife - die Erkenntnis, dass nachhaltige Veränderung von unten kommt, nicht von oben."
+        },
+
+        "ending_justice": {
+            "chapter": 5,
+            "title": "Die Waage der Gerechtigkeit",
+            "isEnding": true,
+            "text": "Die Tribunale sind ein Drahtseilakt. Du leitest die Untersuchungskommission. Jeden Tag hörst du Zeugenaussagen - Opfer, Täter, Mitläufer. Die Grauzone ist größer als gedacht.\n\nDer ehemalige CEO von OmniCorp zeigt keine Reue. 'Ich habe nur Geschäfte gemacht', sagt er kalt. Lebenslänglich.\n\nAber was ist mit der Sekretärin, die Dokumente fälschte, um ihre kranke Tochter zu versorgen? Dem Wachmann, der wegschaute, weil er erpresst wurde?\n\nDu entwickelst ein System: Volle Geständnisse und Wiedergutmachung führen zu Bewährung und Sozialdienst. Die Stadt wird zur riesigen Werkstatt der Versöhnung.\n\nKael ist dein schwierigster Fall. Seine Bomben töteten drei Wachen. Aber er bereut aufrichtig. Du entscheidest: Zehn Jahre Gefängnis, aber mit der Aufgabe, andere Radikale zu deradikalisieren.\n\nNicht alle sind zufrieden. Manche wollen härtere Strafen, andere völlige Amnestie. Aber langsam heilt die Stadt.\n\nJahrzehnte später wirst du Richterin am Internationalen Gerichtshof. Deine Erfahrungen in Grautal prägen ein neues Verständnis von Übergangsjustiz weltweit.\n\n**MORALISCHE BEWERTUNG: Gerechter Schiedsrichter (+8 bis +11)**\nDu hast den schmalen Pfad zwischen Rache und Vergebung gefunden. Deine Justiz war nicht blind, sondern sehend - sie erkannte Kontext ohne Taten zu entschuldigen. Dies erforderte immense moralische Kraft und Weisheit."
+        },
+
+        "ending_temptation": {
+            "chapter": 5,
+            "title": "Der Weg zur Tyrannei",
+            "isEnding": true,
+            "text": "Es beginnt unschuldig. Du übernimmst 'vorübergehend' die Kontrolle. Nur bis zur Stabilisierung. Aber es gibt immer eine weitere Krise, einen weiteren Grund zu bleiben.\n\nDeine Entscheidungen sind gut - zuerst. Wasserversorgung gesichert, Gesundheitssystem aufgebaut. Die Menschen lieben dich. Sie nennen dich 'Befreierin'.\n\nAber Macht verändert dich. Als Kael deine Wirtschaftsreformen kritisiert, lässt du ihn verhaften. 'Nur vorübergehend', sagst du dir. Als Zeitungen deine Methoden hinterfragen, führst du 'Qualitätskontrollen' ein. Zensur mit anderem Namen.\n\nElara konfrontiert dich. 'Das ist nicht, wofür wir gekämpft haben!' Du antwortest kalt: 'Ich weiß besser, was die Stadt braucht.'\n\nJahre vergehen. Grautal ist sauber, sicher, effizient. Und stumm. Die Brunnen fließen, aber der Geist der Stadt ist wieder gefangen. Du hast OmniCorp besiegt nur um es zu ersetzen.\n\nIn deinem Palast (wann wurde aus dem Rathaus ein Palast?) siehst du dein Spiegelbild. Die Augen, die zurückstarren, erkennst du nicht. Sie erinnern an Krieger.\n\n**MORALISCHE BEWERTUNG: Gefallener Held (-15 oder niedriger)**\nDu hast die ultimative Prüfung nicht bestanden - die Versuchung der Macht. Dein Weg beweist, dass gute Absichten ohne moralische Wachsamkeit in Tyrannei enden. Du wurdest zu dem, was du bekämpft hast."
+        },
+
+        "ending_redemption": {
+            "chapter": 5,
+            "title": "Der lange Weg zurück",
+            "isEnding": true,
+            "text": "Deine moralische Reise war ein Auf und Ab. Fehler, Verrat, Momente der Feigheit. Aber auch Mut, Reue und der Wille zur Besserung.\n\nNach dem Fall OmniCorps ziehst du dich zurück. Die Last deiner Fehler - Menschen, die du im Stich gelassen hast, Chancen, die du verpasst hast - wiegt schwer.\n\nDu beginnst klein. Hilfst beim Wiederaufbau, ohne Anerkennung zu suchen. Arbeitest in Sarahs Klinik, putzt Böden. Langsam lernst du dich selbst zu vergeben.\n\nJahre später bist du Lehrerin. Nicht für Heldentum, sondern für Ethik. Du nutzt deine Fehler als Lehrmaterial. 'Ich war kein Held', sagst du deinen Schülern. 'Aber ich habe gelernt. Und das könnt ihr auch.'\n\nEiner deiner Schüler wird später Friedensnobelpreisträger. In seiner Dankesrede erwähnt er dich: 'Sie lehrte mich, dass Scheitern nicht das Ende ist, sondern der Anfang wahrer Weisheit.'\n\nAn deinem Lebensende umgeben dich Menschen, denen du geholfen hast. Nicht durch große Taten, sondern durch tägliche kleine Akte der Güte.\n\n**MORALISCHE BEWERTUNG: Der Erlöste (0 bis +7)**\nDein Weg beweist, dass Erlösung möglich ist. Du hast deine Fehler nicht versteckt, sondern aus ihnen gelernt. Dies ist vielleicht die menschlichste aller Geschichten - nicht perfekt, aber beständig strebend."
+        },
+
+        "ending_shadow": {
+            "chapter": 5,
+            "title": "Im Schatten der Geschichte",
+            "isEnding": true,
+            "text": "Du warst immer am Rand. Nie der Held, nie der Schurke. Ein Beobachter in deiner eigenen Geschichte. Als andere kämpften, hast du dokumentiert. Als andere starben, hast du überlebt.\n\nNach OmniCorps Fall wirst du Chronistin der Revolution. Dein Buch 'Die Grauen Jahre' wird zum Standardwerk. Historiker loben deine Objektivität, Aktivisten kritisieren deine Distanz.\n\nDu interviewst alle - Helden und Schurken. Elara vertraut dir ihre Zweifel an, Kael seine Reue. Selbst gefangene OmniCorp-Führungskräfte sprechen mit dir. Du hörst zu, notierst, urteilst nicht.\n\nAber nachts plagt dich die Frage: Was wäre gewesen, wenn? Wenn du eingegriffen hättest? Wenn du Partei ergriffen hättest?\n\nJahrzehnte später stirbst du friedlich, umgeben von Büchern und Aufzeichnungen. Dein Nachlass wird zum Archiv. Generationen lernen aus deinen Worten über eine Zeit, die du durchlebt aber nie wirklich gelebt hast.\n\nAuf deinem Grabstein: 'Sie sah alles, tat wenig, vergaß nichts.'\n\n**MORALISCHE BEWERTUNG: Der ewige Beobachter (-7 bis -1)**\nDeine Neutralität war ihre eigene Form des Verrats. In Zeiten, die Helden forderten, warst du Bürokrat. Dein Leben zeigt: Nicht zu wählen ist auch eine Wahl - meist die falsche."
+        },
+
+        // Zusätzliche Szenen für alternative Pfade
+
+        "scene_24c": {
+            "chapter": 5,
+            "title": "Vigilanten-Justiz",
+            "transition": "Der gefährliche Pfad der Selbstjustiz beginnt.",
+            "text": "Die 'Bürgerwehr für Gerechtigkeit' formiert sich schnell. Zu schnell. Kael führt eine Gruppe, du eine andere. Listen werden erstellt - wer war Täter, wer Mitläufer?\n\nDie erste Verhaftung verläuft glimpflich. Ein mittlerer Manager, der Wasserlieferungen umgeleitet hat. Er kommt freiwillig mit.\n\nAber beim zweiten Mal eskaliert es. Der Sicherheitschef von OmniCorp verschanzt sich. Ein Feuergefecht. Zwei Tote - auf beiden Seiten.\n\nDie Stadt spaltet sich. Manche jubeln über 'endliche Gerechtigkeit'. Andere fürchten Anarchie. Elara warnt: 'Wir werden zu dem, was wir hassen!'\n\nEine Menschenmenge umstellt die Villa des CEO. Fackeln, Mistgabeln - ein klassischer Mob. Du stehst vor einer Entscheidung, die alles definieren wird.",
+            "choices": [
+                {
+                    "id": "choice_24ca",
+                    "text": "Dich vor den Mob stellen. 'Das ist nicht unser Weg! Wir sind besser!'",
+                    "moralEffect": 2,
+                    "nextScene": "scene_25c",
+                    "feedback": "In der Stunde der Prüfung findest du deine moralische Klarheit wieder. Du riskierst alles, um Lynchjustiz zu verhindern. (+2)"
+                },
+                {
+                    "id": "choice_24cb",
+                    "text": "Den Mob 'kontrolliert' zur Villa führen. 'Verhaftung, kein Mord!'",
+                    "moralEffect": -1,
+                    "nextScene": "scene_25d",
+                    "feedback": "Du versuchst, das Unkontrollierbare zu kontrollieren. Ein gefährlicher Tanz mit dem Mob. (-1)"
+                },
+                {
+                    "id": "choice_24cc",
+                    "text": "Dich zurückziehen. Das ist nicht mehr deine Revolution.",
+                    "moralEffect": -2,
+                    "nextScene": "ending_shadow",
+                    "feedback": "In der kritischen Stunde versagst du. Deine Flucht besiegelt dein Schicksal als ewiger Beobachter. (-2)"
+                }
+            ]
+        }
+    };
+
+    // Spielfunktionen
+    function startGame() {
+        gameState = {
+            moralScore: 0,
+            currentScene: 'scene_1',
+            decisionsCount: 0,
+            positiveActions: 0,
+            negativeActions: 0,
+            neutralActions: 0,
+            currentChapter: 1,
+            storyPath: 'Hauptstrang',
+            visitedScenes: new Set(),
+            specialFlags: new Set(),
+            currentChoice: null,
+            choiceHistory: [],
+            relationships: {
+                elara: 0,
+                thomas: 0,
+                marcus: 0,
+                sarah: 0,
+                kael: 0,
+                amy: 0
+            },
+            inventory: new Set(),
+            knowledge: new Set()
+        };
+
+        document.getElementById('start-screen').classList.add('hidden');
+        document.getElementById('end-screen').classList.add('hidden');
+        document.getElementById('game-play').classList.remove('hidden');
+
+        updateUI();
+        loadScene(gameState.currentScene);
+    }
+
+    function loadScene(sceneId) {
+        const scene = storyData[sceneId];
+        if (!scene) {
+            console.error('Szene nicht gefunden:', sceneId);
+            checkEnding();
+            return;
+        }
+
+        // Check if this is an ending scene
+        if (scene.isEnding) {
+            showEnding(scene);
+            return;
+        }
+
+        // Update game state
+        gameState.currentScene = sceneId;
+        gameState.visitedScenes.add(sceneId);
+        gameState.currentChapter = scene.chapter || gameState.currentChapter;
+
+        // Update UI elements
+        document.getElementById('chapter-indicator').textContent = `Kapitel ${gameState.currentChapter}`;
+        document.getElementById('story-path').textContent = gameState.storyPath;
+
+        // Set scene title if available
+        const sceneTitle = document.getElementById('scene-title');
+        if (scene.title) {
+            sceneTitle.textContent = scene.title;
+            sceneTitle.style.display = 'block';
+        } else {
+            sceneTitle.style.display = 'none';
+        }
+
+        // Set scene text with transition if available
+        const sceneText = document.getElementById('scene-text');
+        let fullText = '';
+
+        if (scene.transition) {
+            fullText = `<span class="transition-text">${scene.transition}</span>`;
+        }
+
+        fullText += scene.text;
+        sceneText.innerHTML = fullText;
+
+        // Clear and populate choices
+        const choicesContainer = document.getElementById('choices-container');
+        choicesContainer.innerHTML = '';
+
+        scene.choices.forEach((choice, index) => {
+            const button = document.createElement('button');
+            button.className = 'choice-button';
+            button.textContent = choice.text;
+            button.onclick = () => makeChoice(choice);
+            choicesContainer.appendChild(button);
+        });
+
+        // Hide feedback
+        document.getElementById('feedback-container').classList.add('hidden');
+
+        // Update progress
+        updateUI();
+    }
+
+    function makeChoice(choice) {
+        // Store current choice
+        gameState.currentChoice = choice;
+
+        // Add to choice history
+        gameState.choiceHistory.push({
+            scene: gameState.currentScene,
+            choice: choice.text,
+            moralEffect: choice.moralEffect || 0
+        });
+
+        // Update statistics
+        gameState.decisionsCount++;
+
+        if (choice.moralEffect !== undefined) {
+            gameState.moralScore += choice.moralEffect;
+
+            if (choice.moralEffect > 0) {
+                gameState.positiveActions++;
+            } else if (choice.moralEffect < 0) {
+                gameState.negativeActions++;
+            } else {
+                gameState.neutralActions++;
+            }
+        }
+
+        // Update story path if specified
+        if (choice.storyPath) {
+            gameState.storyPath = storyPaths[choice.storyPath] || gameState.storyPath;
+        }
+
+        // Update relationships if specified
+        if (choice.relationships) {
+            Object.keys(choice.relationships).forEach(person => {
+                gameState.relationships[person] += choice.relationships[person];
+            });
+        }
+
+        // Add to inventory if specified
+        if (choice.inventory) {
+            choice.inventory.forEach(item => gameState.inventory.add(item));
+        }
+
+        // Add to knowledge if specified
+        if (choice.knowledge) {
+            choice.knowledge.forEach(info => gameState.knowledge.add(info));
+        }
+
+        // Add special flags if specified
+        if (choice.specialFlags) {
+            choice.specialFlags.forEach(flag => gameState.specialFlags.add(flag));
+        }
+
+        // Show feedback
+        showFeedback(choice);
+
+        // Update UI
+        updateUI();
+    }
+
+    function showFeedback(choice) {
+        const feedbackContainer = document.getElementById('feedback-container');
+        const feedbackHeader = document.getElementById('feedback-header');
+        const feedbackText = document.getElementById('feedback-text');
+        const timerDisplay = document.getElementById('timer-display');
+
+        // Set feedback class based on moral effect
+        feedbackContainer.className = '';
+        if (choice.moralEffect > 0) {
+            feedbackContainer.classList.add('feedback-positive');
+            feedbackHeader.textContent = `Moralisch Gut (+${choice.moralEffect})`;
+        } else if (choice.moralEffect < 0) {
+            feedbackContainer.classList.add('feedback-negative');
+            feedbackHeader.textContent = `Moralisch Fragwürdig (${choice.moralEffect})`;
+        } else {
+            feedbackContainer.classList.add('feedback-neutral');
+            feedbackHeader.textContent = 'Neutrale Handlung';
+        }
+
+        feedbackText.textContent = choice.feedback;
+        feedbackContainer.classList.remove('hidden');
+
+        // Disable choice buttons
+        const buttons = document.querySelectorAll('.choice-button');
+        buttons.forEach(btn => btn.disabled = true);
+
+        // Start 30-second timer
+        let timeLeft = 30;
+        timerDisplay.textContent = `Automatisch weiter in ${timeLeft}s`;
+
+        clearInterval(timerInterval);
+        timerInterval = setInterval(() => {
+            timeLeft--;
+            timerDisplay.textContent = `Automatisch weiter in ${timeLeft}s`;
+
+            if (timeLeft <= 0) {
+                clearInterval(timerInterval);
+                continueFeedback();
+            }
+        }, 1000);
+    }
+
+    function continueFeedback() {
+        clearInterval(timerInterval);
+
+        // Check for immediate ending conditions
+        if (gameState.moralScore >= 15 || gameState.moralScore <= -15) {
+            checkEnding();
+            return;
+        }
+
+        const choice = gameState.currentChoice;
+        if (choice && choice.nextScene) {
+            loadScene(choice.nextScene);
+        } else {
+            // If no next scene, check for ending
+            checkEnding();
+        }
+    }
+
+    function updateUI() {
+        // Update moral score display
+        const scoreDisplay = document.getElementById('moral-score');
+        scoreDisplay.textContent = gameState.moralScore >= 0 ? `+${gameState.moralScore}` : gameState.moralScore;
+
+        // Update score color
+        scoreDisplay.className = '';
+        if (gameState.moralScore > 0) {
+            scoreDisplay.classList.add('score-positive');
+        } else if (gameState.moralScore < 0) {
+            scoreDisplay.classList.add('score-negative');
+        } else {
+            scoreDisplay.classList.add('score-neutral');
+        }
+
+        // Update progress bar
+        const progress = (gameState.decisionsCount / 48) * 100;
+        document.getElementById('progress-bar').style.width = `${progress}%`;
+    }
+
+    function checkEnding() {
+        let endingScene;
+
+        // Determine ending based on moral score and path
+        if (gameState.moralScore >= 15) {
+            if (gameState.specialFlags.has('Martyrium')) {
+                endingScene = 'ending_martyr';
+            } else if (gameState.storyPath.includes('Demokratie')) {
+                endingScene = 'ending_democracy';
+            } else {
+                endingScene = 'ending_justice';
+            }
+        } else if (gameState.moralScore <= -15) {
+            if (gameState.storyPath.includes('Tyrann')) {
+                endingScene = 'ending_temptation';
+            } else {
+                endingScene = 'ending_shadow';
+            }
+        } else {
+            // Neutral endings based on path and choices
+            if (gameState.positiveActions > gameState.negativeActions * 2) {
+                endingScene = 'ending_redemption';
+            } else if (gameState.neutralActions > gameState.decisionsCount / 2) {
+                endingScene = 'ending_shadow';
+            } else {
+                endingScene = 'ending_redemption';
+            }
+        }
+
+        // Load the ending scene
+        if (storyData[endingScene]) {
+            showEnding(storyData[endingScene]);
+        } else {
+            // Fallback ending
+            showEnding({
+                title: "Ende der Reise",
+                isEnding: true,
+                text: "Deine Geschichte in Grautal endet hier. Deine Entscheidungen haben Spuren hinterlassen, deren Auswirkungen noch lange nachhallen werden."
+            });
+        }
+    }
+
+    function showEnding(endingScene) {
+        document.getElementById('game-play').classList.add('hidden');
+        document.getElementById('end-screen').classList.remove('hidden');
+
+        document.getElementById('end-title').textContent = endingScene.title;
+        document.getElementById('end-description').innerHTML = endingScene.text.replace(/\n\n/g, '<br><br>');
+
+        updateEndStats();
+        generateMoralAnalysis();
+    }
+
+    function updateEndStats() {
+        // Update statistics
+        document.getElementById('final-score').textContent =
+            gameState.moralScore >= 0 ? `+${gameState.moralScore}` : gameState.moralScore;
+        document.getElementById('decisions-made').textContent = gameState.decisionsCount;
+        document.getElementById('positive-actions').textContent = gameState.positiveActions;
+        document.getElementById('negative-actions').textContent = gameState.negativeActions;
+        document.getElementById('final-path').textContent = gameState.storyPath;
+    }
+
+    function generateMoralAnalysis() {
+        const journeyText = document.getElementById('moral-journey-text');
+        const choiceHistory = document.getElementById('choice-history');
+
+        // Generate moral journey analysis
+        let analysis = '';
+
+        if (gameState.moralScore >= 15) {
+            analysis = 'Deine Reise war geprägt von außergewöhnlichem Altruismus und moralischer Klarheit. In nahezu jeder Situation hast du das Wohl anderer über dein eigenes gestellt. Du hast bewiesen, dass der kategorische Imperativ nicht nur eine Theorie ist, sondern gelebte Praxis sein kann.';
+        } else if (gameState.moralScore >= 8) {
+            analysis = 'Du hast einen überwiegend moralischen Weg gewählt, mit einigen Kompromissen. Deine Entscheidungen zeigen jemanden, der sich bemüht, das Richtige zu tun, auch wenn es nicht immer einfach war.';
+        } else if (gameState.moralScore >= 0) {
+            analysis = 'Dein Weg war von Ambivalenz geprägt. Zwischen Gut und Böse schwankend, hast du die Grauzone der Moral erkundet. Dies macht dich menschlich, aber auch unberechenbar.';
+        } else if (gameState.moralScore >= -7) {
+            analysis = 'Die dunkle Seite hat dich oft verlockt, und du hast ihr nachgegeben. Doch es gab Momente des Lichts, die zeigen, dass Erlösung möglich ist.';
+        } else {
+            analysis = 'Dein Pfad war finster. Eigennützigkeit, Grausamkeit und Verrat prägten deine Reise. Du bist zum Beweis geworden, wie leicht Menschen ihre Menschlichkeit verlieren können.';
+        }
+
+        journeyText.textContent = analysis;
+
+        // Display choice history
+        choiceHistory.innerHTML = '';
+        gameState.choiceHistory.slice(-10).forEach(choice => {
+            const entry = document.createElement('div');
+            entry.className = 'choice-entry';
+            if (choice.moralEffect > 0) {
+                entry.classList.add('positive');
+            } else if (choice.moralEffect < 0) {
+                entry.classList.add('negative');
+            }
+            entry.innerHTML = `<strong>Szene:</strong> ${choice.scene}<br><strong>Wahl:</strong> ${choice.choice}<br><strong>Moraleffekt:</strong> ${choice.moralEffect > 0 ? '+' : ''}${choice.moralEffect}`;
+            choiceHistory.appendChild(entry);
+        });
+    }
+
+    // Initialize game when page loads
+    window.addEventListener('DOMContentLoaded', () => {
+        console.log('Das Echo von Grautal - Vollständige moralische Odyssee bereit');
+    });
+    </script>
+</body>
+</html>
