@@ -1711,10 +1711,12 @@
         clearInterval(timerInterval);
 
         // Check for immediate ending conditions
+        /* // Auskommentiert, um sofortiges Ende bei +/-15 zu verhindern
         if (gameState.moralScore >= 15 || gameState.moralScore <= -15) {
             checkEnding();
             return;
         }
+        */
 
         const choice = gameState.currentChoice;
         if (choice && choice.nextScene) {
