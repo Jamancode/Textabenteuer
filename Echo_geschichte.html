@@ -1710,11 +1710,6 @@
     function continueFeedback() {
         clearInterval(timerInterval);
 
-        // Check for immediate ending conditions
-        if (gameState.moralScore >= 15 || gameState.moralScore <= -15) {
-            checkEnding();
-            return;
-        }
 
         const choice = gameState.currentChoice;
         if (choice && choice.nextScene) {
@@ -1778,12 +1773,9 @@
         if (storyData[endingScene]) {
             showEnding(storyData[endingScene]);
         } else {
-            // Fallback ending
-            showEnding({
-                title: "Ende der Reise",
-                isEnding: true,
-                text: "Deine Geschichte in Grautal endet hier. Deine Entscheidungen haben Spuren hinterlassen, deren Auswirkungen noch lange nachhallen werden."
-            });
+            // Fallback ending if a specific one isn't found by logic (should not happen with current setup)
+            console.warn('Fallback ending triggered for score:', gameState.moralScore, 'Path:', gameState.storyPath);
+            showEnding(storyData['ending_shadow']); // Default to a generic neutral ending
         }
     }
 
